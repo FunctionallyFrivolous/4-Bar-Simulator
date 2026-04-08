@@ -11,7 +11,7 @@ Written using html & javascript, with D3 to facilitate interactive svg content
 
 ## UI:
 SVG representation of the 4 bar linkage is interactive, such that user can drag link nodes to adjust the linage geometry.
-Actuated motion of the current geometry linkage can be performed by dragging a slider who's limits reflect the motion limits of the linkage itself (based on limits of input and output links).
+Actuated motion of the current geometry linkage can be performed by dragging a slider who's limits reflect the motion limits of the linkage itself (based on limits of input and output links). Individual link lengths must not change during actuation.
 All buttons and user inputs/interactions should be contained within the SVG window.
 This should be setup to look and function properly on eiher desktop or mobile browsers.
 
