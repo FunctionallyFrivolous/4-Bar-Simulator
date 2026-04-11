@@ -1,9 +1,38 @@
+// Next Tasks:
+    // Complete the function to calc input and output limits
+        // Already setup to use limits to restrict actuation, just need logic that updates them
+        // Will next need option to toggle crossover-ability
+    // Functions to set and determine the configuration (open vs crossed)
+        // Actuation calc is different for each
+        // Node drag actions can change the config status, which changes actuation calc
+        // Also need a user input to toggle btw configs
+    // Drag entire links?
+        // Not input link...
+    // Add a ternary node for each link (in node data)
+        // Show/hide nodes and include/exclude polygone points based on status
+        // Add a status to link data (ternary: true/false)
+        // Change status via dblclick
+        // Ternary nodes always exist (and update with linakge changes) just hide when not active
+
 const windowWidth = 500;
 const windowHeight = 500;
 const windowCenter = {x: windowWidth/2, y: windowHeight/2}
+const originCoords = {x: 140, y: 300}
+const coordScale = 20;
 
-let inputAngle = 0;
+let tempX = 0;
+let tempY = 0;
 
+let inputAngle = 90;
+let outputAngle = 80;
+let baseAngle = 0;
+let linkageOpen = true;
+let inputClass = "Crank"
+let outputClass = "Rocker"
+
+let inputLimits = {min: 0, max: 360};
+let outputLimits = {min: 0, max: 360};
+const limitThreshold = 0.001
 
 const svg = d3.select("#topView"); // Defining the svg window (references element from index.html)
 const background = svg.append("rect")
@@ -42,4 +71,3 @@ const linkLineGroup = zoomGroup.append("g")
 const fixedNodeGroup = zoomGroup.append("g")
 const nodeDragGroup = zoomGroup.append("g")
 const nodeDotGroup = zoomGroup.append("g")
-const actuateHandle = zoomGroup.append("circle")
