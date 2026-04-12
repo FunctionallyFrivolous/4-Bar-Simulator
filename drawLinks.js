@@ -1,8 +1,8 @@
 
 const linksData = [
+    {id: "AD", points: [], len: 10, color: "indigo", type: "fixed"},
     {id: "BC", points: [], len: 12, color: "darkgreen", type: "coupler"},
     {id: "DC", points: [], len: 8, color: "darkblue", type: "output"},
-    {id: "AD", points: [], len: 10, color: "indigo", type: "fixed"},
     {id: "AB", points: [], len: 5, color: "darkred", type: "input"},
 ];
 // To do (here):

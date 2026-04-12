@@ -61,8 +61,9 @@ svg.call(zoom)
     .on("dblclick.zoom", null);
 
 // Initialize and order svg groups and elements
-const linkLineGroup = zoomGroup.append("g")
 const fixedNodeGroup = zoomGroup.append("g")
+const linkLineGroup = zoomGroup.append("g")
+// const fixedNodeGroup = zoomGroup.append("g")
 const nodeDragGroup = zoomGroup.append("g")
 const nodeDotGroup = zoomGroup.append("g")
 
