@@ -4,61 +4,37 @@
     // This will be executed as a result of draging the input handle and any other actuation method implemented
 function doActuate(deg) {
     let inAngle = deg
-    inputAngle = coordToLink(inAngle, "angle")
 
+    let checkAngle = coordToLink(inAngle, "angle")
+    
+    if (inputLimits.min < 0 && checkAngle > 180) {
+        checkAngle = checkAngle - 360
+    }
     if (inputClass !== "Crank") {
-        if (inputLimits.min < 0) {
-            let tempDeg = inputAngle
-            if (inputAngle > 180) {
-                tempDeg = tempDeg - 360
+        if (checkAngle < inputLimits.min) {
+            inAngle = linkToCoord(inputLimits.min, "angle") + limitThreshold;
+            if (!recentCrossover && checkAngle < inputLimits.min + crossoverDeadband && allowCrossover) {
+                toggleOpenCrossed()
+                recentCrossover = true
             }
-            if (tempDeg < inputLimits.min) {
-                inAngle = inputLimits.min + limitThreshold;
-                inAngle = linkToCoord(inAngle, "angle")
-                if (!recentCrossover && tempDeg < inputLimits.min + crossoverDeadband && allowCrossover) {
-                    toggleOpenCrossed()
-                    recentCrossover = true
-                }
-            } else if (tempDeg > inputLimits.max) {
-                inAngle = inputLimits.max - limitThreshold;
-                inAngle = linkToCoord(inAngle, "angle")
-                if (!recentCrossover && tempDeg > inputLimits.max - crossoverDeadband && allowCrossover) {
-                    toggleOpenCrossed()
-                    recentCrossover = true
-                }
+        } else if (checkAngle > inputLimits.max) {
+            inAngle = linkToCoord(inputLimits.max, "angle") - limitThreshold;
+            if (!recentCrossover && checkAngle > inputLimits.max - crossoverDeadband && allowCrossover) {
+                toggleOpenCrossed()
+                recentCrossover = true
             }
-            if (tempDeg > inputLimits.min + crossoverDeadband && tempDeg < inputLimits.max - crossoverDeadband) {
+        }
+        if (checkAngle > inputLimits.min + crossoverDeadband && checkAngle < inputLimits.max - crossoverDeadband) {
                 recentCrossover = false
-            }
-        } else {
-            if (inputAngle < inputLimits.min) {
-                inAngle = linkToCoord(inputLimits.min, "angle") + limitThreshold;
-                if (!recentCrossover && inAngle < inputLimits.min + crossoverDeadband && allowCrossover) {
-                    toggleOpenCrossed()
-                    recentCrossover = true
-                }
-            } 
-            if (inputAngle > inputLimits.max) {
-                inAngle = linkToCoord(inputLimits.max, "angle") - limitThreshold;
-                if (!recentCrossover && inAngle > inputLimits.max - crossoverDeadband && allowCrossover) {
-                    toggleOpenCrossed()
-                    recentCrossover = true
-                }
-            }
-            if (inAngle > inputLimits.min + crossoverDeadband && inAngle < inputLimits.max - crossoverDeadband) {
-                recentCrossover = false
-            }
         }
     }
     
     inputAngle = coordToLink(inAngle, "angle")
 
-    const inputLink = getLinkByType("input")
-    const outputLink = getLinkByType("output")
     const outAngle = calcOutputAngle()
 
-    setLinkAngle(inputLink.id, inAngle)
-    setLinkAngle(outputLink.id, outAngle)
+    setLinkAngle(getLinkByType("input").id, inAngle)
+    setLinkAngle(getLinkByType("output").id, outAngle)
     
     updateLinkGeometry();
 }
@@ -181,20 +157,26 @@ function updateLinkGeometry() {
     fixedNodes
         .attr("cx", d => d.x)
         .attr("cy", d => d.y)
+        .attr("fill", d => d.ground ? fgColor : "none")
     nodeDots
         .attr("cx", d => d.x)
         .attr("cy", d => d.y)
+        .attr("fill", bgColor)
 
     setLinkNodes()
 
     linkLines
         .attr("points", d => d.points.map(j => `${j.x},${j.y}`).join(" "))
-        .attr("stroke", d => d.type === "fixed" ? "black" : d.color)
+        .attr("stroke", d => d.type === "fixed" ? fgColor : d3.interpolateRgb(d.color,"white")(whtnColor))
         .attr("opacity", d => d.type === "fixed" ? 1 : 0.5)
         .attr("stroke-width", d => d.type === "fixed" ? 4 : 20)
 
-    toggleCrossoverIcon.attr("opacity", allowCrossover && inputClass !== "Crank" ? 1 : 0.5)
-    toggleCrossoverButton.attr("stroke-opacity", allowCrossover && inputClass !== "Crank" ? 1 : 0.5)
+    toggleCrossoverIcon
+        .attr("opacity", inputClass === "Crank" ? 0.25 : allowCrossover ? 1 : 0.5)
+        .attr("text-decoration", allowCrossover ? "none" : "line-through")
+    toggleCrossoverButton
+        .attr("stroke-opacity", inputClass === "Crank" ? 0.25 : 0.75)
+        .attr("fill-opacity", inputClass === "Crank" ? 0.25 : 0.75)
 
     updateLinkageConfig()
 
