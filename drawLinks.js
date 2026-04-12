@@ -1,9 +1,9 @@
 
 const linksData = [
-    {id: "AB", points: [], len: 5, color: "darkred", type: "input"},
     {id: "BC", points: [], len: 12, color: "darkgreen", type: "coupler"},
     {id: "DC", points: [], len: 8, color: "darkblue", type: "output"},
     {id: "AD", points: [], len: 10, color: "indigo", type: "fixed"},
+    {id: "AB", points: [], len: 5, color: "darkred", type: "input"},
 ];
 // To do (here):
     // Calc angle of output link (given link lengths above)
@@ -17,9 +17,9 @@ const linksData = [
         // Short term: manually dictate node coords
 const nodesData = [
     {id: "A", x: originCoords.x, y: originCoords.y, ground: true}, 
-    {id: "B", x: originCoords.x, y: originCoords.y-linksData[0].len*coordScale, ground: false},  
+    {id: "B", x: originCoords.x, y: originCoords.y-getLinkByID("AB").len*coordScale, ground: false},  
     {id: "C", x: originCoords.x+11.7*coordScale, y: originCoords.y-7.8*coordScale, ground: false},
-    {id: "D", x: originCoords.x+linksData[3].len*coordScale, y: originCoords.y, ground: true},
+    {id: "D", x: originCoords.x+getLinkByID("AD").len*coordScale, y: originCoords.y, ground: true},
     // {id: "AB_c", x: 100, y: 250, ground: false},
     // {id: "BC_c", x: 190, y: 150, ground: false},
     // {id: "CD_c", x: 400, y: 250, ground: false},
@@ -107,32 +107,3 @@ const nodeDrag = nodeDragGroup.selectAll("cirlce")
     )
 
 updateLinkGeometry();
-
-function updateLinkGeometry() {
-    nodeDrag
-        .attr("cx", d => d.x)
-        .attr("cy", d => d.y)
-    fixedNodes
-        .attr("cx", d => d.x)
-        .attr("cy", d => d.y)
-    nodeDots
-        .attr("cx", d => d.x)
-        .attr("cy", d => d.y)
-
-    setLinkNodes()
-
-    linkLines
-        .attr("points", d => d.points.map(j => `${j.x},${j.y}`).join(" "))
-        .attr("stroke", d => d.type === "fixed" ? "black" : d.color)
-        .attr("opacity", d => d.type === "fixed" ? 1 : 0.5)
-        .attr("stroke-width", d => d.type === "fixed" ? 4 : 20)
-
-    updateLinkageConfig()
-
-    // document.getElementById("debugOutputs").innerHTML = 
-    // `${inputClass}, 
-    // min: ${inputLimits.min.toFixed(1)}, 
-    // max: ${inputLimits.max.toFixed(1)}, 
-    // input: ${inputAngle.toFixed(1)}, 
-    // base: ${baseAngle.toFixed(1)}`
-}

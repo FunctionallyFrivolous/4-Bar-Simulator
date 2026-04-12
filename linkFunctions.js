@@ -6,11 +6,9 @@
     // First two should always be the joint nodes
     // Why does including a for loop break this...
 function getLinkNodes(link) {
-
     const getNodes = []
-
-    getNodes[0] = nodesData.find(j => j.id === link[0])
-    getNodes[1] = nodesData.find(j => j.id === link[1])
+    getNodes[0] = getNode(link[0])
+    getNodes[1] = getNode(link[1])
 
     return getNodes
 }
@@ -23,17 +21,15 @@ function setLinkNodes() {
     for (i=0; i<linksData.length; i++) {
         const link_id = linksData[i].id
         const [sNode, eNode] = getLinkNodes(link_id)
-        // const sNode = nodesData.find(j => j.id === link_id[0])
-        // const eNode = nodesData.find(j => j.id === link_id[1])
         linksData[i].points[0] = {x: sNode.x, y: sNode.y}
         linksData[i].points[1] = {x: eNode.x, y: eNode.y}
         if (sNode.ground && eNode.ground) linksData[i].type = "fixed"
         linksData[i].len = getLinkLength(linksData[i].id)
     }
 
-    const inLink = linksData.find(j => j.type === "input").id
-    const outLink = linksData.find(j => j.type === "output").id
-    const fixLink = linksData.find(j => j.type === "fixed").id
+    const inLink = getLinkByType("input").id
+    const outLink = getLinkByType("output").id
+    const fixLink = getLinkByType("fixed").id
 
     inputAngle = coordToLink(getLinkAngle(inLink), "angle")
     outputAngle = coordToLink(getLinkAngle(outLink), "angle")
@@ -42,37 +38,27 @@ function setLinkNodes() {
 }
 
 function getLinkAngle(link) {
-    const thisLink = linksData.find(j => j.id === link)
-    const node0_x = thisLink.points[0].x;
-    const node0_y = thisLink.points[0].y*1;
-    const node1_x = thisLink.points[1].x*1;
-    const node1_y = thisLink.points[1].y*1;
-
-    const link_th = Math.atan2((node0_y-node1_y),(node1_x-node0_x))
-    let link_deg = radToDeg(link_th);
-    if (link_deg < 0) link_deg = link_deg + 360
-
-    return link_deg;
+    const linkAngle = getNodesAngle(getNode(link[0]), getNode(link[1]))
+    return linkAngle;
 }
 function setLinkAngle(link, deg) {
-
     const linkNodes = getLinkNodes(link)
-    const pivotNode = nodesData.find(j => j.id === link[0])
+    const pivotNode = getNode(link[0])
 
     for (i = 0; i < linkNodes.length; i++) {
         const mobileNode = linkNodes[i]
-        const [newX, newY] = rotateNode(mobileNode, deg, pivotNode)
+        rotateNode(mobileNode, deg, pivotNode)
+        // const [newX, newY] = rotateNode(mobileNode, deg, pivotNode)
 
-        mobileNode.x = newX
-        mobileNode.y = newY
-
+        // mobileNode.x = newX
+        // mobileNode.y = newY
     }
 
     updateLinkGeometry()
 }
 
 function getLinkLength(link) {
-    const thisLink = linksData.find(j => j.id === link)
+    const thisLink = getLinkByID(link)
     const node0_x = thisLink.points[0].x;
     const node0_y = thisLink.points[0].y*1;
     const node1_x = thisLink.points[1].x*1;
@@ -81,4 +67,13 @@ function getLinkLength(link) {
     const link_len = Math.sqrt((node0_x-node1_x)*((node0_x-node1_x))+(node0_y-node1_y)*(node0_y-node1_y))/coordScale
 
     return link_len;
+}
+
+function getLinkByType(type) {
+    const link = linksData.find(j => j.type === type)
+    return link
+}
+function getLinkByID(id) {
+    const link = linksData.find(j => j.id === id)
+    return link
 }

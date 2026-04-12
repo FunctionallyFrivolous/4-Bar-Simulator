@@ -15,24 +15,46 @@ function doActuate(deg) {
             if (tempDeg < inputLimits.min) {
                 inAngle = inputLimits.min + limitThreshold;
                 inAngle = linkToCoord(inAngle, "angle")
+                if (!recentCrossover && tempDeg < inputLimits.min + crossoverDeadband && allowCrossover) {
+                    toggleOpenCrossed()
+                    recentCrossover = true
+                }
             } else if (tempDeg > inputLimits.max) {
                 inAngle = inputLimits.max - limitThreshold;
                 inAngle = linkToCoord(inAngle, "angle")
+                if (!recentCrossover && tempDeg > inputLimits.max - crossoverDeadband && allowCrossover) {
+                    toggleOpenCrossed()
+                    recentCrossover = true
+                }
+            }
+            if (tempDeg > inputLimits.min + crossoverDeadband && tempDeg < inputLimits.max - crossoverDeadband) {
+                recentCrossover = false
             }
         } else {
             if (inputAngle < inputLimits.min) {
                 inAngle = linkToCoord(inputLimits.min, "angle") + limitThreshold;
+                if (!recentCrossover && inAngle < inputLimits.min + crossoverDeadband && allowCrossover) {
+                    toggleOpenCrossed()
+                    recentCrossover = true
+                }
             } 
             if (inputAngle > inputLimits.max) {
-            inAngle = linkToCoord(inputLimits.max, "angle") - limitThreshold;
+                inAngle = linkToCoord(inputLimits.max, "angle") - limitThreshold;
+                if (!recentCrossover && inAngle > inputLimits.max - crossoverDeadband && allowCrossover) {
+                    toggleOpenCrossed()
+                    recentCrossover = true
+                }
+            }
+            if (inAngle > inputLimits.min + crossoverDeadband && inAngle < inputLimits.max - crossoverDeadband) {
+                recentCrossover = false
             }
         }
     }
     
     inputAngle = coordToLink(inAngle, "angle")
 
-    const inputLink = linksData.find(j => j.type === "input")
-    const outputLink = linksData.find(j => j.type === "output")
+    const inputLink = getLinkByType("input")
+    const outputLink = getLinkByType("output")
     const outAngle = calcOutputAngle()
 
     setLinkAngle(inputLink.id, inAngle)
@@ -43,10 +65,10 @@ function doActuate(deg) {
 
 // Function to calc/return the angle of the output link based on all link lengths and input angle
 function calcOutputAngle() {
-    const a = linksData.find(j => j.type === "input").len
-    const b = linksData.find(j => j.type === "output").len
-    const c = linksData.find(j => j.type === "coupler").len
-    const d = linksData.find(j => j.type === "fixed").len
+    const a = getLinkByType("input").len
+    const b = getLinkByType("output").len
+    const c = getLinkByType("coupler").len
+    const d = getLinkByType("fixed").len
 
     const inAngle = degToRad(inputAngle)
 
@@ -54,7 +76,8 @@ function calcOutputAngle() {
     const V = 2*a*b*Math.sin(inAngle)
     const W = 2*b*(d - a*Math.cos(inAngle))
 
-    const halfTan = (-V + Math.sqrt(V*V - U*U + W*W))/(W-U)
+    const configFactor = linkageOpen ? 1 : -1
+    const halfTan = (-V + configFactor * Math.sqrt(V*V - U*U + W*W))/(W-U)
     let outAngle = Math.atan2(halfTan, 1) * 2
     outAngle = radToDeg(outAngle)
     if (outAngle < 0) outAngle + 360
@@ -67,10 +90,12 @@ function calcOutputAngle() {
 }
 
 function updateLinkageConfig() {
-    const a = linksData.find(j => j.type === "input").len
-    const b = linksData.find(j => j.type === "output").len
-    const c = linksData.find(j => j.type === "coupler").len
-    const d = linksData.find(j => j.type === "fixed").len
+    updateOpenCrossed()
+
+    const a = getLinkByType("input").len
+    const b = getLinkByType("output").len
+    const c = getLinkByType("coupler").len
+    const d = getLinkByType("fixed").len
 
     let A_min = 0;
     let A_max = 360;
@@ -109,7 +134,7 @@ function updateLinkageConfig() {
         A_min = 360-A_min;
         A_max = 360-A_max;
     }
-
+    
     if (A_min > A_max) {
         const A_swap = A_min;
         A_min = A_max;
@@ -120,4 +145,59 @@ function updateLinkageConfig() {
     inputLimits.max = A_max;
 
     // document.getElementById("debugOutputs").innerHTML = `${baseAngle.toFixed(1)}`
+}
+
+function updateOpenCrossed() {
+    const AB_th = getNodesAngle(getNode("A"), getNode("B"))
+    const DA_th = getNodesAngle(getNode("D"), getNode("A"))
+    const DB_th = DA_th - getNodesAngle(getNode("D"), getNode("B"))
+    let DC_th = DA_th - getNodesAngle(getNode("D"), getNode("C"))
+
+    if (AB_th < DA_th) {
+        if (DC_th < 0) DC_th = DC_th + 360
+        if (DC_th < DB_th || DC_th > DB_th+180) linkageOpen = false;
+        else linkageOpen = true
+    } else {
+        if (DC_th < DB_th || DC_th > DB_th+180) linkageOpen = false;
+        else linkageOpen = true
+    }
+
+    toggleConfigIcon.text(linkageOpen ? "Open ⇋ Crossed" : "Crossed ⇋ Open")
+    // document.getElementById("debugOutputs").innerHTML = `AB: ${AB_th.toFixed(1)}, DA: ${DA_th.toFixed(1)}, DC: ${DC_th.toFixed(1)}, DB: ${DB_th.toFixed(1)}, DB': ${(DB_th+180).toFixed(1)}`
+} 
+function toggleOpenCrossed() {
+    const DB_th = getNodesAngle(getNode("D"), getNode("B"))
+    const DC_th = getNodesAngle(getNode("D"), getNode("C"))
+    const newDC_th = 2*DB_th - DC_th
+    rotateNode(getNode("C"),newDC_th,getNode("D"))
+    updateOpenCrossed()
+    updateLinkGeometry()
+}
+
+function updateLinkGeometry() {
+    nodeDrag
+        .attr("cx", d => d.x)
+        .attr("cy", d => d.y)
+    fixedNodes
+        .attr("cx", d => d.x)
+        .attr("cy", d => d.y)
+    nodeDots
+        .attr("cx", d => d.x)
+        .attr("cy", d => d.y)
+
+    setLinkNodes()
+
+    linkLines
+        .attr("points", d => d.points.map(j => `${j.x},${j.y}`).join(" "))
+        .attr("stroke", d => d.type === "fixed" ? "black" : d.color)
+        .attr("opacity", d => d.type === "fixed" ? 1 : 0.5)
+        .attr("stroke-width", d => d.type === "fixed" ? 4 : 20)
+
+    toggleCrossoverIcon.attr("opacity", allowCrossover && inputClass !== "Crank" ? 1 : 0.5)
+    toggleCrossoverButton.attr("stroke-opacity", allowCrossover && inputClass !== "Crank" ? 1 : 0.5)
+
+    updateLinkageConfig()
+
+    // document.getElementById("debugOutputs").innerHTML = 
+    // `${linkageOpen ? "Open" : "Crossed"}`
 }
