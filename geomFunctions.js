@@ -6,7 +6,7 @@ function doActuate(deg) {
     let inAngle = deg
 
     let checkAngle = coordToLink(inAngle, "angle")
-    
+
     if (inputLimits.min < 0 && checkAngle > 180) {
         checkAngle = checkAngle - 360
     }
@@ -31,38 +31,40 @@ function doActuate(deg) {
     
     inputAngle = coordToLink(inAngle, "angle")
 
-    const outAngle = calcOutputAngle()
+    const outAngle = calcOutputAngle(inputAngle)
 
     setLinkAngle(getLinkByType("input").id, inAngle)
     setLinkAngle(getLinkByType("output").id, outAngle)
     
     updateLinkGeometry();
+    updateOutputAngle();
 }
 
 // Function to calc/return the angle of the output link based on all link lengths and input angle
-function calcOutputAngle() {
+function calcOutputAngle(inDeg) {
     const a = getLinkByType("input").len
     const b = getLinkByType("output").len
     const c = getLinkByType("coupler").len
     const d = getLinkByType("fixed").len
 
-    const inAngle = degToRad(inputAngle)
+    const inAngle = degToRad(inDeg)
 
     const U = a*a + b*b - c*c + d*d - 2*a*d*Math.cos(inAngle)
     const V = 2*a*b*Math.sin(inAngle)
     const W = 2*b*(d - a*Math.cos(inAngle))
 
     const configFactor = linkageOpen ? 1 : -1
-    const halfTan = (-V + configFactor * Math.sqrt(V*V - U*U + W*W))/(W-U)
-    let outAngle = Math.atan2(halfTan, 1) * 2
+    const halfTan = (-V + configFactor * Math.sqrt(Math.max((V*V - U*U + W*W),0)))/(W-U)
+    let outAngle = Math.atan(halfTan) * 2
     outAngle = radToDeg(outAngle)
     if (outAngle < 0) outAngle + 360
-
-    outputAngle = outAngle;
 
     outAngle = linkToCoord(outAngle, "angle")
 
     return outAngle;
+}
+function updateOutputAngle() {
+    outputAngle = calcOutputAngle(inputAngle)
 }
 
 function updateLinkageConfig() {
@@ -120,6 +122,9 @@ function updateLinkageConfig() {
     inputLimits.min = A_min;
     inputLimits.max = A_max;
 
+    outputLimits.min = calcOutputAngle(A_min);
+    outputLimits.max = calcOutputAngle(A_max);
+
     // document.getElementById("debugOutputs").innerHTML = `${baseAngle.toFixed(1)}`
 }
 
@@ -168,17 +173,32 @@ function updateLinkGeometry() {
     linkLines
         .attr("points", d => d.points.map(j => `${j.x},${j.y}`).join(" "))
         .attr("stroke", d => d.type === "fixed" ? fgColor : d3.interpolateRgb(d.color,"white")(whtnColor))
-        .attr("opacity", d => d.type === "fixed" ? 1 : 0.5)
+        .attr("opacity", d => d.type === "fixed" ? 1 : darkMode ? 0.6 : 0.6)
         .attr("stroke-width", d => d.type === "fixed" ? 4 : 20)
 
     toggleCrossoverIcon
-        .attr("opacity", inputClass === "Crank" ? 0.25 : allowCrossover ? 1 : 0.5)
+        .attr("opacity", inputClass === "Crank" ? 0.25 : 1)
+        // .attr("font-weight", allowCrossover ? "bold" : "none")
         .attr("text-decoration", allowCrossover ? "none" : "line-through")
     toggleCrossoverButton
         .attr("stroke-opacity", inputClass === "Crank" ? 0.25 : 0.75)
         .attr("fill-opacity", inputClass === "Crank" ? 0.25 : 0.75)
 
     updateLinkageConfig()
+
+    inputLinkVal
+        .attr("fill", d3.interpolateRgb(getLinkByType("input").color,"white")(whtnColor*2))
+        .text(`Input: ${inputAngle.toFixed(1)}°`)
+    inputLinkProps
+        .attr("fill", d3.interpolateRgb(getLinkByType("input").color,"white")(whtnColor*2))
+        .text(`${inputClass} (${inputLimits.min.toFixed(1)}°, ${inputLimits.max.toFixed(1)}°)`)
+
+    outputLinkVal
+        .attr("fill", d3.interpolateRgb(getLinkByType("output").color,"white")(whtnColor*2))
+        .text(`Output: ${outputAngle.toFixed(1)}°`)
+    outputLinkProps
+        .attr("fill", d3.interpolateRgb(getLinkByType("output").color,"white")(whtnColor*2))
+        .text(`${outputClass} (${outputLimits.min.toFixed(1)}°, ${outputLimits.max.toFixed(1)}°)`)
 
     // document.getElementById("debugOutputs").innerHTML = 
     // `${linkageOpen ? "Open" : "Crossed"}`

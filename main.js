@@ -1,14 +1,26 @@
 // Next Tasks:
-    // Add input & output stats
-        // Current angle
-        // Link class
-        // Limits
-    // Dark mode icon
+    // Animate actuation
+        // Create function that cycles through actuation limits
+        // User input to start/pause
+        // User input to drag slider
+            // Linear slider or wheel?
+        // User input playback speed parameter
+        // Follow crossover status
+        // User input to set limits
+            // Wheel slider probably makes this a lot more natural...
     // Add a ternary node for each link (in node data)
         // Show/hide nodes and include/exclude polygone points based on status
         // Add a status to link data (ternary: true/false)
         // Change status via dblclick
         // Ternary nodes always exist (and update with linakge changes) just hide when not active
+    // Organized menu system
+        // Static menu bar which expands different grouped/categorized menus
+            // Visual Preferences (dark/light mode, show/hide various things)
+            // Linkage Configuration (open/crossed, crossover, )
+            // Animation (show/hide animation controlls)
+            // Save/Share options
+    // Save/Share (URL)
+    // Undo/Redo?
 
 const windowWidth = 500;
 const windowHeight = 500;
@@ -34,8 +46,10 @@ let inputClass = "Crank"
 let outputClass = "Rocker"
 
 let darkMode = false
-let bgColor = "white" // "rgb(26, 26, 26)"
-let fgColor = "black"
+const lightColor = "rgb(255, 255, 255)"
+const darkColor = "rgb(26, 26, 26)"
+let bgColor = lightColor
+let fgColor = darkColor
 let whtnColor = 0
 
 const svg = d3.select("#topView"); // Defining the svg window (references element from index.html)
@@ -73,7 +87,6 @@ svg.call(zoom)
 // Initialize and order svg groups and elements
 const fixedNodeGroup = zoomGroup.append("g")
 const linkLineGroup = zoomGroup.append("g")
-// const fixedNodeGroup = zoomGroup.append("g")
 const nodeDragGroup = zoomGroup.append("g")
 const nodeDotGroup = zoomGroup.append("g")
 
@@ -84,3 +97,9 @@ const toggleCrossoverIcon = overlayGroup.append("text")
 const darkModeButton = overlayGroup.append("rect")
 const darkModeIconTop = overlayGroup.append("path")
 const darkModeIconBottom = overlayGroup.append("path")
+
+const inputLinkVal = overlayGroup.append("text")
+const inputLinkProps = overlayGroup.append("text")
+const outputLinkVal = overlayGroup.append("text")
+const outputLinkProps = overlayGroup.append("text")
+

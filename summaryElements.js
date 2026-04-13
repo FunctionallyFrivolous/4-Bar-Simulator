@@ -1,0 +1,46 @@
+
+inputLinkVal
+    .attr("x", 5)
+    .attr("y", 5)
+    .attr("font-size", "10pt")
+    .attr("font-family", "sans-serif")
+    .attr("font-weight", "bold")
+    .attr("fill", getLinkByType("input").color)
+    .attr("text-anchor", "start")
+    .attr("alignment-baseline", "text-before-edge")
+    .style("pointer-events", "none")
+    .text(`Input: ${inputAngle.toFixed(1)}°`)
+
+inputLinkProps
+    .attr("x", 5)
+    .attr("y", 5+16)
+    .attr("font-size", "10pt")
+    .attr("font-family", "sans-serif")
+    .attr("fill", getLinkByType("input").color)
+    .attr("text-anchor", "start")
+    .attr("alignment-baseline", "text-before-edge")
+    .style("pointer-events", "none")
+    .text(`${inputClass} (${inputLimits.min.toFixed(1)}°, ${inputLimits.max.toFixed(1)}°)`)
+
+outputLinkVal
+    .attr("x", windowWidth-5)
+    .attr("y", 5)
+    .attr("font-size", "10pt")
+    .attr("font-family", "sans-serif")
+    .attr("font-weight", "bold")
+    .attr("fill", getLinkByType("output").color)
+    .attr("text-anchor", "end")
+    .attr("alignment-baseline", "text-before-edge")
+    .style("pointer-events", "none")
+    .text(`Output: ${inputAngle.toFixed(1)}°`)
+
+outputLinkProps
+    .attr("x", windowWidth-5)
+    .attr("y", 5+16)
+    .attr("font-size", "10pt")
+    .attr("font-family", "sans-serif")
+    .attr("fill", getLinkByType("output").color)
+    .attr("text-anchor", "end")
+    .attr("alignment-baseline", "text-before-edge")
+    .style("pointer-events", "none")
+    .text(`${outputClass} (${inputLimits.min.toFixed(1)}°, ${inputLimits.max.toFixed(1)}°)`)
