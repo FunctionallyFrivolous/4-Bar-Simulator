@@ -102,6 +102,7 @@ const zoom = d3.zoom()
 svg.call(zoom)
     .on("dblclick.zoom", null);
 
+
 // Initialize and order svg groups and elements
 const linkLineGroup = zoomGroup.append("g")
 const groundLineGroup = zoomGroup.append("g")
@@ -121,4 +122,3 @@ const inputLinkVal = overlayGroup.append("text")
 const inputLinkProps = overlayGroup.append("text")
 const outputLinkVal = overlayGroup.append("text")
 const outputLinkProps = overlayGroup.append("text")
-

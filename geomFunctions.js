@@ -156,6 +156,8 @@ function toggleOpenCrossed() {
 }
 
 function updateLinkGeometry() {
+    
+
     nodeDrag
         .attr("cx", d => d.x)
         .attr("cy", d => d.y)

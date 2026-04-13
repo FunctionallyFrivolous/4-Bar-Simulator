@@ -29,15 +29,16 @@ const linkLines = linkLineGroup.selectAll("polygon")
     .data(linksData)
     .enter()
     .append("polygon")
+    .attr("class", "link")
     .attr("opacity", 0.5)
     .style("stroke-linecap", "round")
     .style("stroke-linejoin", "round")
     .attr("stroke-width", 20)
-    .on("dblclick", function(event, d){
-        if(d.type !== "fixed") return
-        d.visible = !d.visible
-        updateLinkGeometry()
-    })
+    // .on("dblclick", function(event, d){
+    //     if(d.type !== "fixed") return
+    //     d.visible = !d.visible
+    //     updateLinkGeometry()
+    // })
     .call(d3.drag()
         .on("start", function(event) {
             tempX = event.x
@@ -103,18 +104,12 @@ const nodeDrag = nodeDragGroup.selectAll("cirlce")
     .data(nodesData)
     .enter()
     .append("circle")
+    .attr("class", "ground")
     .attr("cx", d => d.x)
     .attr("cy", d => d.y)
     .attr("r", 15)
     .attr("fill", fgColor)
     .attr("opacity", 0)
-    .on("dblclick", function(event, d){
-        if(d.ground) {
-            const thisLink = getLinkByType("fixed")
-            thisLink.visible = !thisLink.visible
-            updateLinkGeometry()
-        }
-    })
     .call(d3.drag()
         .on("start", function(event, d) {
             nodeDrag.attr("opacity", n => n.id === d.id ? 0.1 : 0);
@@ -131,4 +126,19 @@ const nodeDrag = nodeDragGroup.selectAll("cirlce")
         })
     )
 
+svg.selectAll(".link")
+    .on("dblclick", function(event, d) {
+        if(d.type !== "fixed") return
+        d.visible = !d.visible
+        updateLinkGeometry()
+    })
+svg.selectAll(".ground")
+    .on("dblclick", function(event, d) {
+        if(d.ground) {
+        const thisLink = getLinkByType("fixed")
+        thisLink.visible = !thisLink.visible
+        updateLinkGeometry()
+        }
+    })
+    
 updateLinkGeometry();
