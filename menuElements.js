@@ -13,7 +13,7 @@ toggleConfigButton
     .attr("stroke", "black")
     .attr("stroke-width", 1)
     .attr("stroke-opacity", 0.75)
-    .on("click", function(event, d) {
+    .on("click", function() {
         toggleOpenCrossed()
     })
 toggleConfigIcon
@@ -39,7 +39,7 @@ toggleCrossoverButton
     .attr("stroke", "black")
     .attr("stroke-width", 1)
     .attr("stroke-opacity", 0.25)
-    .on("click", function(event, d) {
+    .on("click", function() {
         if (inputClass === "Crank") return
         allowCrossover = !allowCrossover
         updateLinkGeometry()
@@ -68,7 +68,7 @@ darkModeButton
     .attr("stroke", "black")
     .attr("stroke-width", 1)
     .attr("stroke-opacity", 0.75)
-    .on("click", function(event, d) {
+    .on("click", function() {
         darkMode = !darkMode
         bgColor = darkMode ? darkColor : lightColor
         fgColor = darkMode ? lightColor : darkColor
@@ -76,6 +76,7 @@ darkModeButton
         background.attr("fill", bgColor)
         darkModeIconTop.attr("fill", bgColor)
         darkModeIconBottom.attr("fill", fgColor)
+        nodeDrag.attr("fill", darkMode ? "white" : "black")
         updateLinkGeometry()
     })
 

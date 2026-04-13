@@ -172,9 +172,15 @@ function updateLinkGeometry() {
 
     linkLines
         .attr("points", d => d.points.map(j => `${j.x},${j.y}`).join(" "))
-        .attr("stroke", d => d.type === "fixed" ? fgColor : d3.interpolateRgb(d.color,"white")(whtnColor))
-        .attr("opacity", d => d.type === "fixed" ? 1 : darkMode ? 0.6 : 0.6)
-        .attr("stroke-width", d => d.type === "fixed" ? 4 : 20)
+        .attr("stroke", d => d3.interpolateRgb(d.color,"white")(whtnColor))
+        .attr("opacity", d => d.type === "fixed" ? 0 : darkMode ? 0.8 : 0.6)
+        // .attr("stroke-width", d => d.type === "fixed" ? 4 : 20)
+        .style("display", d => d.visible ? "block" : "none")
+    groundLine
+        .attr("points", d => d.points.map(j => `${j.x},${j.y}`).join(" "))
+        .attr("stroke", fgColor)
+        .style("display", d => d.type === "fixed" && d.visible ? "block" : "none")
+        .attr("stroke-dasharray", d => d.type === "fixed" ? "4,8" : "none")
 
     toggleCrossoverIcon
         .attr("opacity", inputClass === "Crank" ? 0.25 : 1)
@@ -200,6 +206,20 @@ function updateLinkGeometry() {
         .attr("fill", d3.interpolateRgb(getLinkByType("output").color,"white")(whtnColor*2))
         .text(`${outputClass} (${outputLimits.min.toFixed(1)}°, ${outputLimits.max.toFixed(1)}°)`)
 
+    updateToolTips()
+
     // document.getElementById("debugOutputs").innerHTML = 
     // `${linkageOpen ? "Open" : "Crossed"}`
+}
+
+function updateToolTips() {
+    toggleConfigButton
+        .append("title")
+        .text("Toggle Open / Crossed")
+    linkLines
+        .append("title")
+        .text(d => `${d.type} link (L = ${d.len.toFixed(1)})`)
+    nodeDrag
+        .append("title")
+        .text(d => `(${d.x.toFixed(1)}, ${d.y.toFixed(1)})`)
 }

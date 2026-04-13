@@ -1,9 +1,9 @@
 
 const linksData = [
-    {id: "AD", points: [], len: 10, color: "indigo", type: "fixed"},
-    {id: "BC", points: [], len: 12, color: "darkgreen", type: "coupler"},
-    {id: "DC", points: [], len: 8, color: "darkblue", type: "output"},
-    {id: "AB", points: [], len: 5, color: "darkred", type: "input"},
+    {id: "AD", points: [], len: 10, color: "indigo", type: "fixed", cat: "binary", visible: true},
+    {id: "BC", points: [], len: 12, color: "darkgreen", type: "coupler", cat: "binary", visible: true},
+    {id: "DC", points: [], len: 8, color: "darkblue", type: "output", cat: "binary", visible: true},
+    {id: "AB", points: [], len: 5, color: "darkred", type: "input", cat: "binary", visible: true},
 ];
 // To do (here):
     // Calc angle of output link (given link lengths above)
@@ -32,8 +32,14 @@ const linkLines = linkLineGroup.selectAll("polygon")
     .attr("opacity", 0.5)
     .style("stroke-linecap", "round")
     .style("stroke-linejoin", "round")
+    .attr("stroke-width", 20)
+    .on("dblclick", function(event, d){
+        if(d.type !== "fixed") return
+        d.visible = !d.visible
+        updateLinkGeometry()
+    })
     .call(d3.drag()
-        .on("start", function(event, d) {
+        .on("start", function(event) {
             tempX = event.x
             tempY = event.y
         })
@@ -61,6 +67,18 @@ const linkLines = linkLineGroup.selectAll("polygon")
             }
         })
     )
+
+const groundLine = groundLineGroup.selectAll("polyline")
+    .data(linksData)
+    .enter()
+    .append("polyline")
+    .attr("opacity", 1)
+    .style("stroke-linecap", "round")
+    .style("stroke-linejoin", "round")
+    .attr("opacity", 1)
+    .attr("stroke-width", 4)
+    .style("display", d => d.type === "fixed" ? "block" : "none")
+    .style("pointer-events", "none")
 
 const fixedNodes = fixedNodeGroup.selectAll("circle")
     .data(nodesData)
@@ -90,18 +108,25 @@ const nodeDrag = nodeDragGroup.selectAll("cirlce")
     .attr("r", 15)
     .attr("fill", fgColor)
     .attr("opacity", 0)
+    .on("dblclick", function(event, d){
+        if(d.ground) {
+            const thisLink = getLinkByType("fixed")
+            thisLink.visible = !thisLink.visible
+            updateLinkGeometry()
+        }
+    })
     .call(d3.drag()
-        .on("start", function(event,d) {
+        .on("start", function(event, d) {
             nodeDrag.attr("opacity", n => n.id === d.id ? 0.1 : 0);
         })
         .on("drag", function(event, d) {
-            // if (d.id !== "A") {
+            // if (d.type !== "input") {
                 d.x = event.x;
                 d.y = event.y
             // }
             updateLinkGeometry();
         })
-        .on("end", function(event, d) {
+        .on("end", function() {
             nodeDrag.attr("opacity", 0)
         })
     )

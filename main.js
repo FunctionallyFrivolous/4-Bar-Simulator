@@ -1,4 +1,16 @@
 // Next Tasks:
+    // Add a ternary node for each link (in node data)
+        // Ternary nodes always exist in nodesData. Include/exclude from polygon points to showhide
+            // Always update positions even when hidden
+            // Parameter in nodesData to dictate show/hide. And/or in links data?
+        // Add a status to link data (ternary: true/false)
+        // Change status via dblclick
+    // Trace lines
+        // Generate trace line for each node
+        // Show/hide on node double click
+        // Use a for loop to calc X number of points at incremental input angles
+            // Use these values as points for a polyline (polygon?)
+        // First full trace. Later add ghost trace for out of reach areas (e.g. crossover disallowed)
     // Animate actuation
         // Create function that cycles through actuation limits
         // User input to start/pause
@@ -8,19 +20,25 @@
         // Follow crossover status
         // User input to set limits
             // Wheel slider probably makes this a lot more natural...
-    // Add a ternary node for each link (in node data)
-        // Show/hide nodes and include/exclude polygone points based on status
-        // Add a status to link data (ternary: true/false)
-        // Change status via dblclick
-        // Ternary nodes always exist (and update with linakge changes) just hide when not active
     // Organized menu system
         // Static menu bar which expands different grouped/categorized menus
             // Visual Preferences (dark/light mode, show/hide various things)
-            // Linkage Configuration (open/crossed, crossover, )
+            // Linkage Configuration (open/crossed, crossover, manual limits?)
             // Animation (show/hide animation controlls)
+                // Separate SVG window?
             // Save/Share options
     // Save/Share (URL)
     // Undo/Redo?
+    // Button Icons:
+        // Open/Crossed: generic linkage in current config, with opposite config ghost
+        // Crossover: generic linkage at cross over point. Arrows/X indicating if crossover is allowed?
+    // Functions:
+        // get angle between nodes (about common origin)
+            // Specify both nodes (order matters) and origin
+            // Important for ternary nodes: On drag, re-calc ternary node angle from main node (about pivot node). Use this value to re-cal ternary node pos on acutation (relative to main link angle)
+        // calc any node position for a given input angle
+            // Method will depend on the specific node
+            // Should be able to do all ternary nodes the same (relative to their main link angle)
 
 const windowWidth = 500;
 const windowHeight = 500;
@@ -85,8 +103,9 @@ svg.call(zoom)
     .on("dblclick.zoom", null);
 
 // Initialize and order svg groups and elements
-const fixedNodeGroup = zoomGroup.append("g")
 const linkLineGroup = zoomGroup.append("g")
+const groundLineGroup = zoomGroup.append("g")
+const fixedNodeGroup = zoomGroup.append("g")
 const nodeDragGroup = zoomGroup.append("g")
 const nodeDotGroup = zoomGroup.append("g")
 
