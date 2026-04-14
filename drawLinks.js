@@ -1,9 +1,9 @@
 
 const linksData = [
-    {id: "AD", points: [], len: 10, color: "indigo", type: "fixed", cat: "binary", visible: true},
-    {id: "BC", points: [], len: 12, color: "darkgreen", type: "coupler", cat: "binary", visible: true},
-    {id: "DC", points: [], len: 8, color: "darkblue", type: "output", cat: "binary", visible: true},
-    {id: "AB", points: [], len: 5, color: "darkred", type: "input", cat: "binary", visible: true},
+    {id: "AD", points: [], len: 10, color: "indigo", type: "fixed", ternary: false, tAng: 10, tLen: 10, visible: true},
+    {id: "BC", points: [], len: 12, color: "darkgreen", type: "coupler", ternary: true, tAng: 10, tLen: 10, visible: true},
+    {id: "DC", points: [], len: 8, color: "darkblue", type: "output", ternary: false, tAng: 10, tLen: 10, visible: true},
+    {id: "AB", points: [], len: 5, color: "darkred", type: "input", ternary: false, tAng: 10, tLen: 10, visible: true},
 ];
 // To do (here):
     // Calc angle of output link (given link lengths above)
@@ -20,9 +20,10 @@ const nodesData = [
     {id: "B", x: originCoords.x, y: originCoords.y-getLinkByID("AB").len*coordScale, ground: false},  
     {id: "C", x: originCoords.x+11.7*coordScale, y: originCoords.y-7.8*coordScale, ground: false},
     {id: "D", x: originCoords.x+getLinkByID("AD").len*coordScale, y: originCoords.y, ground: true},
-    // {id: "AB_c", x: 100, y: 250, ground: false},
-    // {id: "BC_c", x: 190, y: 150, ground: false},
-    // {id: "CD_c", x: 400, y: 250, ground: false},
+    {id: "AB", x: 100, y: 250, ground: false},
+    {id: "BC", x: 260, y: 140, ground: false},
+    {id: "DC", x: 400, y: 250, ground: false},
+    {id: "AD", x: 450, y: 250, ground: false},
 ]
 
 const linkLines = linkLineGroup.selectAll("polygon")
@@ -33,7 +34,7 @@ const linkLines = linkLineGroup.selectAll("polygon")
     .attr("opacity", 0.5)
     .style("stroke-linecap", "round")
     .style("stroke-linejoin", "round")
-    .attr("stroke-width", 20)
+    .attr("stroke-width", 25)
     // .on("dblclick", function(event, d){
     //     if(d.type !== "fixed") return
     //     d.visible = !d.visible
@@ -57,13 +58,14 @@ const linkLines = linkLineGroup.selectAll("polygon")
                 const dx = event.x - tempX
                 const dy = event.y - tempY
                 for (i = 0; i < nodesData.length; i++) {
-                    if (nodesData[i].id === d.id[0] || nodesData[i].id === d.id[1]) {
+                    if (d.id.includes(nodesData[i].id)){//d.id[0] || nodesData[i].id === d.id[1]) {
                         nodesData[i].x = nodesData[i].x + dx
                         nodesData[i].y = nodesData[i].y + dy
                     } 
                 }
                 tempX = event.x
                 tempY = event.y
+                updateTNodes()
                 updateLinkGeometry();
             }
         })
@@ -78,6 +80,7 @@ const groundLine = groundLineGroup.selectAll("polyline")
     .style("stroke-linejoin", "round")
     .attr("opacity", 1)
     .attr("stroke-width", 4)
+    .attr("fill", "none")
     .style("display", d => d.type === "fixed" ? "block" : "none")
     .style("pointer-events", "none")
 
@@ -87,7 +90,7 @@ const fixedNodes = fixedNodeGroup.selectAll("circle")
     .append("circle")
     .attr("cx", d => d.x)
     .attr("cy", d => d.y)
-    .attr("r", 7)
+    .attr("r", 8.5)
     .attr("fill", d => d.ground ? fgColor : "none")
 
 const nodeDots = nodeDotGroup.selectAll("cirlce")
@@ -96,7 +99,7 @@ const nodeDots = nodeDotGroup.selectAll("cirlce")
     .append("circle")
     .attr("cx", d => d.x)
     .attr("cy", d => d.y)
-    .attr("r", 4)
+    .attr("r", 4.5)
     .attr("fill", bgColor)
     .style("pointer-events", "none")
 
@@ -107,7 +110,7 @@ const nodeDrag = nodeDragGroup.selectAll("cirlce")
     .attr("class", "ground")
     .attr("cx", d => d.x)
     .attr("cy", d => d.y)
-    .attr("r", 15)
+    .attr("r", 20)
     .attr("fill", fgColor)
     .attr("opacity", 0)
     .call(d3.drag()
@@ -115,10 +118,9 @@ const nodeDrag = nodeDragGroup.selectAll("cirlce")
             nodeDrag.attr("opacity", n => n.id === d.id ? 0.1 : 0);
         })
         .on("drag", function(event, d) {
-            // if (d.type !== "input") {
-                d.x = event.x;
-                d.y = event.y
-            // }
+            d.x = event.x;
+            d.y = event.y
+            updateTNodes()
             updateLinkGeometry();
         })
         .on("end", function() {
@@ -126,19 +128,58 @@ const nodeDrag = nodeDragGroup.selectAll("cirlce")
         })
     )
 
+// svg.selectAll(".link")
+//     .on("dblclick", function(event, d) {
+//         if(d.type !== "fixed") {
+//             d.ternary = !d.ternary
+//         } else {
+//             d.visible = !d.visible
+//         }
+//         setLinkNodes()
+//         updateLinkGeometry()
+//     })
+
+// svg.selectAll(".ground")
+//     .on("dblclick", function(event, d) {
+//         if(d.ground) {
+//         const thisLink = getLinkByType("fixed")
+//         thisLink.visible = !thisLink.visible
+//         updateLinkGeometry()
+//         }
+//     })
+
 svg.selectAll(".link")
-    .on("dblclick", function(event, d) {
-        if(d.type !== "fixed") return
-        d.visible = !d.visible
-        updateLinkGeometry()
-    })
+  .on("pointerdown", linkDoubleTap);
+
 svg.selectAll(".ground")
-    .on("dblclick", function(event, d) {
+  .on("pointerdown", groundDoubleTap);
+
+function linkDoubleTap(event, d) {
+    const now = Date.now();
+    if (now - lastTapTime < 300) {
+        if(d.type !== "fixed") {
+            d.ternary = !d.ternary
+        } else {
+            d.visible = !d.visible
+        }
+        setLinkNodes()
+        updateLinkGeometry()
+    }
+    lastTapTime = now;
+}
+
+function groundDoubleTap(event, d) {
+    const now = Date.now();
+    if (now - lastTapTime < 300) {
         if(d.ground) {
         const thisLink = getLinkByType("fixed")
         thisLink.visible = !thisLink.visible
         updateLinkGeometry()
         }
-    })
-    
+    }
+    lastTapTime = now;
+}
+
+// setLinkNodes()
+updateTNodes()
 updateLinkGeometry();

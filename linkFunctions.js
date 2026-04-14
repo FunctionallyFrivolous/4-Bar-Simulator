@@ -9,6 +9,7 @@ function getLinkNodes(link) {
     const getNodes = []
     getNodes[0] = getNode(link[0])
     getNodes[1] = getNode(link[1])
+    getNodes[2] = getNode(link)
 
     return getNodes
 }
@@ -20,9 +21,14 @@ function setLinkNodes() {
 
     for (i=0; i<linksData.length; i++) {
         const link_id = linksData[i].id
-        const [sNode, eNode] = getLinkNodes(link_id)
+        const [sNode, eNode, cNode] = getLinkNodes(link_id)
+        // document.getElementById("debugOutputs").innerHTML = `${cNode}`
+
+        linksData[i].points = []
+
         linksData[i].points[0] = {x: sNode.x, y: sNode.y}
         linksData[i].points[1] = {x: eNode.x, y: eNode.y}
+        if (linksData[i].ternary) linksData[i].points[2] = {x: cNode.x, y: cNode.y};
         if (sNode.ground && eNode.ground) linksData[i].type = "fixed"
         linksData[i].len = getLinkLength(linksData[i].id)
     }
@@ -42,19 +48,20 @@ function getLinkAngle(link) {
     return linkAngle;
 }
 function setLinkAngle(link, deg) {
+    const thisLink = getLinkByID(link)
     const linkNodes = getLinkNodes(link)
     const pivotNode = getNode(link[0])
+    // const freeNode = getNode(link[1])
+    // const tNode = getNode(link)
 
     for (i = 0; i < linkNodes.length; i++) {
         const mobileNode = linkNodes[i]
-        rotateNode(mobileNode, deg, pivotNode)
-        // const [newX, newY] = rotateNode(mobileNode, deg, pivotNode)
-
-        // mobileNode.x = newX
-        // mobileNode.y = newY
+        if (mobileNode.id.length === 1) {
+            rotateNode(mobileNode, deg, pivotNode)
+        }
     }
 
-    updateLinkGeometry()
+    // updateLinkGeometry()
 }
 
 function getLinkLength(link) {

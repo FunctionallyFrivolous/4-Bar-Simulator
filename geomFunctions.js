@@ -32,12 +32,13 @@ function doActuate(deg) {
     inputAngle = coordToLink(inAngle, "angle")
 
     const outAngle = calcOutputAngle(inputAngle)
+    updateOutputAngle();
 
     setLinkAngle(getLinkByType("input").id, inAngle)
     setLinkAngle(getLinkByType("output").id, outAngle)
+    tNodeFollow()
     
     updateLinkGeometry();
-    updateOutputAngle();
 }
 
 // Function to calc/return the angle of the output link based on all link lengths and input angle
@@ -152,29 +153,33 @@ function toggleOpenCrossed() {
     const newDC_th = 2*DB_th - DC_th
     rotateNode(getNode("C"),newDC_th,getNode("D"))
     updateOpenCrossed()
+    tNodeFollow()
     updateLinkGeometry()
 }
 
 function updateLinkGeometry() {
-    
-
     nodeDrag
         .attr("cx", d => d.x)
         .attr("cy", d => d.y)
+        .style("display", d => d.id.length === 1 ? "block" : getLinkByID(d.id).ternary ? "block" : "none")
     fixedNodes
         .attr("cx", d => d.x)
         .attr("cy", d => d.y)
         .attr("fill", d => d.ground ? fgColor : "none")
+        .style("display", d => d.id.length === 1 ? "block" : getLinkByID(d.id).ternary ? "block" : "none")
     nodeDots
         .attr("cx", d => d.x)
         .attr("cy", d => d.y)
+        .attr("r", d => d.id.length === 2 ? 5 : d.ground ? 4 : 4.5)
         .attr("fill", bgColor)
+        .style("display", d => d.id.length === 1 ? "block" : getLinkByID(d.id).ternary ? "block" : "none")
 
     setLinkNodes()
 
     linkLines
         .attr("points", d => d.points.map(j => `${j.x},${j.y}`).join(" "))
         .attr("stroke", d => d3.interpolateRgb(d.color,"white")(whtnColor))
+        .attr("fill", d => d3.interpolateRgb(d.color,"white")(whtnColor))
         .attr("opacity", d => d.type === "fixed" ? 0 : darkMode ? 0.8 : 0.6)
         // .attr("stroke-width", d => d.type === "fixed" ? 4 : 20)
         .style("display", d => d.visible ? "block" : "none")
@@ -210,7 +215,7 @@ function updateLinkGeometry() {
 
     updateToolTips()
 
-    // document.getElementById("debugOutputs").innerHTML = 
+    // document.getElementById("debugOutputs").innerHTML = A_angle.toFixed(1)
     // `${linkageOpen ? "Open" : "Crossed"}`
 }
 

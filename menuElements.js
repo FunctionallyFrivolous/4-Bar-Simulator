@@ -43,6 +43,7 @@ toggleCrossoverButton
         if (inputClass === "Crank") return
         allowCrossover = !allowCrossover
         updateLinkGeometry()
+        
     })
 toggleCrossoverIcon
     .attr("x", 70/2+buttonMargin*2+100)

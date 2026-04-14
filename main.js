@@ -48,6 +48,7 @@ const coordScale = 20;
 
 let tempX = 0;
 let tempY = 0;
+let lastTapTime = 0;
 
 let inputLimits = {min: 0, max: 360};
 let outputLimits = {min: 0, max: 360};
@@ -102,13 +103,12 @@ const zoom = d3.zoom()
 svg.call(zoom)
     .on("dblclick.zoom", null);
 
-
 // Initialize and order svg groups and elements
 const linkLineGroup = zoomGroup.append("g")
-const groundLineGroup = zoomGroup.append("g")
 const fixedNodeGroup = zoomGroup.append("g")
-const nodeDragGroup = zoomGroup.append("g")
+const groundLineGroup = zoomGroup.append("g")
 const nodeDotGroup = zoomGroup.append("g")
+const nodeDragGroup = zoomGroup.append("g")
 
 const toggleConfigButton = overlayGroup.append("rect")
 const toggleConfigIcon = overlayGroup.append("text")
