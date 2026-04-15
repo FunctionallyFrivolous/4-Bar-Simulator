@@ -204,14 +204,14 @@ function updateOpenCrossed() {
     if (DC_th < DB_th || DC_th > DB_th+180) linkageOpen = false;
     else linkageOpen = true
 
-    document.getElementById("debugOutputs").innerHTML = `
-        DBraw: ${getNodesAngle(getNode("D"),getNode("B")).toFixed(1)}, 
-        DCraw: ${getNodesAngle(getNode("D"),getNode("C")).toFixed(1)}, \n<br>
-        AB: ${AB_th.toFixed(1)}, 
-        DA: ${DA_th.toFixed(1)}, 
-        DC: ${DC_th.toFixed(1)}, 
-        DB: ${DB_th.toFixed(1)} \n<br>
-        `
+    // document.getElementById("debugOutputs").innerHTML = `
+    //     DBraw: ${getNodesAngle(getNode("D"),getNode("B")).toFixed(1)}, 
+    //     DCraw: ${getNodesAngle(getNode("D"),getNode("C")).toFixed(1)}, \n<br>
+    //     AB: ${AB_th.toFixed(1)}, 
+    //     DA: ${DA_th.toFixed(1)}, 
+    //     DC: ${DC_th.toFixed(1)}, 
+    //     DB: ${DB_th.toFixed(1)} \n<br>
+    //     `
 
     toggleConfigIcon.text(linkageOpen ? "Open ⇋ Crossed" : "Crossed ⇋ Open")
     // document.getElementById("debugOutputs").innerHTML = `AB: ${AB_th.toFixed(1)}, DA: ${DA_th.toFixed(1)}, DC: ${DC_th.toFixed(1)}, DB: ${DB_th.toFixed(1)}, DB': ${(DB_th+180).toFixed(1)}`

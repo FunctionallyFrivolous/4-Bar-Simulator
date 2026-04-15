@@ -113,8 +113,13 @@ const nodeDrag = nodeDragGroup.selectAll("cirlce")
         })
         .on("drag", function(event, d) {
             if (d.id === "A") return
-            d.x = Math.max(event.x, getNode("A").x);
-            if (d.id !== "D") d.y = event.y
+            if (d.id === "D") {
+                d.x = Math.max(event.x, getNode("A").x);
+            }
+            if (d.id !== "D") {
+                d.x = event.x
+                d.y = event.y
+            }
             updateTNodes()
             updateLinkGeometry();
         })
