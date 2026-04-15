@@ -1,10 +1,7 @@
 // Next Tasks:
-    // Add a ternary node for each link (in node data)
-        // Ternary nodes always exist in nodesData. Include/exclude from polygon points to showhide
-            // Always update positions even when hidden
-            // Parameter in nodesData to dictate show/hide. And/or in links data?
-        // Add a status to link data (ternary: true/false)
-        // Change status via dblclick
+    // Need to fix logic that is erroneously toggling linkage config in certain arrangements
+        // Arises when certain angles cross 0 / 360
+        // Interim solution is to disallow changing angle of fixed link
     // Trace lines
         // Generate trace line for each node
         // Show/hide on node double click
@@ -122,3 +119,11 @@ const inputLinkVal = overlayGroup.append("text")
 const inputLinkProps = overlayGroup.append("text")
 const outputLinkVal = overlayGroup.append("text")
 const outputLinkProps = overlayGroup.append("text")
+
+// const DBLink = zoomGroup.append("line")
+//     .attr("x1", 250)
+//     .attr("y1", 250)
+//     .attr("x2", 100)
+//     .attr("y2", 100)
+//     .attr("stroke-width", 2)
+//     .attr("stroke", "black")

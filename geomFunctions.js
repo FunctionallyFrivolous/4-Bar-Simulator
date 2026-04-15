@@ -5,20 +5,20 @@
 function doActuate(deg) {
     let inAngle = deg
 
-    let checkAngle = coordToLink(inAngle, "angle")
+    let checkAngle = getNetAngle(coordToLink(inAngle, "angle"))
 
     if (inputLimits.min < 0 && checkAngle > 180) {
         checkAngle = checkAngle - 360
     }
     if (inputClass !== "Crank") {
         if (checkAngle < inputLimits.min) {
-            inAngle = linkToCoord(inputLimits.min, "angle") + limitThreshold;
+            inAngle = getNetAngle(linkToCoord(inputLimits.min, "angle")) + limitThreshold;
             if (!recentCrossover && checkAngle < inputLimits.min + crossoverDeadband && allowCrossover) {
                 toggleOpenCrossed()
                 recentCrossover = true
             }
         } else if (checkAngle > inputLimits.max) {
-            inAngle = linkToCoord(inputLimits.max, "angle") - limitThreshold;
+            inAngle = getNetAngle(linkToCoord(inputLimits.max, "angle")) - limitThreshold;
             if (!recentCrossover && checkAngle > inputLimits.max - crossoverDeadband && allowCrossover) {
                 toggleOpenCrossed()
                 recentCrossover = true
@@ -29,7 +29,7 @@ function doActuate(deg) {
         }
     }
     
-    inputAngle = coordToLink(inAngle, "angle")
+    inputAngle = getNetAngle(coordToLink(inAngle, "angle"))
 
     const outAngle = calcOutputAngle(inputAngle)
     updateOutputAngle();
@@ -57,10 +57,9 @@ function calcOutputAngle(inDeg) {
     const configFactor = linkageOpen ? 1 : -1
     const halfTan = (-V + configFactor * Math.sqrt(Math.max((V*V - U*U + W*W),0)))/(W-U)
     let outAngle = Math.atan(halfTan) * 2
-    outAngle = radToDeg(outAngle)
-    if (outAngle < 0) outAngle + 360
+    outAngle = getNetAngle(radToDeg(outAngle))
 
-    outAngle = linkToCoord(outAngle, "angle")
+    outAngle = getNetAngle(linkToCoord(outAngle, "angle"))
 
     return outAngle;
 }
@@ -68,9 +67,7 @@ function updateOutputAngle() {
     outputAngle = calcOutputAngle(inputAngle)
 }
 
-function updateLinkageConfig() {
-    updateOpenCrossed()
-
+function updateInputLimits() {
     const a = getLinkByType("input").len
     const b = getLinkByType("output").len
     const c = getLinkByType("coupler").len
@@ -85,11 +82,9 @@ function updateLinkageConfig() {
     const A_min_rad = Math.acos(A_min_temp);
     const A_max_rad = Math.acos(A_max_temp);
 
-    let A_min_deg = radToDeg(Math.acos(A_min_temp));
-    if (A_min_deg < 0 )  A_min_deg = 360 + A_min_deg;
+    let A_min_deg = getNetAngle(radToDeg(Math.acos(A_min_temp)));
 
-    let A_max_deg = radToDeg(Math.acos(A_max_temp));
-    if (A_max_deg < 0 )  A_max_deg = 360 + A_max_deg;
+    let A_max_deg = getNetAngle(radToDeg(Math.acos(A_max_temp)));
     
     if (Number.isNaN(A_min_rad) & Number.isNaN(A_max_rad)) {
         A_min = 0;
@@ -109,7 +104,7 @@ function updateLinkageConfig() {
         inputClass = "Rocker";
     }
 
-    if (inputClass === "Rocker" & nodesData[1].y > nodesData[0].y) {
+    if (inputClass === "Rocker" & getNodesAngle(getNode("A"), getNode("B")) > getNodesAngle(getNode("D"),getNode("A")) ) {
         A_min = 360-A_min;
         A_max = 360-A_max;
     }
@@ -122,27 +117,101 @@ function updateLinkageConfig() {
 
     inputLimits.min = A_min;
     inputLimits.max = A_max;
-
-    outputLimits.min = calcOutputAngle(A_min);
-    outputLimits.max = calcOutputAngle(A_max);
-
-    // document.getElementById("debugOutputs").innerHTML = `${baseAngle.toFixed(1)}`
 }
 
-function updateOpenCrossed() {
-    const AB_th = getNodesAngle(getNode("A"), getNode("B"))
-    const DA_th = getNodesAngle(getNode("D"), getNode("A"))
-    const DB_th = DA_th - getNodesAngle(getNode("D"), getNode("B"))
-    let DC_th = DA_th - getNodesAngle(getNode("D"), getNode("C"))
+function updateOutputLimits() {
 
-    if (AB_th < DA_th) {
-        if (DC_th < 0) DC_th = DC_th + 360
-        if (DC_th < DB_th || DC_th > DB_th+180) linkageOpen = false;
-        else linkageOpen = true
+    const a = getLinkByType("input").len
+    const b = getLinkByType("output").len
+    const c = getLinkByType("coupler").len
+    const d = getLinkByType("fixed").len
+
+    let B_min = 0;
+    let B_max = 360;
+
+    const B_min_temp = ((c-a)*(c-a) - b*b - d*d)/(2*b*d);
+    const B_max_temp = ((c+a)*(c+a) - b*b - d*d)/(2*b*d);
+
+    const B_min_rad = Math.acos(B_min_temp);
+    const B_max_rad = Math.acos(B_max_temp);
+    
+
+    if (Number.isNaN(B_min_rad) & Number.isNaN(B_max_rad)) {
+        B_min = 0;
+        B_max = 360;
+        outputClass = "Crank";
+    } else if (Number.isNaN(B_min_rad)) {
+        B_max = radToDeg(B_max_rad);
+        B_min = 360-B_max;
+        // B_min = 360-B_max;
+        outputClass = "π-Rocker"
+    } else if (Number.isNaN(B_max_rad)) {
+        B_min = radToDeg(B_min_rad);
+        B_max = -B_min;
+        outputClass = "0-Rocker"
     } else {
-        if (DC_th < DB_th || DC_th > DB_th+180) linkageOpen = false;
-        else linkageOpen = true
+        B_min = radToDeg(B_min_rad);
+        B_max = radToDeg(B_max_rad);
+        outputClass = "Rocker"
     }
+    if (!linkageOpen & outputClass !== "0-Rocker") {
+        B_min = 360-B_min;
+        B_max = 360-B_max;
+    }
+    const crossAngle = getNodesAngle(getNode(getLinkByType("output").id[0]), getNode(getLinkByType("input").id[1]))
+    // const 
+
+    if (!linkageOpen & outputClass === "Rocker" & inputClass === "Rocker" & crossAngle < getNodesAngle(getNode("D"),getNode("A")) ) {
+        B_min = 360-B_min;
+        B_max = 360-B_max;
+    }
+    if (linkageOpen & outputClass === "Rocker" & inputClass === "Rocker" & crossAngle > getNodesAngle(getNode("D"),getNode("A")) ) {
+        B_min = 360-B_min;
+        B_max = 360-B_max;
+    }
+    
+    if (B_min > B_max) {
+        const B_swap = B_min;
+        B_min = B_max;
+        B_max = B_swap;
+    }
+
+    outputLimits.min = B_min;
+    outputLimits.max = B_max;
+
+}
+
+function updateLinkageConfig() {
+    updateOpenCrossed()
+    updateInputLimits()
+    updateOutputLimits()
+}
+
+// Current issue: 
+    // The issue arises when BDC straddles the horizontal
+        // DB above and DC below - OR - DB below and C above
+        // But also only when DA is not horiz
+    // Old version does not have this issue, but also has the luxury of not accounting for angle of DA
+
+function updateOpenCrossed() {
+    const AB_th = coordToLink(getNodesAngle(getNode("A"), getNode("B")),"angle")
+    const DA_th = coordToLink(getNodesAngle(getNode("D"), getNode("A")), "angle")
+    const DB_th = DA_th - coordToLink(getNodesAngle(getNode("D"), getNode("B")), "angle")
+    let DC_th = DA_th - coordToLink(getNodesAngle(getNode("D"), getNode("C")), "angle")
+
+    if (AB_th < DA_th) DC_th = getNetAngle(DC_th)
+
+    if (DC_th < DB_th || DC_th > DB_th+180) linkageOpen = false;
+    else linkageOpen = true
+
+    document.getElementById("debugOutputs").innerHTML = `
+        DBraw: ${getNodesAngle(getNode("D"),getNode("B")).toFixed(1)}, 
+        DCraw: ${getNodesAngle(getNode("D"),getNode("C")).toFixed(1)}, \n<br>
+        AB: ${AB_th.toFixed(1)}, 
+        DA: ${DA_th.toFixed(1)}, 
+        DC: ${DC_th.toFixed(1)}, 
+        DB: ${DB_th.toFixed(1)} \n<br>
+        `
 
     toggleConfigIcon.text(linkageOpen ? "Open ⇋ Crossed" : "Crossed ⇋ Open")
     // document.getElementById("debugOutputs").innerHTML = `AB: ${AB_th.toFixed(1)}, DA: ${DA_th.toFixed(1)}, DC: ${DC_th.toFixed(1)}, DB: ${DB_th.toFixed(1)}, DB': ${(DB_th+180).toFixed(1)}`
@@ -215,6 +284,12 @@ function updateLinkGeometry() {
 
     updateToolTips()
 
+    // DBLink
+    // .attr("x1", getNode("D").x)
+    // .attr("y1", getNode("D").y)
+    // .attr("x2", getNode("B").x)
+    // .attr("y2", getNode("B").y)
+
     // document.getElementById("debugOutputs").innerHTML = A_angle.toFixed(1)
     // `${linkageOpen ? "Open" : "Crossed"}`
 }
@@ -229,4 +304,12 @@ function updateToolTips() {
     nodeDrag
         .append("title")
         .text(d => `(${d.x.toFixed(1)}, ${d.y.toFixed(1)})`)
+}
+
+function getNetAngle(deg, neg=false) {
+    let newDeg = deg
+    if (newDeg > 360) newDeg = newDeg - 360
+    if (!neg & newDeg < 0) newDeg = newDeg + 360
+
+    return newDeg
 }

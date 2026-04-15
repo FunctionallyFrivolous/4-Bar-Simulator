@@ -16,7 +16,6 @@ function coordToLink(val, type) {
     else if (type === "y") dist = (originCoords.y-val)/coordScale
     else if (type === "angle") {
         dist = val - baseAngle
-        if (dist < 0) dist = dist + 360
     } else dist = val / coordScale
 
     return dist;
@@ -27,8 +26,6 @@ function linkToCoord(val, type) {
     else if (type === "y") coord =  originCoords.y - val*coordScale
     else if (type === "angle") {
         coord = val + baseAngle
-        if (coord > 360) coord = coord - 360
-        else if (coord < 0) coord = coord + 360
     } else coord = val * coordScale
     
     return coord;

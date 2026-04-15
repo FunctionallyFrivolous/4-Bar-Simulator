@@ -35,11 +35,6 @@ const linkLines = linkLineGroup.selectAll("polygon")
     .style("stroke-linecap", "round")
     .style("stroke-linejoin", "round")
     .attr("stroke-width", 25)
-    // .on("dblclick", function(event, d){
-    //     if(d.type !== "fixed") return
-    //     d.visible = !d.visible
-    //     updateLinkGeometry()
-    // })
     .call(d3.drag()
         .on("start", function(event) {
             tempX = event.x
@@ -49,8 +44,7 @@ const linkLines = linkLineGroup.selectAll("polygon")
             if (d.type === "input") {
                 const pivotNode = getLinkNodes(d.id)[0]
                 let newAngle = Math.atan2((pivotNode.y-event.y),(event.x-pivotNode.x))
-                newAngle = radToDeg(newAngle)
-                if(newAngle < 0) newAngle = newAngle + 360
+                newAngle = getNetAngle(radToDeg(newAngle))
 
                 doActuate(newAngle)
             }
@@ -107,7 +101,7 @@ const nodeDrag = nodeDragGroup.selectAll("cirlce")
     .data(nodesData)
     .enter()
     .append("circle")
-    .attr("class", "ground")
+    .attr("class", "node")
     .attr("cx", d => d.x)
     .attr("cy", d => d.y)
     .attr("r", 20)
@@ -118,8 +112,9 @@ const nodeDrag = nodeDragGroup.selectAll("cirlce")
             nodeDrag.attr("opacity", n => n.id === d.id ? 0.1 : 0);
         })
         .on("drag", function(event, d) {
-            d.x = event.x;
-            d.y = event.y
+            if (d.id === "A") return
+            d.x = Math.max(event.x, getNode("A").x);
+            if (d.id !== "D") d.y = event.y
             updateTNodes()
             updateLinkGeometry();
         })
@@ -128,31 +123,11 @@ const nodeDrag = nodeDragGroup.selectAll("cirlce")
         })
     )
 
-// svg.selectAll(".link")
-//     .on("dblclick", function(event, d) {
-//         if(d.type !== "fixed") {
-//             d.ternary = !d.ternary
-//         } else {
-//             d.visible = !d.visible
-//         }
-//         setLinkNodes()
-//         updateLinkGeometry()
-//     })
-
-// svg.selectAll(".ground")
-//     .on("dblclick", function(event, d) {
-//         if(d.ground) {
-//         const thisLink = getLinkByType("fixed")
-//         thisLink.visible = !thisLink.visible
-//         updateLinkGeometry()
-//         }
-//     })
-
 svg.selectAll(".link")
   .on("pointerdown", linkDoubleTap);
 
-svg.selectAll(".ground")
-  .on("pointerdown", groundDoubleTap);
+svg.selectAll(".node")
+  .on("pointerdown", nodeDoubleTap);
 
 function linkDoubleTap(event, d) {
     const now = Date.now();
@@ -168,18 +143,19 @@ function linkDoubleTap(event, d) {
     lastTapTime = now;
 }
 
-function groundDoubleTap(event, d) {
+function nodeDoubleTap(event, d) {
     const now = Date.now();
     if (now - lastTapTime < 300) {
         if(d.ground) {
-        const thisLink = getLinkByType("fixed")
-        thisLink.visible = !thisLink.visible
-        updateLinkGeometry()
+            const thisLink = getLinkByType("fixed")
+            thisLink.visible = !thisLink.visible
+            updateLinkGeometry()
         }
     }
     lastTapTime = now;
 }
 
 // setLinkNodes()
+updateOutputAngle()
 updateTNodes()
 updateLinkGeometry();

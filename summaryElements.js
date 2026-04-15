@@ -32,7 +32,7 @@ outputLinkVal
     .attr("text-anchor", "end")
     .attr("alignment-baseline", "text-before-edge")
     .style("pointer-events", "none")
-    .text(`Output: ${inputAngle.toFixed(1)}°`)
+    .text(`Output: ${outputAngle.toFixed(1)}°`)
 
 outputLinkProps
     .attr("x", windowWidth-5)
@@ -43,4 +43,4 @@ outputLinkProps
     .attr("text-anchor", "end")
     .attr("alignment-baseline", "text-before-edge")
     .style("pointer-events", "none")
-    .text(`${outputClass} (${inputLimits.min.toFixed(1)}°, ${inputLimits.max.toFixed(1)}°)`)
+    .text(`${outputClass} (${outputLimits.min.toFixed(1)}°, ${outputLimits.max.toFixed(1)}°)`)

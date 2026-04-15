@@ -52,10 +52,9 @@ function updateTNodes() {
     }
 }
 
-function getNodesAngle(startNode, endNode) {
+function getNodesAngle(startNode, endNode, neg=false) {
     let nodesAngle = Math.atan2((startNode.y-endNode.y),(endNode.x-startNode.x))
-    nodesAngle = radToDeg(nodesAngle);
-    if (nodesAngle < 0) nodesAngle = nodesAngle + 360
+    nodesAngle = getNetAngle(radToDeg(nodesAngle),neg);
 
     return nodesAngle;
 }
