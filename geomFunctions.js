@@ -207,12 +207,8 @@ function updateOpenCrossed() {
         if (DC_th < 0) DC_th = DC_th + 360
         if (DC_th < DB_th) linkageOpen = true
         else linkageOpen = false
-    } else if (outputClass === "0-Rocker") {
-        DB_th = coordToLink(getNodesAngle(getNode("B"),getNode("D"), true), "angle")
-        if (DC_th < DB_th) linkageOpen = false
-        else linkageOpen = true
     } 
-    else if (outputClass === "Crank") {
+    else if (outputClass === "Crank" || outputClass === "0-Rocker") {
         if (AB_th > 0 && DC_th > 0) {
             if (DC_th < DB_th) linkageOpen = true
             else linkageOpen = false
@@ -234,19 +230,8 @@ function updateOpenCrossed() {
             else linkageOpen = true
         }          
     }
-    
-    // document.getElementById("debugOutputs").innerHTML = `
-    //     Input: ${coordToLink(getLinkAngle("AB"), "angle").toFixed(1)} \n<br>
-    //     DBraw: ${DB_raw.toFixed(1)}, 
-    //     DCraw: ${DC_raw.toFixed(1)}, \n<br>
-    //     AB: ${AB_th.toFixed(1)}, 
-    //     DA: ${DA_th.toFixed(1)}, 
-    //     DC: ${DC_th.toFixed(1)}, 
-    //     DB: ${DB_th.toFixed(1)} \n<br>
-    //     `
 
     toggleConfigIcon.text(linkageOpen ? "Open ⇋ Crossed" : "Crossed ⇋ Open")
-    // document.getElementById("debugOutputs").innerHTML = `AB: ${AB_th.toFixed(1)}, DA: ${DA_th.toFixed(1)}, DC: ${DC_th.toFixed(1)}, DB: ${DB_th.toFixed(1)}, DB': ${(DB_th+180).toFixed(1)}`
 } 
 function toggleOpenCrossed() {
     const DB_th = getNodesAngle(getNode("D"), getNode("B"))
@@ -302,7 +287,7 @@ function updateLinkGeometry() {
 
     inputLinkVal
         .attr("fill", d3.interpolateRgb(getLinkByType("input").color,"white")(whtnColor*2))
-        .text(`Input: ${inputAngle.toFixed(1)}°`)
+        .text(`Input: ${inputLimits.min < 0 ? coordToLink(getLinkAngle("AB"),"angle").toFixed(1) : getNetAngle(inputAngle).toFixed(1)}°`)
     inputLinkProps
         .attr("fill", d3.interpolateRgb(getLinkByType("input").color,"white")(whtnColor*2))
         .text(`${inputClass} (${inputLimits.min.toFixed(1)}°, ${inputLimits.max.toFixed(1)}°)`)
@@ -315,11 +300,6 @@ function updateLinkGeometry() {
         .text(`${outputClass} (${outputLimits.min.toFixed(1)}°, ${outputLimits.max.toFixed(1)}°)`)
 
     updateToolTips()
-
-    // document.getElementById("debugOutputs").innerHTML = `
-    //     ${baseAngle.toFixed(1)} \n<br>
-    //     ${getLinkAngle("AB").toFixed(1)} \n<br>
-    //     ${coordToLink(getLinkAngle("AB"), "angle").toFixed(1)}`
 
     // DBLink
     // .attr("x1", getNode("D").x)
@@ -350,3 +330,28 @@ function getNetAngle(deg, neg=false) {
 
     return newDeg
 }
+
+// function cycleCongugate() {
+//     const distAB = getDistBtwNodes(getNode("A"),getNode("B"))
+//     const distBC = getDistBtwNodes(getNode("B"),getNode("C"))
+//     const distCD = getDistBtwNodes(getNode("C"),getNode("D"))
+//     const distDA = getDistBtwNodes(getNode("D"),getNode("A"))
+//     const distBE = getDistBtwNodes(getNode("B"),getNode("BC"))
+//     const distCE = getDistBtwNodes(getNode("C"),getNode("BC"))
+
+//     const angCBE = getAngleBtwNodes(getNode("BC"), getNode("C"), getNode("B"))
+    
+
+//     const newCE = distAB
+//     const newCD = distBE
+
+//     const newBC = distBE/distBC * newCE // New coupler link length
+//     const newBE = distCE/distBC * newCE // New coupler tDist
+
+//     const newDA = distDA/distBC * distBE // New fixed link length
+//     // const rotFixed = 
+
+//     // const newA_Coord = {x: rotateNode(), y: }
+//     const newD_Coord = {x: getNode("A").x, y: getNode("A").y}
+
+// }

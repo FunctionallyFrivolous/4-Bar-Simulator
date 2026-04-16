@@ -28,9 +28,6 @@
         // Open/Crossed: generic linkage in current config, with opposite config ghost
         // Crossover: generic linkage at cross over point. Arrows/X indicating if crossover is allowed?
     // Functions:
-        // get angle between nodes (about common origin)
-            // Specify both nodes (order matters) and origin
-            // Important for ternary nodes: On drag, re-calc ternary node angle from main node (about pivot node). Use this value to re-cal ternary node pos on acutation (relative to main link angle)
         // calc any node position for a given input angle
             // Method will depend on the specific node
             // Should be able to do all ternary nodes the same (relative to their main link angle)
@@ -43,6 +40,7 @@ const coordScale = 20;
 
 let tempX = 0;
 let tempY = 0;
+let tempAngle = 90;
 let lastTapTime = 0;
 
 let inputLimits = {min: 0, max: 360};

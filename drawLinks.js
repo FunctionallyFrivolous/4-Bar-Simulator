@@ -36,17 +36,28 @@ const linkLines = linkLineGroup.selectAll("polygon")
     .style("stroke-linejoin", "round")
     .attr("stroke-width", 25)
     .call(d3.drag()
-        .on("start", function(event) {
+        .on("start", function(event, d) {
             tempX = event.x
             tempY = event.y
+            const pivotNode = getLinkNodes(d.id)[0]
+            const tempNode = {id: "tempNode", x: tempX, y: tempY}
+            tempAngle = getNodesAngle(pivotNode, tempNode)
         })
         .on("drag", function(event, d) {
             if (d.type === "input") {
+                const currentAngle = getLinkAngle("AB")
                 const pivotNode = getLinkNodes(d.id)[0]
-                let newAngle = Math.atan2((pivotNode.y-event.y),(event.x-pivotNode.x))
-                newAngle = getNetAngle(radToDeg(newAngle))
+                let eventAngle = Math.atan2((pivotNode.y-event.y),(event.x-pivotNode.x))
+                eventAngle = getNetAngle(radToDeg(eventAngle))
+                const deltaAngle = eventAngle - tempAngle
+                const newAngle = currentAngle + deltaAngle
 
                 doActuate(newAngle)
+                
+                tempX = event.x
+                tempY = event.y
+                const tempNode = {id: "tempNode", x: tempX, y: tempY}
+                tempAngle = getNodesAngle(pivotNode, tempNode)
             }
             else {
                 const dx = event.x - tempX

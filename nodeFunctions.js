@@ -4,7 +4,7 @@
     //
 
 // Rotate a given node, about a given pivot point, to a given final angle
-function rotateNode(node, deg, pivot) {
+function rotateNode(node, deg, pivot, doit=true) {
     const dx = node.x - pivot.x
     const dy = node.y - pivot.y
     let dist = Math.sqrt(dx*dx + dy*dy)
@@ -17,10 +17,12 @@ function rotateNode(node, deg, pivot) {
     const newX = pivot.x + Math.cos(degToRad(deg)) * dist
     const newY = pivot.y - Math.sin(degToRad(deg)) * dist
 
-    node.x = newX;
-    node.y = newY;
+    if (doit) {
+        node.x = newX;
+        node.y = newY;
+    }
 
-    // return [newX, newY]
+    return [newX, newY]
 }
 function tNodeFollow() {
     for (i = 0; i < linksData.length; i++) {
