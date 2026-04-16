@@ -194,19 +194,51 @@ function updateLinkageConfig() {
     // Old version does not have this issue, but also has the luxury of not accounting for angle of DA
 
 function updateOpenCrossed() {
-    const AB_th = coordToLink(getNodesAngle(getNode("A"), getNode("B")),"angle")
-    const DA_th = coordToLink(getNodesAngle(getNode("D"), getNode("A")), "angle")
-    const DB_th = DA_th - coordToLink(getNodesAngle(getNode("D"), getNode("B")), "angle")
-    let DC_th = DA_th - coordToLink(getNodesAngle(getNode("D"), getNode("C")), "angle")
+    const AB_th = coordToLink(getNodesAngle(getNode("A"), getNode("B"), true), "angle")
+    const DA_th = getNodesAngle(getNode("D"), getNode("A"), true)
+    let DB_th = coordToLink(getNodesAngle(getNode("D"), getNode("B"), true), "angle")
+    let DC_th = coordToLink(getNodesAngle(getNode("D"), getNode("C"), true), "angle")
 
-    if (AB_th < DA_th) DC_th = getNetAngle(DC_th)
+    const DB_raw = DB_th
+    const DC_raw = DC_th
 
-    if (DC_th < DB_th || DC_th > DB_th+180) linkageOpen = false;
-    else linkageOpen = true
-
+    if (outputClass !== "0-Rocker" && outputClass !== "Crank") {
+        if (AB_th <0) DB_th = DB_th + 360
+        if (DC_th < 0) DC_th = DC_th + 360
+        if (DC_th < DB_th) linkageOpen = true
+        else linkageOpen = false
+    } else if (outputClass === "0-Rocker") {
+        DB_th = coordToLink(getNodesAngle(getNode("B"),getNode("D"), true), "angle")
+        if (DC_th < DB_th) linkageOpen = false
+        else linkageOpen = true
+    } 
+    else if (outputClass === "Crank") {
+        if (AB_th > 0 && DC_th > 0) {
+            if (DC_th < DB_th) linkageOpen = true
+            else linkageOpen = false
+        } else if (AB_th > 0 && DC_th < 0 && AB_th < DB_th){
+            DB_th = coordToLink(getNodesAngle(getNode("B"),getNode("D"), true), "angle")
+            if (DC_th > DB_th) linkageOpen = true
+            else linkageOpen = false
+        } else if (AB_th < 0 && DC_th < 0 && AB_th < DB_th){
+            if (DC_th < DB_th) linkageOpen = false
+            else linkageOpen = true
+        } 
+        else if (AB_th < 0 && DC_th < 0 && AB_th > DB_th){
+            if (DC_th > DB_th) linkageOpen = false
+            else linkageOpen = true
+        }
+        else if (AB_th < 0 && DC_th > 0){
+            DB_th = coordToLink(getNodesAngle(getNode("B"),getNode("D"), true), "angle")
+            if (DC_th < DB_th) linkageOpen = false
+            else linkageOpen = true
+        }          
+    }
+    
     // document.getElementById("debugOutputs").innerHTML = `
-    //     DBraw: ${getNodesAngle(getNode("D"),getNode("B")).toFixed(1)}, 
-    //     DCraw: ${getNodesAngle(getNode("D"),getNode("C")).toFixed(1)}, \n<br>
+    //     Input: ${coordToLink(getLinkAngle("AB"), "angle").toFixed(1)} \n<br>
+    //     DBraw: ${DB_raw.toFixed(1)}, 
+    //     DCraw: ${DC_raw.toFixed(1)}, \n<br>
     //     AB: ${AB_th.toFixed(1)}, 
     //     DA: ${DA_th.toFixed(1)}, 
     //     DC: ${DC_th.toFixed(1)}, 
@@ -277,12 +309,17 @@ function updateLinkGeometry() {
 
     outputLinkVal
         .attr("fill", d3.interpolateRgb(getLinkByType("output").color,"white")(whtnColor*2))
-        .text(`Output: ${outputAngle.toFixed(1)}°`)
-    outputLinkProps
+        .text(`Output: ${outputLimits.min < 0 ? outputAngle.toFixed(1) : getNetAngle(outputAngle).toFixed(1)}°`)
+    outputLinkProps 
         .attr("fill", d3.interpolateRgb(getLinkByType("output").color,"white")(whtnColor*2))
         .text(`${outputClass} (${outputLimits.min.toFixed(1)}°, ${outputLimits.max.toFixed(1)}°)`)
 
     updateToolTips()
+
+    // document.getElementById("debugOutputs").innerHTML = `
+    //     ${baseAngle.toFixed(1)} \n<br>
+    //     ${getLinkAngle("AB").toFixed(1)} \n<br>
+    //     ${coordToLink(getLinkAngle("AB"), "angle").toFixed(1)}`
 
     // DBLink
     // .attr("x1", getNode("D").x)

@@ -1,7 +1,5 @@
 // Next Tasks:
-    // Need to fix logic that is erroneously toggling linkage config in certain arrangements
-        // Arises when certain angles cross 0 / 360
-        // Interim solution is to disallow changing angle of fixed link
+    // Update input/output limits to account for config/crossover status
     // Trace lines
         // Generate trace line for each node
         // Show/hide on node double click
