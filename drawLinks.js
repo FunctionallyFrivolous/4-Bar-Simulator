@@ -44,6 +44,7 @@ const linkLines = linkLineGroup.selectAll("polygon")
             const pivotNode = getLinkNodes(d.id)[0]
             const tempNode = {id: "tempNode", x: tempX, y: tempY}
             tempAngle = getNodesAngle(pivotNode, tempNode)
+            traceSteps = traceStepsCoarse
         })
         .on("drag", function(event, d) {
             if (d.type === "input") {
@@ -87,6 +88,11 @@ const linkLines = linkLineGroup.selectAll("polygon")
             }
             updateTNodes()
             setLinkNodes()
+            updateTrace()
+            updateLinkGeometry();
+        })
+        .on("end", function(event,d) {
+            traceSteps = traceStepsFine
             updateTrace()
             updateLinkGeometry();
         })
@@ -136,7 +142,8 @@ const nodeDrag = nodeDragGroup.selectAll("cirlce")
     .attr("opacity", 0)
     .call(d3.drag()
         .on("start", function(event, d) {
-            nodeDrag.attr("opacity", n => n.id === d.id ? 0.1 : 0);
+            nodeDrag.attr("opacity", n => n.id === d.id ? 0.1 : 0)
+            traceSteps = traceStepsCoarse
         })
         .on("drag", function(event, d) {
             if (d.id === "A") return
@@ -154,6 +161,9 @@ const nodeDrag = nodeDragGroup.selectAll("cirlce")
         })
         .on("end", function() {
             nodeDrag.attr("opacity", 0)
+            traceSteps = traceStepsFine
+            updateTrace()
+            updateLinkGeometry();
         })
     )
 

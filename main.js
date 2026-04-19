@@ -67,8 +67,10 @@ document.body.style.backgroundColor = bgColor
 document.getElementById("pageLab").style.color = fgColor
 document.getElementById("topView").style.border = `1px solid ${fgColor}`
 
-
-const traceSteps = 2000;
+const traceStepsCoarse = 1000
+const traceStepsFine = 4000
+let traceSteps = traceStepsFine;
+const traceDelta = 0.25
 
 
 const svg = d3.select("#topView"); // Defining the svg window (references element from index.html)

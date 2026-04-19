@@ -405,9 +405,7 @@ function updateTrace() {
     let out_startAngle = outputLimits.max
     let out_endAngle = outputLimits.min
 
-    // let dbgtxt = ``
-
-    // traceData[0].points = []
+    let dbgtxt = ``
 
     for (i = 0; i < traceSteps+1; i++) {
 
@@ -430,23 +428,30 @@ function updateTrace() {
         const newAB = {x: placeNodePolar(nodeAB, nodeA, linkToCoord(inAngle, "angle")+inputLink.tAng, inputLink.tLen, false)[0], y: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle")+inputLink.tAng, inputLink.tLen, false)[1]}
         const newDC = {x: placeNodePolar(nodeDC, nodeD, outAngle+outputLink.tAng, outputLink.tLen, false)[0], y: placeNodePolar(nodeDC, nodeD, outAngle+outputLink.tAng, outputLink.tLen, false)[1]}
 
-        nodeB.points.push(newB)
-        nodeAB.points.push(newAB)
-        if (linkageOpen || (allowCrossover && inputClass !== "Crank")) {
-            nodeBC.points.push(newBC)
+        let deltaBC = 0;
+        if (nodeBC.allPoints.length > 0) {
+            deltaBC = Math.sqrt((newBC.x - nodeBC.allPoints[nodeBC.allPoints.length-1].x)*(newBC.x - nodeBC.allPoints[nodeBC.allPoints.length-1].x) + (nodeBC.allPoints[nodeBC.allPoints.length-1].y - newBC.y)*(nodeBC.allPoints[nodeBC.allPoints.length-1].y - newBC.y))
         }
 
-        nodeB.allPoints.push(newB)
-        nodeAB.allPoints.push(newAB)
-        if (linkageOpen || inputClass !== "Crank") {
-            nodeC.allPoints.push(newC)
-            nodeBC.allPoints.push(newBC)
-            nodeDC.allPoints.push(newDC)
+        if (i === 0 || deltaBC > traceDelta) {
+            nodeB.points.push(newB)
+            nodeAB.points.push(newAB)
+            if (linkageOpen || (allowCrossover && inputClass !== "Crank")) {
+                nodeBC.points.push(newBC)
+            }
 
-            // traceData[0].points.push(newBC)
+            nodeB.allPoints.push(newB)
+            nodeAB.allPoints.push(newAB)
+            if (linkageOpen || inputClass !== "Crank") {
+                nodeC.allPoints.push(newC)
+                nodeBC.allPoints.push(newBC)
+                nodeDC.allPoints.push(newDC)
+            }
         }
         
     }
+    // document.getElementById("debugOutputs").innerHTML = dbgtxt
+
     // smoothTrace
     //     .attr("d", lineGenerator(traceData[0].points))
     //     .attr("fill", "none")
@@ -473,16 +478,22 @@ function updateTrace() {
         // const newAB = {x: placeNodePolar(nodeAB, nodeA, linkToCoord(inAngle, "angle")+inputLink.tAng, inputLink.tLen, false)[0], y: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle")+inputLink.tAng, inputLink.tLen, false)[1]}
         const newDC = {x: placeNodePolar(nodeDC, nodeD, outAngle+outputLink.tAng, outputLink.tLen, false)[0], y: placeNodePolar(nodeDC, nodeD, outAngle+outputLink.tAng, outputLink.tLen, false)[1]}
 
-        if (!linkageOpen || (allowCrossover && inputClass !== "Crank")) {
-            nodeBC.points.push(newBC)
+        let deltaBC = 0;
+        if (nodeBC.allPoints.length > 0) {
+            deltaBC = Math.sqrt((newBC.x - nodeBC.allPoints[nodeBC.allPoints.length-1].x)*(newBC.x - nodeBC.allPoints[nodeBC.allPoints.length-1].x) + (nodeBC.allPoints[nodeBC.allPoints.length-1].y - newBC.y)*(nodeBC.allPoints[nodeBC.allPoints.length-1].y - newBC.y))
         }
-        
-        if (!linkageOpen || inputClass !== "Crank") {
-            nodeC.allPoints.push(newC)
-            nodeBC.allPoints.push(newBC)
-            nodeDC.allPoints.push(newDC)
+
+        if (i === 0 || deltaBC > traceDelta) {
+            if (!linkageOpen || (allowCrossover && inputClass !== "Crank")) {
+                nodeBC.points.push(newBC)
+            }
+            
+            if (!linkageOpen || inputClass !== "Crank") {
+                nodeC.allPoints.push(newC)
+                nodeBC.allPoints.push(newBC)
+                nodeDC.allPoints.push(newDC)
+            }
         }
-        
     }
 
     if (allowCrossover && inputClass !== "Crank") {
