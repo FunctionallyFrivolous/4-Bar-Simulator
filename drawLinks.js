@@ -44,7 +44,7 @@ const linkLines = linkLineGroup.selectAll("polygon")
             const pivotNode = getLinkNodes(d.id)[0]
             const tempNode = {id: "tempNode", x: tempX, y: tempY}
             tempAngle = getNodesAngle(pivotNode, tempNode)
-            traceSteps = traceStepsCoarse
+            if (d.type !== "input") traceSteps = traceStepsCoarse
         })
         .on("drag", function(event, d) {
             if (d.type === "input") {
@@ -85,11 +85,12 @@ const linkLines = linkLineGroup.selectAll("polygon")
                 }
                 tempX = event.x
                 tempY = event.y
+                updateTNodes()
+                setLinkNodes()
+                updateTrace()
+                updateLinkGeometry();
             }
-            updateTNodes()
-            setLinkNodes()
-            updateTrace()
-            updateLinkGeometry();
+            
         })
         .on("end", function(event,d) {
             traceSteps = traceStepsFine
