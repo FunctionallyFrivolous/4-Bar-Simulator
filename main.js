@@ -1,12 +1,12 @@
 // Next Tasks:
     // Update input/output limits to account for config/crossover status?
     // Trace lines
-        // Update logic to account for fixed link angle
+        // Update logic to account for ground link angle
     // Drag Actuate
         // Fix behavior of jump-swapping config when crossing zero...
             // Try: when a limit is exceeded, do not allow any movement until drag moves back within small distance of that same limit
                 // "recentLimit"
-    // Snap ternary nodes to link angle?
+    // Snap ternary nodes to link angle
     // Animate actuation
         // Create function that cycles through actuation limits
         // User input to start/pause
@@ -64,6 +64,10 @@ const darkColor = "rgb(26, 26, 26)"
 let bgColor = lightColor
 let fgColor = darkColor
 let whtnColor = 0
+document.body.style.backgroundColor = bgColor
+document.getElementById("pageLab").style.color = fgColor
+document.getElementById("topView").style.border = `1px solid ${fgColor}`
+
 
 const traceSteps = 2000;
 
@@ -110,6 +114,8 @@ const traceDotGroup = zoomGroup.append("g")
 const traceLineGroup = zoomGroup.append("g")
 const fullTraceGroup = zoomGroup.append("g")
 
+const smoothTraceGroup = zoomGroup.append("g")
+
 const toggleConfigButton = overlayGroup.append("rect")
 const toggleConfigIcon = overlayGroup.append("text")
 const toggleCrossoverButton = overlayGroup.append("rect")
@@ -130,3 +136,10 @@ const outputLinkProps = overlayGroup.append("text")
 //     .attr("y2", 100)
 //     .attr("stroke-width", 2)
 //     .attr("stroke", "black")
+
+// const lineGenerator = d3.line()
+//         .x(d => d.x)
+//         .y(d => d.y)
+//         .curve(d3.curveCatmullRom.alpha(1))
+
+// const smoothTrace = zoomGroup.append("path")

@@ -407,6 +407,8 @@ function updateTrace() {
 
     // let dbgtxt = ``
 
+    // traceData[0].points = []
+
     for (i = 0; i < traceSteps+1; i++) {
 
         inAngle = in_startAngle + in_angleStep * i
@@ -440,9 +442,15 @@ function updateTrace() {
             nodeC.allPoints.push(newC)
             nodeBC.allPoints.push(newBC)
             nodeDC.allPoints.push(newDC)
+
+            // traceData[0].points.push(newBC)
         }
         
     }
+    // smoothTrace
+    //     .attr("d", lineGenerator(traceData[0].points))
+    //     .attr("fill", "none")
+    //     .attr("stroke", "steelblue");
 
     for (i = 0; i < traceSteps+1; i++) {
 

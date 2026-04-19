@@ -79,6 +79,9 @@ darkModeButton
         darkModeIconTop.attr("fill", bgColor)
         darkModeIconBottom.attr("fill", fgColor)
         nodeDrag.attr("fill", darkMode ? "white" : "black")
+        document.body.style.backgroundColor = bgColor
+        document.getElementById("pageLab").style.color = fgColor
+        document.getElementById("topView").style.border = `1px solid ${fgColor}`
         updateLinkGeometry()
     })
 

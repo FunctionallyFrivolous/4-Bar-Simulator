@@ -26,6 +26,8 @@ const nodesData = [
     {id: "AD", x: 450, y: 250, color: "none", ground: false, trace: false, points: [], allPoints: []},
 ]
 
+// const traceData = [{id: "BC", points: []}]
+
 const linkLines = linkLineGroup.selectAll("polygon")
     .data(linksData)
     .enter()
@@ -182,6 +184,22 @@ const fullTraceLines = fullTraceGroup.selectAll("polyline")
     .attr("stroke-width", 2)
     .style("stroke-linecap", "round")
     .style("pointer-events", "none")
+
+// const smoothTraces = smoothTraceGroup.selectAll("")
+
+// const smoothData = [{x: 0, y: 80}, {x: 100, y: 100}, {x: 200, y: 30}, {x: 300, y: 50}];
+// const lineGenerator = d3.line()
+//     // .data(smoothData)
+//     .x(d => d.x)
+//     .y(d => d.y)
+//     .curve(d3.curveCatmullRom.alpha(1))
+
+// const smoothTrace = zoomGroup.append("path")
+//   .attr("d", lineGenerator(smoothData))
+//   .attr("fill", "none")
+//   .attr("stroke", "steelblue");
+
+
 
 svg.selectAll(".link")
   .on("pointerdown", linkDoubleTap);
