@@ -61,18 +61,18 @@ const linkLines = linkLineGroup.selectAll("polygon")
                 const tempNode = {id: "tempNode", x: tempX, y: tempY}
                 tempAngle = getNodesAngle(pivotNode, tempNode)
             }
-            else if (d.type === "output") {
-                const dx = event.x - tempX
-                // const dy = event.y - tempY
-                for (i = 0; i < nodesData.length; i++) {
-                    if (d.id.includes(nodesData[i].id)){//d.id[0] || nodesData[i].id === d.id[1]) {
-                        nodesData[i].x = nodesData[i].x + dx
-                        // nodesData[i].y = nodesData[i].y + dy
-                    } 
-                }
-                tempX = event.x
-                tempY = event.y
-            }
+            // else if (d.type === "output") {
+            //     const dx = event.x - tempX
+            //     // const dy = event.y - tempY
+            //     for (i = 0; i < nodesData.length; i++) {
+            //         if (d.id.includes(nodesData[i].id)){//d.id[0] || nodesData[i].id === d.id[1]) {
+            //             nodesData[i].x = nodesData[i].x + dx
+            //             // nodesData[i].y = nodesData[i].y + dy
+            //         } 
+            //     }
+            //     tempX = event.x
+            //     tempY = event.y
+            // }
             else {
                 const dx = event.x - tempX
                 const dy = event.y - tempY
@@ -140,13 +140,13 @@ const nodeDrag = nodeDragGroup.selectAll("cirlce")
         })
         .on("drag", function(event, d) {
             if (d.id === "A") return
-            if (d.id === "D") {
-                d.x = Math.max(event.x, getNode("A").x);
-            }
-            if (d.id !== "D") {
+            // if (d.id === "D") {
+            //     d.x = Math.max(event.x, getNode("A").x);
+            // }
+            // if (d.id !== "D") {
                 d.x = event.x
                 d.y = event.y
-            }
+            // }
             updateTNodes()
             setLinkNodes()
             updateTrace()

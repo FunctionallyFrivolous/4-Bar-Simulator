@@ -420,14 +420,14 @@ function updateTrace() {
             out_endAngle = Math.max(out_endAngle, out_temp)
         }
 
-        const newB = {x: placeNodePolar(nodeB, nodeA, inAngle, linkToCoord(inputLink.len), false)[0], y: placeNodePolar(nodeB, nodeA, inAngle, linkToCoord(inputLink.len), false)[1]}
+        const newB = {x: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false)[0], y: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false)[1]}
         const outAngle_temp = getNetAngle(calcOutputAngle(inAngle, true))
         const newC = {x: placeNodePolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false)[0], y: placeNodePolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false)[1]}
         const couplerAngle = getNodesAngle(newB,newC)
-        const couplerTAngle = getNetAngle(couplerAngle + couplerLink.tAng)
+        const couplerTAngle = couplerAngle + couplerLink.tAng
         const couplerTDist = couplerLink.tLen
         const newBC = {x: placeNodePolar(nodeBC, newB, couplerTAngle, couplerTDist, false)[0], y: placeNodePolar(nodeBC, newB, couplerTAngle, couplerTDist, false)[1]}
-        const newAB = {x: placeNodePolar(nodeAB, nodeA, inAngle+inputLink.tAng, inputLink.tLen, false)[0], y: placeNodePolar(nodeB, nodeA, inAngle+inputLink.tAng, inputLink.tLen, false)[1]}
+        const newAB = {x: placeNodePolar(nodeAB, nodeA, linkToCoord(inAngle, "angle")+inputLink.tAng, inputLink.tLen, false)[0], y: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle")+inputLink.tAng, inputLink.tLen, false)[1]}
         const newDC = {x: placeNodePolar(nodeDC, nodeD, outAngle+outputLink.tAng, outputLink.tLen, false)[0], y: placeNodePolar(nodeDC, nodeD, outAngle+outputLink.tAng, outputLink.tLen, false)[1]}
 
         nodeB.points.push(newB)
@@ -463,14 +463,14 @@ function updateTrace() {
             out_endAngle = Math.max(out_endAngle, out_temp)
         }
 
-        const newB = {x: placeNodePolar(nodeB, nodeA, inAngle, linkToCoord(inputLink.len), false)[0], y: placeNodePolar(nodeB, nodeA, inAngle, linkToCoord(inputLink.len), false)[1]}
+        const newB = {x: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false)[0], y: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false)[1]}
         const outAngle_temp = getNetAngle(calcOutputAngle(inAngle, false))
         const newC = {x: placeNodePolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false)[0], y: placeNodePolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false)[1]}
         const couplerAngle = getNodesAngle(newB,newC)
         const couplerTAngle = getNetAngle(couplerAngle + couplerLink.tAng)
         const couplerTDist = couplerLink.tLen
         const newBC = {x: placeNodePolar(nodeBC, newB, couplerTAngle, couplerTDist, false)[0], y: placeNodePolar(nodeBC, newB, couplerTAngle, couplerTDist, false)[1]}
-        // const newAB = {x: placeNodePolar(nodeAB, nodeA, inAngle+inputLink.tAng, inputLink.tLen, false)[0], y: placeNodePolar(nodeB, nodeA, inAngle+inputLink.tAng, inputLink.tLen, false)[1]}
+        // const newAB = {x: placeNodePolar(nodeAB, nodeA, linkToCoord(inAngle, "angle")+inputLink.tAng, inputLink.tLen, false)[0], y: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle")+inputLink.tAng, inputLink.tLen, false)[1]}
         const newDC = {x: placeNodePolar(nodeDC, nodeD, outAngle+outputLink.tAng, outputLink.tLen, false)[0], y: placeNodePolar(nodeDC, nodeD, outAngle+outputLink.tAng, outputLink.tLen, false)[1]}
 
         if (!linkageOpen || (allowCrossover && inputClass !== "Crank")) {

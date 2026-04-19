@@ -1,7 +1,6 @@
 // Next Tasks:
     // Update input/output limits to account for config/crossover status?
-    // Trace lines
-        // Update logic to account for ground link angle
+    // Issues when fixed link angle is positive...
     // Drag Actuate
         // Fix behavior of jump-swapping config when crossing zero...
             // Try: when a limit is exceeded, do not allow any movement until drag moves back within small distance of that same limit
