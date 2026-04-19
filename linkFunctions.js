@@ -60,7 +60,6 @@ function setLinkAngle(link, deg) {
             rotateNode(mobileNode, deg, pivotNode)
         }
     }
-
     // updateLinkGeometry()
 }
 

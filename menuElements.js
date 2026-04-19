@@ -42,6 +42,7 @@ toggleCrossoverButton
     .on("click", function() {
         if (inputClass === "Crank") return
         allowCrossover = !allowCrossover
+        updateTrace()
         updateLinkGeometry()
         
     })

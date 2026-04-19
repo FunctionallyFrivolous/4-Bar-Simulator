@@ -24,6 +24,21 @@ function rotateNode(node, deg, pivot, doit=true) {
 
     return [newX, newY]
 }
+function placeNodePolar(node, origin, deg, dist, doit=false) {
+    // const dx = node.x - origin.x
+    // const dy = node.y - origin.y
+    // const dist = Math.sqrt(dx*dx + dy*dy)
+    const newX = origin.x + Math.cos(degToRad(deg)) * dist
+    const newY = origin.y - Math.sin(degToRad(deg)) * dist
+
+    if (doit) {
+        node.x = newX
+        node.y = newY
+    }
+
+    return [newX, newY]
+}
+
 function tNodeFollow() {
     for (i = 0; i < linksData.length; i++) {
         const thisLink = linksData[i]

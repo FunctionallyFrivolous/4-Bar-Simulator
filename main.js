@@ -1,11 +1,11 @@
 // Next Tasks:
-    // Update input/output limits to account for config/crossover status
+    // Update input/output limits to account for config/crossover status?
     // Trace lines
-        // Generate trace line for each node
-        // Show/hide on node double click
-        // Use a for loop to calc X number of points at incremental input angles
-            // Use these values as points for a polyline (polygon?)
-        // First full trace. Later add ghost trace for out of reach areas (e.g. crossover disallowed)
+        // Update logic to account for fixed link angle
+    // Drag Actuate
+        // Fix behavior of jump-swapping config when crossing zero...
+            // Try: when a limit is exceeded, do not allow any movement until drag moves back within small distance of that same limit
+                // "recentLimit"
     // Animate actuation
         // Create function that cycles through actuation limits
         // User input to start/pause
@@ -64,6 +64,9 @@ let bgColor = lightColor
 let fgColor = darkColor
 let whtnColor = 0
 
+const traceSteps = 2000;
+
+
 const svg = d3.select("#topView"); // Defining the svg window (references element from index.html)
 const background = svg.append("rect")
     .attr("width", "100%")
@@ -102,6 +105,9 @@ const fixedNodeGroup = zoomGroup.append("g")
 const groundLineGroup = zoomGroup.append("g")
 const nodeDotGroup = zoomGroup.append("g")
 const nodeDragGroup = zoomGroup.append("g")
+const traceDotGroup = zoomGroup.append("g")
+const traceLineGroup = zoomGroup.append("g")
+const fullTraceGroup = zoomGroup.append("g")
 
 const toggleConfigButton = overlayGroup.append("rect")
 const toggleConfigIcon = overlayGroup.append("text")

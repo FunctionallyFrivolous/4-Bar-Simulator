@@ -16,14 +16,14 @@ const linksData = [
         // Keep a simple logic here for initial nodes placement. E.g. mid-link w/ constant offset
         // Short term: manually dictate node coords
 const nodesData = [
-    {id: "A", x: originCoords.x, y: originCoords.y, ground: true}, 
-    {id: "B", x: originCoords.x, y: originCoords.y-getLinkByID("AB").len*coordScale, ground: false},  
-    {id: "C", x: originCoords.x+11.7*coordScale, y: originCoords.y-7.8*coordScale, ground: false},
-    {id: "D", x: originCoords.x+getLinkByID("AD").len*coordScale, y: originCoords.y, ground: true},
-    {id: "AB", x: 100, y: 250, ground: false},
-    {id: "BC", x: 260, y: 140, ground: false},
-    {id: "DC", x: 400, y: 250, ground: false},
-    {id: "AD", x: 450, y: 250, ground: false},
+    {id: "A", x: originCoords.x, y: originCoords.y, color: "none", ground: true, trace: false, points: [], allPoints: []}, 
+    {id: "B", x: originCoords.x, y: originCoords.y-getLinkByID("AB").len*coordScale, color: "darkred", ground: false, trace: false, points: [], allPoints: []},  
+    {id: "C", x: originCoords.x+11.7*coordScale, y: originCoords.y-7.8*coordScale, color: "darkblue", ground: false, trace: false, points: [], allPoints: []},
+    {id: "D", x: originCoords.x+getLinkByID("AD").len*coordScale, y: originCoords.y, color: "none", ground: true, trace: false, points: [], allPoints: []},
+    {id: "AB", x: 100, y: 250, color: "darkred", ground: false, trace: false, points: [], allPoints: []},
+    {id: "BC", x: 260, y: 140, color: "darkgreen", ground: false, trace: true, points: [], allPoints: []},
+    {id: "DC", x: 400, y: 250, color: "darkblue", ground: false, trace: false, points: [], allPoints: []},
+    {id: "AD", x: 450, y: 250, color: "none", ground: false, trace: false, points: [], allPoints: []},
 ]
 
 const linkLines = linkLineGroup.selectAll("polygon")
@@ -53,7 +53,7 @@ const linkLines = linkLineGroup.selectAll("polygon")
                 const newAngle = currentAngle + deltaAngle
 
                 doActuate(newAngle)
-                
+
                 tempX = event.x
                 tempY = event.y
                 const tempNode = {id: "tempNode", x: tempX, y: tempY}
@@ -71,6 +71,7 @@ const linkLines = linkLineGroup.selectAll("polygon")
                 tempX = event.x
                 tempY = event.y
                 updateTNodes()
+                updateTrace()
                 updateLinkGeometry();
             }
         })
@@ -83,7 +84,7 @@ const groundLine = groundLineGroup.selectAll("polyline")
     .attr("opacity", 1)
     .style("stroke-linecap", "round")
     .style("stroke-linejoin", "round")
-    .attr("opacity", 1)
+    .attr("opacity", 0.85)
     .attr("stroke-width", 4)
     .attr("fill", "none")
     .style("display", d => d.type === "fixed" ? "block" : "none")
@@ -97,6 +98,7 @@ const fixedNodes = fixedNodeGroup.selectAll("circle")
     .attr("cy", d => d.y)
     .attr("r", 8.5)
     .attr("fill", d => d.ground ? fgColor : "none")
+    // .attr("opacity", 0.75)
 
 const nodeDots = nodeDotGroup.selectAll("cirlce")
     .data(nodesData)
@@ -104,7 +106,6 @@ const nodeDots = nodeDotGroup.selectAll("cirlce")
     .append("circle")
     .attr("cx", d => d.x)
     .attr("cy", d => d.y)
-    .attr("r", 4.5)
     .attr("fill", bgColor)
     .style("pointer-events", "none")
 
@@ -132,12 +133,41 @@ const nodeDrag = nodeDragGroup.selectAll("cirlce")
                 d.y = event.y
             // }
             updateTNodes()
+            updateTrace()
             updateLinkGeometry();
         })
         .on("end", function() {
             nodeDrag.attr("opacity", 0)
         })
     )
+
+const traceDots = traceDotGroup.selectAll("circle")
+    .data(nodesData)
+    .enter()
+    .append("circle")
+    .attr("cx", d => d.x)
+    .attr("cy", d => d.y)
+    .attr("r", 3)
+    .style("pointer-events", "none")
+const traceLines = traceLineGroup.selectAll("polyline")
+    .data(nodesData)
+    .enter()
+    .append("polyline")
+    .attr("fill", "none")
+    .attr("stroke-width", 2)
+    .style("stroke-linecap", "round")
+    .attr("stroke-dasharray", "3,5")
+    .style("pointer-events", "none")
+    .style("display", "none")
+const fullTraceLines = fullTraceGroup.selectAll("polyline")
+    .data(nodesData)
+    .enter()
+    .append("polyline")
+    .attr("fill", "none")
+    .attr("opacity", 0.15)
+    .attr("stroke-width", 2)
+    .style("stroke-linecap", "round")
+    .style("pointer-events", "none")
 
 svg.selectAll(".link")
   .on("pointerdown", linkDoubleTap);
@@ -165,8 +195,10 @@ function nodeDoubleTap(event, d) {
         if(d.ground) {
             const thisLink = getLinkByType("fixed")
             thisLink.visible = !thisLink.visible
-            updateLinkGeometry()
+        } else {
+            d.trace = !d.trace
         }
+        updateLinkGeometry()
     }
     lastTapTime = now;
 }
@@ -174,4 +206,6 @@ function nodeDoubleTap(event, d) {
 // setLinkNodes()
 updateOutputAngle()
 updateTNodes()
+setLinkNodes()
+updateTrace()
 updateLinkGeometry();
