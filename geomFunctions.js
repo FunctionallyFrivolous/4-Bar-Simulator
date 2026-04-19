@@ -278,14 +278,14 @@ function updateLinkGeometry() {
     traceDots
         .attr("cx", d => d.x)
         .attr("cy", d => d.y)
-        .attr("fill", d => d3.interpolateRgb(d.color,"white")(whtnColor))
+        .attr("fill", d => d3.interpolateRgb(d.color,"white")(whtnColor*2))
         .style("display", d => !d.trace ? "none" : d.id.length === 2 && !linksData.find(l => l.id === d.id).ternary ? "none" : "block")
     traceLines
-        .attr("stroke", d => d3.interpolateRgb(d.color,"white")(whtnColor))
+        .attr("stroke", d => d3.interpolateRgb(d.color,"white")(whtnColor*2))
         .attr("points", d => d.points.map(j => `${j.x},${j.y}`).join(" "))
         .style("display", d => !d.trace ? "none" : d.id.length === 2 && !linksData.find(l => l.id === d.id).ternary ? "none" : "block")
     fullTraceLines
-        .attr("stroke", d => d3.interpolateRgb(d.color,"white")(whtnColor))
+        .attr("stroke", d => d3.interpolateRgb(d.color,"white")(whtnColor*2))
         .attr("points", d => d.allPoints.map(j => `${j.x},${j.y}`).join(" "))
         .style("display", d => !d.trace ? "none" : d.id.length === 2 && !linksData.find(l => l.id === d.id).ternary ? "none" : "block")
 

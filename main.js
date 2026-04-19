@@ -6,6 +6,7 @@
         // Fix behavior of jump-swapping config when crossing zero...
             // Try: when a limit is exceeded, do not allow any movement until drag moves back within small distance of that same limit
                 // "recentLimit"
+    // Snap ternary nodes to link angle?
     // Animate actuation
         // Create function that cycles through actuation limits
         // User input to start/pause
