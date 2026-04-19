@@ -54,19 +54,35 @@ function tNodeFollow() {
     }
 }
 
-function updateTNodes() {
+function updateTNodes(snap=false, node="") {
     for (i = 0; i < linksData.length; i++) {
         const linkID = linksData[i].id
         const tNode = getNode(linkID)
-        // const linkAngle = getLinkAngle(linkID)
+        const linkAngle = getNodesAngle(getNode("B"),getNode("C"))//getLinkAngle(linkID)
         const pNode = getNode(linkID[0])
 
-        const tDeg = getAngleBtwNodes(tNode, getNode(linkID[1]), pNode)
+        let tDeg = getAngleBtwNodes(tNode, getNode(linkID[1]), pNode)
+        
+        if (linksData[i].tSnap && node !== linkID) tDeg = linksData[i].tAng
+        if (snap) {
+            if (node === linkID) {
+            if (Math.abs(tDeg) < snapAngle) tDeg = 0
+            else if (Math.abs(tDeg-180) < snapAngle) tDeg = -180
+            linksData[i].tSnap = true
+            }
+            else linksData[i].tSnap = false
+        }
+
+        if (linkID === "BC") document.getElementById("debugOutputs").innerHTML = `${linksData[i].tSnap}`
+
         linksData[i].tAng = tDeg
 
         const tDist = getDistBtwNodes(getNode(linkID), pNode)
         linksData[i].tLen = tDist        
     }
+    // setLinkNodes()
+    tNodeFollow()
+    updateLinkGeometry()
 }
 
 function getNodesAngle(startNode, endNode, neg=false) {

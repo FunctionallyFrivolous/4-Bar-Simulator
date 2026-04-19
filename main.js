@@ -5,7 +5,6 @@
         // Fix behavior of jump-swapping config when crossing zero...
             // Try: when a limit is exceeded, do not allow any movement until drag moves back within small distance of that same limit
                 // "recentLimit"
-    // Snap ternary nodes to link angle
     // Animate actuation
         // Create function that cycles through actuation limits
         // User input to start/pause
@@ -71,6 +70,8 @@ const traceStepsCoarse = 1000
 const traceStepsFine = 4000
 let traceSteps = traceStepsFine;
 const traceDelta = 0.25
+
+const snapAngle = 5;
 
 
 const svg = d3.select("#topView"); // Defining the svg window (references element from index.html)

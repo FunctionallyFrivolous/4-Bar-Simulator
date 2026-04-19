@@ -1,9 +1,9 @@
 
 const linksData = [
-    {id: "AD", points: [], len: 10, color: "indigo", type: "fixed", ternary: false, tAng: 10, tLen: 10, visible: true},
-    {id: "BC", points: [], len: 12, color: "darkgreen", type: "coupler", ternary: true, tAng: 10, tLen: 10, visible: true},
-    {id: "DC", points: [], len: 8, color: "darkblue", type: "output", ternary: false, tAng: 10, tLen: 10, visible: true},
-    {id: "AB", points: [], len: 5, color: "darkred", type: "input", ternary: false, tAng: 10, tLen: 10, visible: true},
+    {id: "AD", points: [], len: 10, color: "indigo", type: "fixed", ternary: false, tAng: 10, tLen: 10, tSnap: false, visible: true},
+    {id: "BC", points: [], len: 12, color: "darkgreen", type: "coupler", ternary: true, tAng: 10, tLen: 10, tSnap: false, visible: true},
+    {id: "DC", points: [], len: 8, color: "darkblue", type: "output", ternary: false, tAng: 10, tLen: 10, tSnap: false, visible: true},
+    {id: "AB", points: [], len: 5, color: "darkred", type: "input", ternary: false, tAng: 10, tLen: 10, tSnap: false, visible: true},
 ];
 // To do (here):
     // Calc angle of output link (given link lengths above)
@@ -85,7 +85,7 @@ const linkLines = linkLineGroup.selectAll("polygon")
                 }
                 tempX = event.x
                 tempY = event.y
-                updateTNodes()
+                updateTNodes(false, d.id)
                 setLinkNodes()
                 updateTrace()
                 updateLinkGeometry();
@@ -155,7 +155,8 @@ const nodeDrag = nodeDragGroup.selectAll("cirlce")
                 d.x = event.x
                 d.y = event.y
             // }
-            updateTNodes()
+            if (d.id.length === 2) updateTNodes(true, d.id)
+            else updateTNodes()
             setLinkNodes()
             updateTrace()
             updateLinkGeometry();
