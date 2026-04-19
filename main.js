@@ -67,7 +67,7 @@ document.getElementById("pageLab").style.color = fgColor
 document.getElementById("topView").style.border = `1px solid ${fgColor}`
 
 const traceStepsCoarse = 1000
-const traceStepsFine = 4000
+const traceStepsFine = 2000
 let traceSteps = traceStepsFine;
 const traceDelta = 0.25
 

@@ -73,7 +73,7 @@ function updateTNodes(snap=false, node="") {
             else linksData[i].tSnap = false
         }
 
-        if (linkID === "BC") document.getElementById("debugOutputs").innerHTML = `${linksData[i].tSnap}`
+        // if (linkID === "BC") document.getElementById("debugOutputs").innerHTML = `${linksData[i].tSnap}`
 
         linksData[i].tAng = tDeg
 
