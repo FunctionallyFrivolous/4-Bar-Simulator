@@ -548,9 +548,10 @@ function updateTrace() {
 }
 
 function playAnimation() {
-    const startAngle = getNetAngle(getLinkAngle(getLinkByType("input").id), inputClass === "0-Rocker" ? true : false)
-    const maxInput = linkToCoord(inputLimits.max, "angle", inputClass === "0-Rocker" ? true : false)
-    const minInput = linkToCoord(inputLimits.min, "angle", inputClass === "0-Rocker" ? true : false)
+    const linkageConfig = linkageOpen
+    const startAngle = inputAngle
+    const maxInput = inputLimits.max
+    const minInput = inputLimits.min
 
     const angleRange = maxInput - minInput
     const stepSize = angleRange/(animateSpeed*10)
@@ -558,25 +559,24 @@ function playAnimation() {
     const loop = inputClass === "Crank" ? true : false
 
     let newAngle = startAngle + stepSize * animateDir
-    newAngle = getNetAngle(newAngle, inputClass === "0-Rocker" ? true : false)
+    newAngle = inputClass === "0-Rocker" && newAngle > 180 ? newAngle - 360 : newAngle
 
     if (!loop) {
         if (newAngle > maxInput - limitThreshold) {
             newAngle = maxInput - limitThreshold
             animateDir = animateDir * -1
-            if (allowCrossover) linkageOpen = !linkageOpen
+            if (allowCrossover) linkageOpen = !linkageConfig
         }
         if (newAngle < minInput + limitThreshold) {
             newAngle = minInput + limitThreshold
             animateDir = animateDir * -1
-            if (allowCrossover) linkageOpen = !linkageOpen
+            if (allowCrossover) linkageOpen = !linkageConfig
         }
     }
 
-    // document.getElementById("debugOutputs").innerHTML = `${minInput.toFixed(1)}`
-
     reverseIcon.text(animateDir > 0 ? "⟲" : "⟳")
 
+    newAngle = getNetAngle(linkToCoord(newAngle, "angle"), false)
     doActuate(newAngle)
 
 }
