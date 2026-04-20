@@ -1,14 +1,12 @@
 // Next Tasks:
     // Update input/output limits to account for config/crossover status?
     // Animate actuation
-        // Create function that cycles through actuation limits
-        // User input to start/pause
-        // User input to drag slider
-            // Linear slider or wheel?
-        // User input playback speed parameter
-        // Follow crossover status
-        // User input to set limits
-            // Wheel slider probably makes this a lot more natural...
+        // Initial implementatin complete!
+        // Things to add:
+            // User actuate via slider
+            // User adjust playback speed
+            // User set actuation 
+            // User defined limits
     // Organized menu system
         // Static menu bar which expands different grouped/categorized menus
             // Visual Preferences (dark/light mode, show/hide various things)
@@ -70,6 +68,12 @@ const traceReduction = 20
 
 const snapAngle = 5;
 
+let animationActive = false
+let animationTimer = null
+let animateSpeed = 10 // rpm
+// let animateSteps = 100
+let animateDir = 1
+
 
 const svg = d3.select("#topView"); // Defining the svg window (references element from index.html)
 const background = svg.append("rect")
@@ -122,6 +126,11 @@ const toggleCrossoverIcon = overlayGroup.append("text")
 const darkModeButton = overlayGroup.append("rect")
 const darkModeIconTop = overlayGroup.append("path")
 const darkModeIconBottom = overlayGroup.append("path")
+
+const playButton = overlayGroup.append("rect")
+const playIcon = overlayGroup.append("text")
+const reverseButton = overlayGroup.append("rect")
+const reverseIcon = overlayGroup.append("text")
 
 const inputLinkVal = overlayGroup.append("text")
 const inputLinkProps = overlayGroup.append("text")

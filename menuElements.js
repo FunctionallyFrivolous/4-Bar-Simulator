@@ -125,3 +125,79 @@ darkModeIconBottom
     .attr("fill", fgColor)
     .attr("d", drawDarkModeIcons()[1])
     .style("pointer-events", "none")
+
+playButton
+    .attr("x", 180+buttonMargin)
+    .attr("y", windowHeight-buttonMargin-buttonHeight)
+    .attr("width", buttonHeight)
+    .attr("height", buttonHeight)
+    .attr("rx", 5)
+    .attr("ry", 5)
+    .attr("fill", "lightgray")
+    .attr("fill-opacity", 0.75)
+    .attr("stroke", "black")
+    .attr("stroke-width", 1)
+    .attr("stroke-opacity", 0.75)
+    .on("click", function() {
+        animationActive = !animationActive
+
+        if (animationActive) {
+            startAnimationLoop();
+        } else {
+            stopAnimationLoop();
+        }
+    })
+
+playIcon
+    .attr("x", buttonHeight/2+180+buttonMargin)
+    .attr("y", windowHeight-buttonHeight/2-buttonMargin)
+    .attr("font-size", "10pt")
+    .attr("font-family", "sans-serif")
+    .attr("font-weight", "bold")
+    .attr("text-anchor", "middle")
+    .attr("alignment-baseline", "middle")
+    .style("pointer-events", "none")
+    .text("▶")
+
+reverseButton
+    .attr("x", 180 + buttonMargin*2 + buttonHeight)
+    .attr("y", windowHeight-buttonMargin-buttonHeight)
+    .attr("width", buttonHeight)
+    .attr("height", buttonHeight)
+    .attr("rx", 5)
+    .attr("ry", 5)
+    .attr("fill", "lightgray")
+    .attr("fill-opacity", 0.75)
+    .attr("stroke", "black")
+    .attr("stroke-width", 1)
+    .attr("stroke-opacity", 0.75)
+    .on("click", function() {
+        animateDir = animateDir * -1
+        reverseIcon.text(animateDir > 0 ? "⟲" : "⟳")
+    })
+
+reverseIcon
+    .attr("x", buttonHeight/2 + 180 + buttonMargin*2 + buttonHeight)
+    .attr("y", windowHeight-buttonHeight/2-buttonMargin)
+    .attr("font-size", "10pt")
+    .attr("font-family", "sans-serif")
+    .attr("font-weight", "bold")
+    .attr("text-anchor", "middle")
+    .attr("alignment-baseline", "middle")
+    .style("pointer-events", "none")
+    .text("⟲")
+
+function startAnimationLoop() {
+    playIcon.text("⏸")
+    animationTimer = d3.timer(() => {
+        playAnimation();
+    }
+);
+}
+function stopAnimationLoop() {
+    if (animationTimer) {
+        animationTimer.stop();
+        animationTimer = null;
+    }
+    playIcon.text("▶")
+}

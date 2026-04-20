@@ -546,3 +546,29 @@ function updateTrace() {
     // document.getElementById("debugOutputs").innerHTML = dbgtxt
 
 }
+
+function playAnimation() {
+    const startAngle = getLinkAngle(getLinkByType("input").id)
+    const angleRange = inputLimits.max - inputLimits.min
+    const stepSize = angleRange/(animateSpeed*10)
+
+    const loop = inputClass === "Crank" ? true : false
+
+    let newAngle = startAngle + stepSize * animateDir
+
+    if (!loop) {
+        if (getNetAngle(newAngle, false) > inputLimits.max - limitThreshold) {
+            newAngle = inputLimits.max - limitThreshold
+            animateDir = animateDir * -1
+            if (allowCrossover) linkageOpen = !linkageOpen
+        }
+        if (getNetAngle(newAngle, false) < inputLimits.min + limitThreshold) {
+            newAngle = inputLimits.min + limitThreshold
+            animateDir = animateDir * -1
+            if (allowCrossover) linkageOpen = !linkageOpen
+        }
+    }
+
+    doActuate(newAngle)
+
+}
