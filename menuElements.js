@@ -151,7 +151,7 @@ playButton
 playIcon
     .attr("x", buttonHeight/2+180+buttonMargin)
     .attr("y", windowHeight-buttonHeight/2-buttonMargin)
-    .attr("font-size", "10pt")
+    .attr("font-size", "15px")
     .attr("font-family", "sans-serif")
     .attr("font-weight", "bold")
     .attr("text-anchor", "middle")
@@ -179,7 +179,7 @@ reverseButton
 reverseIcon
     .attr("x", buttonHeight/2 + 180 + buttonMargin*2 + buttonHeight)
     .attr("y", windowHeight-buttonHeight/2-buttonMargin)
-    .attr("font-size", "10pt")
+    .attr("font-size", "15px")
     .attr("font-family", "sans-serif")
     .attr("font-weight", "bold")
     .attr("text-anchor", "middle")

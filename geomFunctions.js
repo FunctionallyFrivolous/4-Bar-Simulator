@@ -342,7 +342,7 @@ function updateLinkGeometry() {
     // .attr("x2", getNode("B").x)
     // .attr("y2", getNode("B").y)
 
-    // document.getElementById("debugOutputs").innerHTML = A_angle.toFixed(1)
+    // document.getElementById("debugOutputs").innerHTML = getNetAngle(getLinkAngle(getLinkByType("input").id), inputClass === "0-Rocker" ? true : false) //A_angle.toFixed(1)
     // `${linkageOpen ? "Open" : "Crossed"}`
 }
 
@@ -548,26 +548,34 @@ function updateTrace() {
 }
 
 function playAnimation() {
-    const startAngle = getLinkAngle(getLinkByType("input").id)
-    const angleRange = inputLimits.max - inputLimits.min
+    const startAngle = getNetAngle(getLinkAngle(getLinkByType("input").id), inputClass === "0-Rocker" ? true : false)
+    const maxInput = linkToCoord(inputLimits.max, "angle", inputClass === "0-Rocker" ? true : false)
+    const minInput = linkToCoord(inputLimits.min, "angle", inputClass === "0-Rocker" ? true : false)
+
+    const angleRange = maxInput - minInput
     const stepSize = angleRange/(animateSpeed*10)
 
     const loop = inputClass === "Crank" ? true : false
 
     let newAngle = startAngle + stepSize * animateDir
+    newAngle = getNetAngle(newAngle, inputClass === "0-Rocker" ? true : false)
 
     if (!loop) {
-        if (getNetAngle(newAngle, false) > inputLimits.max - limitThreshold) {
-            newAngle = inputLimits.max - limitThreshold
+        if (newAngle > maxInput - limitThreshold) {
+            newAngle = maxInput - limitThreshold
             animateDir = animateDir * -1
             if (allowCrossover) linkageOpen = !linkageOpen
         }
-        if (getNetAngle(newAngle, false) < inputLimits.min + limitThreshold) {
-            newAngle = inputLimits.min + limitThreshold
+        if (newAngle < minInput + limitThreshold) {
+            newAngle = minInput + limitThreshold
             animateDir = animateDir * -1
             if (allowCrossover) linkageOpen = !linkageOpen
         }
     }
+
+    // document.getElementById("debugOutputs").innerHTML = `${minInput.toFixed(1)}`
+
+    reverseIcon.text(animateDir > 0 ? "⟲" : "⟳")
 
     doActuate(newAngle)
 
