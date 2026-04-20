@@ -55,7 +55,28 @@ const linkLines = linkLineGroup.selectAll("polygon")
                 const deltaAngle = eventAngle - tempAngle
                 const newAngle = currentAngle + deltaAngle
 
-                doActuate(newAngle)
+                // if attempted input link angle > max limit --> set link angle to max limit
+                    // if newAngle > inputLimits.max then doActute(inputLimits.max)
+                
+                document.getElementById("debugOutputs").innerHTML = `${eventAngle}, ${newAngle}`
+                if (recentLimit === "max") {
+                    const tempLimit = linkToCoord(getNetAngle(inputLimits.max), "angle") - limitThreshold
+                    if (eventAngle > tempLimit || Math.abs(tempLimit-eventAngle) > crossoverDeadband*10) {
+                        doActuate(tempLimit)
+                    }
+                    else doActuate(eventAngle)
+                }
+                else if (recentLimit === "min") {
+                    const tempLimit = linkToCoord(inputLimits.min, "angle") + limitThreshold
+                    const eventAng = tempLimit < 0 ? eventAngle - 360 : eventAngle
+                    if (eventAngle < tempLimit || Math.abs(tempLimit-eventAng) > crossoverDeadband*10) {
+                        doActuate(tempLimit)
+                    }
+                    else doActuate(eventAngle)
+                }
+                else {
+                    doActuate(eventAngle)
+                }
 
                 tempX = event.x
                 tempY = event.y

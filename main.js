@@ -1,9 +1,5 @@
 // Next Tasks:
     // Update input/output limits to account for config/crossover status?
-    // Drag Actuate
-        // Fix behavior of jump-swapping config when crossing zero...
-            // Try: when a limit is exceeded, do not allow any movement until drag moves back within small distance of that same limit
-                // "recentLimit"
     // Animate actuation
         // Create function that cycles through actuation limits
         // User input to start/pause
@@ -44,6 +40,7 @@ let lastTapTime = 0;
 let inputLimits = {min: 0, max: 360};
 let outputLimits = {min: 0, max: 360};
 const limitThreshold = 0.001
+let recentLimit = "none";
 
 let inputAngle = 90;
 let outputAngle = 80;

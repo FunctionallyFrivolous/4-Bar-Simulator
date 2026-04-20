@@ -13,12 +13,14 @@ function doActuate(deg) {
     if (inputClass !== "Crank") {
         if (checkAngle < inputLimits.min) {
             inAngle = getNetAngle(linkToCoord(inputLimits.min, "angle")) + limitThreshold;
+            recentLimit = "min"
             if (!recentCrossover && checkAngle < inputLimits.min + crossoverDeadband && allowCrossover) {
                 toggleOpenCrossed()
                 recentCrossover = true
             }
         } else if (checkAngle > inputLimits.max) {
             inAngle = getNetAngle(linkToCoord(inputLimits.max, "angle")) - limitThreshold;
+            recentLimit = "max"
             if (!recentCrossover && checkAngle > inputLimits.max - crossoverDeadband && allowCrossover) {
                 toggleOpenCrossed()
                 recentCrossover = true
@@ -26,8 +28,16 @@ function doActuate(deg) {
         }
         if (checkAngle > inputLimits.min + crossoverDeadband && checkAngle < inputLimits.max - crossoverDeadband) {
                 recentCrossover = false
-        }
+                recentLimit = "none"
+        } 
     }
+
+    // document.getElementById("debugOutputs").innerHTML = `
+    //     ${checkAngle.toFixed(1)}, 
+    //     ${(inputLimits.min + crossoverDeadband).toFixed(1)},
+    //     ${recentCrossover},
+    //     ${recentLimit},
+    //     `
     
     inputAngle = getNetAngle(coordToLink(inAngle, "angle"))
 
@@ -236,11 +246,11 @@ function updateOpenCrossed() {
         }         
     }
 
-    document.getElementById("debugOutputs").innerHTML = `
-        ${AB_th.toFixed(1)}, 
-        ${DC_th.toFixed(1)}, 
-        ${DB_th.toFixed(1)}
-        `
+    // document.getElementById("debugOutputs").innerHTML = `
+    //     ${AB_th.toFixed(1)}, 
+    //     ${DC_th.toFixed(1)}, 
+    //     ${DB_th.toFixed(1)}
+    //     `
 
     toggleConfigIcon.text(linkageOpen ? "Open ⇋ Crossed" : "Crossed ⇋ Open")
 } 
