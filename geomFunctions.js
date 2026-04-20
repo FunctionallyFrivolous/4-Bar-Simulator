@@ -194,8 +194,8 @@ function updateLinkageConfig() {
     // Old version does not have this issue, but also has the luxury of not accounting for angle of DA
 
 function updateOpenCrossed() {
-    const AB_th = coordToLink(getNodesAngle(getNode("A"), getNode("B"), true), "angle")
-    const DA_th = getNodesAngle(getNode("D"), getNode("A"), true)
+    const AB_th = coordToLink(getNodesAngle(getNode("A"), getNode("B")), "angle")
+    // const DA_th = getNodesAngle(getNode("D"), getNode("A"), true)
     let DB_th = coordToLink(getNodesAngle(getNode("D"), getNode("B"), true), "angle")
     let DC_th = coordToLink(getNodesAngle(getNode("D"), getNode("C"), true), "angle")
 
@@ -203,33 +203,44 @@ function updateOpenCrossed() {
     const DC_raw = DC_th
 
     if (outputClass !== "0-Rocker" && outputClass !== "Crank") {
-        if (AB_th <0) DB_th = DB_th + 360
+        if (AB_th < 0) DB_th = DB_th + 360
         if (DC_th < 0) DC_th = DC_th + 360
-        if (DC_th < DB_th) linkageOpen = true
+        if (DC_th < getNetAngle(DB_th,false)) linkageOpen = true
         else linkageOpen = false
     } 
     else if (outputClass === "Crank" || outputClass === "0-Rocker") {
-        if (AB_th > 0 && DC_th > 0) {
-            if (DC_th < DB_th) linkageOpen = true
+        if (AB_th >= 0 && DC_th >= 0) {
+            if (DC_th < getNetAngle(DB_th,false)) linkageOpen = true
             else linkageOpen = false
-        } else if (AB_th > 0 && DC_th < 0 && AB_th < DB_th){
+        } else if (AB_th >= 0 && DC_th < 0 && AB_th < DB_th){
             DB_th = coordToLink(getNodesAngle(getNode("B"),getNode("D"), true), "angle")
             if (DC_th > DB_th) linkageOpen = true
             else linkageOpen = false
         } else if (AB_th < 0 && DC_th < 0 && AB_th < DB_th){
-            if (DC_th < DB_th) linkageOpen = false
+            if (DC_th < getNetAngle(DB_th,false)) linkageOpen = false
             else linkageOpen = true
         } 
-        else if (AB_th < 0 && DC_th < 0 && AB_th > DB_th){
-            if (DC_th > DB_th) linkageOpen = false
+        else if (AB_th < 0 && DC_th < 0 && AB_th >= DB_th){
+            if (getNetAngle(DC_th,false) > getNetAngle(DB_th,false)) linkageOpen = false
             else linkageOpen = true
         }
-        else if (AB_th < 0 && DC_th > 0){
+        else if (AB_th < 0 && DC_th >= 0 && AB_th < DB_th){
             DB_th = coordToLink(getNodesAngle(getNode("B"),getNode("D"), true), "angle")
             if (DC_th < DB_th) linkageOpen = false
             else linkageOpen = true
-        }          
+        }
+        else if (AB_th < 0 && DC_th >= 0 && AB_th >= DB_th){
+            DB_th = coordToLink(getNodesAngle(getNode("B"),getNode("D"), true), "angle")
+            if (DC_th < getNetAngle(DB_th,false)) linkageOpen = false
+            else linkageOpen = true
+        }         
     }
+
+    document.getElementById("debugOutputs").innerHTML = `
+        ${AB_th.toFixed(1)}, 
+        ${DC_th.toFixed(1)}, 
+        ${DB_th.toFixed(1)}
+        `
 
     toggleConfigIcon.text(linkageOpen ? "Open ⇋ Crossed" : "Crossed ⇋ Open")
 } 
@@ -378,7 +389,7 @@ function updateTrace() {
     let in_startAngle = inputLimits.min
     let in_endAngle = inputLimits.max
     const in_angleRange = in_endAngle-in_startAngle
-    const in_angleStep = in_angleRange/traceSteps
+    let in_angleStep = in_angleRange/traceSteps
 
     const inputLink = getLinkByType("input")
     const outputLink = getLinkByType("output")
@@ -425,7 +436,7 @@ function updateTrace() {
         const couplerTAngle = couplerAngle + couplerLink.tAng
         const couplerTDist = couplerLink.tLen
         const newBC = {x: placeNodePolar(nodeBC, newB, couplerTAngle, couplerTDist, false)[0], y: placeNodePolar(nodeBC, newB, couplerTAngle, couplerTDist, false)[1]}
-        const newAB = {x: placeNodePolar(nodeAB, nodeA, linkToCoord(inAngle, "angle")+inputLink.tAng, inputLink.tLen, false)[0], y: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle")+inputLink.tAng, inputLink.tLen, false)[1]}
+        // const newAB = {x: placeNodePolar(nodeAB, nodeA, linkToCoord(inAngle, "angle")+inputLink.tAng, inputLink.tLen, false)[0], y: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle")+inputLink.tAng, inputLink.tLen, false)[1]}
         const newDC = {x: placeNodePolar(nodeDC, nodeD, outAngle+outputLink.tAng, outputLink.tLen, false)[0], y: placeNodePolar(nodeDC, nodeD, outAngle+outputLink.tAng, outputLink.tLen, false)[1]}
 
         let deltaBC = 0;
@@ -434,28 +445,23 @@ function updateTrace() {
         }
 
         if (i === 0 || deltaBC > traceDelta) {
-            nodeB.points.push(newB)
-            nodeAB.points.push(newAB)
+            // nodeB.points.push(newB)
+            // nodeAB.points.push(newAB)
             if (linkageOpen || (allowCrossover && inputClass !== "Crank")) {
                 nodeBC.points.push(newBC)
             }
 
-            nodeB.allPoints.push(newB)
-            nodeAB.allPoints.push(newAB)
+            // nodeB.allPoints.push(newB)
+            // nodeAB.allPoints.push(newAB)
             if (linkageOpen || inputClass !== "Crank") {
-                nodeC.allPoints.push(newC)
                 nodeBC.allPoints.push(newBC)
+                nodeC.allPoints.push(newC)
                 nodeDC.allPoints.push(newDC)
             }
         }
         
     }
     // document.getElementById("debugOutputs").innerHTML = dbgtxt
-
-    // smoothTrace
-    //     .attr("d", lineGenerator(traceData[0].points))
-    //     .attr("fill", "none")
-    //     .attr("stroke", "steelblue");
 
     for (i = 0; i < traceSteps+1; i++) {
 
@@ -489,8 +495,8 @@ function updateTrace() {
             }
             
             if (!linkageOpen || inputClass !== "Crank") {
-                nodeC.allPoints.push(newC)
                 nodeBC.allPoints.push(newBC)
+                nodeC.allPoints.push(newC)
                 nodeDC.allPoints.push(newDC)
             }
         }
@@ -501,17 +507,30 @@ function updateTrace() {
         out_endAngle = outputLimits.max
     }
     const out_angleRange = out_endAngle-out_startAngle
-    const out_angleStep = out_angleRange/traceSteps
+    const out_angleStep = out_angleRange/(traceSteps/traceReduction)
     let outAngle_C = out_startAngle
 
-    for (i = 0; i < traceSteps; i++) {
+    for (i = 0; i < traceSteps/traceReduction+1; i++) {
+        outAngle_C = out_startAngle + out_angleStep * i
         const newC = {x: placeNodePolar(nodeC, nodeD, outAngle_C, linkToCoord(outputLink.len), false)[0], y: placeNodePolar(nodeC, nodeD, outAngle_C, linkToCoord(outputLink.len), false)[1]}
         const newDC = {x: placeNodePolar(nodeDC, nodeD, outAngle_C+outputLink.tAng, outputLink.tLen, false)[0], y: placeNodePolar(nodeDC, nodeD, outAngle_C+outputLink.tAng, outputLink.tLen, false)[1]}
 
         nodeC.points.push(newC)
         nodeDC.points.push(newDC)
-        
-        outAngle_C = outAngle_C + out_angleStep
+    }
+
+    in_angleStep = in_angleRange/(traceSteps/traceReduction)
+
+    for (i = 0; i < traceSteps/traceReduction+1; i++) {
+        inAngle = in_startAngle + in_angleStep * i
+        const newB = {x: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false)[0], y: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false)[1]}
+        const newAB = {x: placeNodePolar(nodeAB, nodeA, linkToCoord(inAngle, "angle")+inputLink.tAng, inputLink.tLen, false)[0], y: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle")+inputLink.tAng, inputLink.tLen, false)[1]}
+
+        nodeB.points.push(newB)
+        nodeAB.points.push(newAB)
+
+        nodeB.allPoints.push(newB)
+        nodeAB.allPoints.push(newAB)
     }
 
     // document.getElementById("debugOutputs").innerHTML = dbgtxt
