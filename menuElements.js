@@ -2,7 +2,7 @@ const buttonHeight = 30;
 const buttonMargin = 5
 
 toggleConfigButton
-    .attr("x", buttonMargin)
+    .attr("x", buttonMargin*3 + buttonHeight*2)
     .attr("y", windowHeight-35)
     .attr("width", 100)
     .attr("height", buttonHeight)
@@ -17,7 +17,7 @@ toggleConfigButton
         toggleOpenCrossed()
     })
 toggleConfigIcon
-    .attr("x", 100/2+buttonMargin)
+    .attr("x", buttonMargin*3 + buttonHeight*2+100/2)
     .attr("y", windowHeight-+buttonHeight/2-buttonMargin)
     .attr("font-size", "8pt")
     .attr("font-family", "sans-serif")
@@ -28,7 +28,7 @@ toggleConfigIcon
     .text("Open ⇋ Crossed")
 
 toggleCrossoverButton
-    .attr("x", buttonMargin*2+100)
+    .attr("x", buttonMargin*4 + buttonHeight*2+100)
     .attr("y", windowHeight-35)
     .attr("width", 70)
     .attr("height", buttonHeight)
@@ -47,7 +47,7 @@ toggleCrossoverButton
         
     })
 toggleCrossoverIcon
-    .attr("x", 70/2+buttonMargin*2+100)
+    .attr("x", buttonMargin*4 + buttonHeight*2+100 + 70/2)
     .attr("y", windowHeight-+buttonHeight/2-buttonMargin)
     .attr("font-size", "8pt")
     .attr("font-family", "sans-serif")
@@ -127,7 +127,7 @@ darkModeIconBottom
     .style("pointer-events", "none")
 
 playButton
-    .attr("x", 180+buttonMargin)
+    .attr("x", buttonMargin)
     .attr("y", windowHeight-buttonMargin-buttonHeight)
     .attr("width", buttonHeight)
     .attr("height", buttonHeight)
@@ -149,7 +149,7 @@ playButton
     })
 
 playIcon
-    .attr("x", buttonHeight/2+180+buttonMargin)
+    .attr("x", buttonHeight/2+buttonMargin)
     .attr("y", windowHeight-buttonHeight/2-buttonMargin)
     .attr("font-size", "15px")
     .attr("font-family", "sans-serif")
@@ -160,7 +160,7 @@ playIcon
     .text("▶")
 
 reverseButton
-    .attr("x", 180 + buttonMargin*2 + buttonHeight)
+    .attr("x", buttonMargin*2 + buttonHeight)
     .attr("y", windowHeight-buttonMargin-buttonHeight)
     .attr("width", buttonHeight)
     .attr("height", buttonHeight)
@@ -177,15 +177,43 @@ reverseButton
     })
 
 reverseIcon
-    .attr("x", buttonHeight/2 + 180 + buttonMargin*2 + buttonHeight)
+    .attr("x", buttonHeight/2 + buttonMargin*2 + buttonHeight)
     .attr("y", windowHeight-buttonHeight/2-buttonMargin)
-    .attr("font-size", "15px")
+    .attr("font-size", "18px")
     .attr("font-family", "sans-serif")
     .attr("font-weight", "bold")
     .attr("text-anchor", "middle")
     .attr("alignment-baseline", "middle")
     .style("pointer-events", "none")
     .text("⟲")
+
+cognateButton
+    .attr("x", buttonMargin*5 + buttonHeight*2+100 + 70)
+    .attr("y", windowHeight-buttonMargin-buttonHeight)
+    .attr("width", buttonHeight)
+    .attr("height", buttonHeight)
+    .attr("rx", 5)
+    .attr("ry", 5)
+    .attr("fill", "lightgray")
+    .attr("fill-opacity", 0.75)
+    .attr("stroke", "black")
+    .attr("stroke-width", 1)
+    .attr("stroke-opacity", 0.75)
+    .on("click", function() {
+        cycleCognates()
+        updateTrace()
+        updateLinkGeometry()
+    })
+cognateIcon
+    .attr("x", buttonMargin*5 + buttonHeight*2+100+70 + buttonHeight/2)
+    .attr("y", windowHeight-buttonHeight/2-buttonMargin)
+    .attr("font-size", "20px")
+    .attr("font-family", "sans-serif")
+    .attr("font-weight", "bold")
+    .attr("text-anchor", "middle")
+    .attr("alignment-baseline", "middle")
+    .style("pointer-events", "none")
+    .text("♺")
 
 function startAnimationLoop() {
     playIcon.text("⏸")

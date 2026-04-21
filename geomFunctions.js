@@ -266,6 +266,7 @@ function toggleOpenCrossed() {
 }
 
 function updateLinkGeometry() {
+    // cycleCognates()
     nodeDrag
         .attr("cx", d => d.x)
         .attr("cy", d => d.y)
@@ -336,6 +337,8 @@ function updateLinkGeometry() {
 
     updateToolTips()
 
+    // cycleCognates()
+
     // DBLink
     // .attr("x1", getNode("D").x)
     // .attr("y1", getNode("D").y)
@@ -366,7 +369,7 @@ function getNetAngle(deg, neg=false) {
     return newDeg
 }
 
-// function cycleCongugate() {
+// function cyclecognate() {
 //     const distAB = getDistBtwNodes(getNode("A"),getNode("B"))
 //     const distBC = getDistBtwNodes(getNode("B"),getNode("C"))
 //     const distCD = getDistBtwNodes(getNode("C"),getNode("D"))
@@ -554,9 +557,15 @@ function playAnimation() {
     const minInput = inputLimits.min
 
     const angleRange = maxInput - minInput
-    const stepSize = angleRange/(animateSpeed*10)
+    let stepSize = angleRange/(animateSpeed*10)
 
-    const loop = inputClass === "Crank" ? true : false
+    let loop = false
+
+    if (inputClass === "Crank") {
+        loop = true
+        stepSize = stepSize / 2
+    }
+    // const loop = inputClass === "Crank" ? true : false
 
     let newAngle = startAngle + stepSize * animateDir
     newAngle = inputClass === "0-Rocker" && newAngle > 180 ? newAngle - 360 : newAngle

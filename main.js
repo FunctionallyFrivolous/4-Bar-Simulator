@@ -1,4 +1,7 @@
 // Next Tasks:
+    // Fix bug on linkage config status in certain arrangements (fixed link btwn 90 and 180)
+        // Shows up as incorrect config label and trace line drawn for wrong config
+        // Discovered thanks to the new cognate function!
     // Update input/output limits to account for config/crossover status?
     // Animate actuation
         // Initial implementatin complete!
@@ -117,7 +120,6 @@ const traceDotGroup = zoomGroup.append("g")
 const traceLineGroup = zoomGroup.append("g")
 const fullTraceGroup = zoomGroup.append("g")
 
-const smoothTraceGroup = zoomGroup.append("g")
 
 const toggleConfigButton = overlayGroup.append("rect")
 const toggleConfigIcon = overlayGroup.append("text")
@@ -131,6 +133,8 @@ const playButton = overlayGroup.append("rect")
 const playIcon = overlayGroup.append("text")
 const reverseButton = overlayGroup.append("rect")
 const reverseIcon = overlayGroup.append("text")
+const cognateButton = overlayGroup.append("rect")
+const cognateIcon = overlayGroup.append("text")
 
 const inputLinkVal = overlayGroup.append("text")
 const inputLinkProps = overlayGroup.append("text")
@@ -145,9 +149,20 @@ const outputLinkProps = overlayGroup.append("text")
 //     .attr("stroke-width", 2)
 //     .attr("stroke", "black")
 
-// const lineGenerator = d3.line()
-//         .x(d => d.x)
-//         .y(d => d.y)
-//         .curve(d3.curveCatmullRom.alpha(1))
+const cognateTestData = [
+    {id: "A0", x: 0, y: 0, color: "black"},
+    {id: "B0", x: 0, y: 0, color: "darkred"}, 
+    {id: "C0", x: 0, y: 0, color: "darkblue"}, 
+    {id: "D0", x: 0, y: 0, color: "black"}, 
+    {id: "E0", x: 0, y: 0, color: "darkgreen"},
+]
 
-// const smoothTrace = zoomGroup.append("path")
+// const cognateRevert = [
+//     {id: "A", x: 0, y: 0},
+//     {id: "B", x: 0, y: 0}, 
+//     {id: "C", x: 0, y: 0}, 
+//     {id: "D", x: 0, y: 0}, 
+//     {id: "E", x: 0, y: 0},
+// ]
+
+// let cognate = false
