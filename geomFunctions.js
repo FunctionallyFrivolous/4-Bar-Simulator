@@ -235,6 +235,10 @@ function updateOpenCrossed() {
             DB_th = coordToLink(getNodesAngle(getNode("B"),getNode("D"), true), "angle")
             if (DC_th > DB_th) linkageOpen = true
             else linkageOpen = false
+        // } else if (AB_th >= 0 && DC_th < 0 && AB_th >= DB_th){
+        //     // DB_th = coordToLink(getNodesAngle(getNode("B"),getNode("D"), true), "angle")
+        //     if (DC_th > DB_th) linkageOpen = true
+        //     else linkageOpen = false
         } else if (AB_th < 0 && DC_th < 0 && AB_th < DB_th){
             if (DC_th < getNetAngle(DB_th,false)) linkageOpen = false
             else linkageOpen = true
@@ -637,4 +641,21 @@ function playAnimation() {
     newAngle = getNetAngle(linkToCoord(newAngle, "angle"), false)
     doActuate(newAngle)
 
+}
+
+
+function toggleDarkMode(){
+    const dMode = localStorage.getItem("darkMode") === "true" ? true : false
+    darkMode = dMode
+    bgColor = darkMode ? darkColor : lightColor
+    fgColor = darkMode ? lightColor : darkColor
+    whtnColor = darkMode ? 0.25 : 0
+    background.attr("fill", bgColor)
+    darkModeIconTop.attr("fill", bgColor)
+    darkModeIconBottom.attr("fill", fgColor)
+    nodeDrag.attr("fill", darkMode ? "white" : "black")
+    document.body.style.backgroundColor = bgColor
+    document.getElementById("pageLab").style.color = fgColor
+    document.getElementById("topView").style.border = `1px solid ${fgColor}`
+    updateLinkGeometry()
 }

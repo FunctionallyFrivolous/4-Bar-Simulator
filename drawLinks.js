@@ -249,6 +249,7 @@ function nodeDoubleTap(event, d) {
 }
 
 // setLinkNodes()
+toggleDarkMode()
 updateOutputAngle()
 updateTNodes()
 setLinkNodes()

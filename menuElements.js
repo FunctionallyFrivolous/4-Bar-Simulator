@@ -73,23 +73,10 @@ darkModeButton
     .attr("stroke-width", 1)
     .attr("stroke-opacity", 0.75)
     .on("click", function() {
-        darkMode = !darkMode
+        // darkMode = !darkMode
+        localStorage.setItem("darkMode", `${!darkMode}`)
         toggleDarkMode()
     })
-
-function toggleDarkMode(){
-    bgColor = darkMode ? darkColor : lightColor
-    fgColor = darkMode ? lightColor : darkColor
-    whtnColor = darkMode ? 0.25 : 0
-    background.attr("fill", bgColor)
-    darkModeIconTop.attr("fill", bgColor)
-    darkModeIconBottom.attr("fill", fgColor)
-    nodeDrag.attr("fill", darkMode ? "white" : "black")
-    document.body.style.backgroundColor = bgColor
-    document.getElementById("pageLab").style.color = fgColor
-    document.getElementById("topView").style.border = `1px solid ${fgColor}`
-    updateLinkGeometry()
-}
 
 function drawDarkModeIcons(){
 

@@ -19,8 +19,10 @@
         // Open/Crossed: generic linkage in current config, with opposite config ghost
         // Crossover: generic linkage at crossover point. Arrows/X indicating if crossover is allowed?
     // localStorage?
-        // Retain recent configuration?
-        // Remember user/display preferences (dark mode, etc.)?
+        // First localStorage application: remember previous darkMode setting!!!
+        // Next:
+            // Linkage? Save the node positions to localStorage. Apply save positions on loading
+                // First, add a button to revert to default linkage? (since refresh will no longer do that)
 
 const windowWidth = 500;
 const windowHeight = 500;
