@@ -17,7 +17,7 @@
     // Undo/Redo?
     // Button Icons:
         // Open/Crossed: generic linkage in current config, with opposite config ghost
-        // Crossover: generic linkage at cross over point. Arrows/X indicating if crossover is allowed?
+        // Crossover: generic linkage at crossover point. Arrows/X indicating if crossover is allowed?
     // localStorage?
         // Retain recent configuration?
         // Remember user/display preferences (dark mode, etc.)?

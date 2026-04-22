@@ -349,7 +349,7 @@ function updateLinkGeometry() {
         .attr("fill", d3.interpolateRgb(getLinkByType("output").color,"white")(whtnColor*2))
         .text(`${outputClass} (${outputLimits.min.toFixed(1)}°, ${outputLimits.max.toFixed(1)}°)`)
 
-    updateToolTips()
+    // updateToolTips()
 
     // DBLink
     //     .attr("x1", getNode("D").x)
