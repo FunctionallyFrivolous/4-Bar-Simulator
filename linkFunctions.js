@@ -38,7 +38,7 @@ function setLinkNodes() {
     const fixLink = getLinkByType("fixed").id
 
     inputAngle = getNetAngle(coordToLink(getLinkAngle(inLink), "angle"))
-    outputAngle = (coordToLink(getLinkAngle(outLink), "angle"))
+    outputAngle = coordToLink(getLinkAngle(outLink), "angle")
     baseAngle = getLinkAngle(fixLink)
 
 }

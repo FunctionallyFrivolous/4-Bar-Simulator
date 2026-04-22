@@ -2,6 +2,7 @@
     // Fix bug on linkage config status in certain arrangements (fixed link btwn 90 and 180)
         // Shows up as incorrect config label and trace line drawn for wrong config
         // Discovered thanks to the new cognate function!
+        // Oh... this is not an open/crossed issue. This is an outputlink angle calc issue...
     // Update input/output limits to account for config/crossover status?
     // Animate actuation
         // Initial implementatin complete!
@@ -22,10 +23,9 @@
     // Button Icons:
         // Open/Crossed: generic linkage in current config, with opposite config ghost
         // Crossover: generic linkage at cross over point. Arrows/X indicating if crossover is allowed?
-    // Functions:
-        // calc any node position for a given input angle
-            // Method will depend on the specific node
-            // Should be able to do all ternary nodes the same (relative to their main link angle)
+    // localStorage?
+        // Retain recent configuration?
+        // Remember user/display preferences (dark mode, etc.)?
 
 const windowWidth = 500;
 const windowHeight = 500;
@@ -149,20 +149,10 @@ const outputLinkProps = overlayGroup.append("text")
 //     .attr("stroke-width", 2)
 //     .attr("stroke", "black")
 
-const cognateTestData = [
+const cognateData = [
     {id: "A0", x: 0, y: 0, color: "black"},
     {id: "B0", x: 0, y: 0, color: "darkred"}, 
     {id: "C0", x: 0, y: 0, color: "darkblue"}, 
     {id: "D0", x: 0, y: 0, color: "black"}, 
     {id: "E0", x: 0, y: 0, color: "darkgreen"},
 ]
-
-// const cognateRevert = [
-//     {id: "A", x: 0, y: 0},
-//     {id: "B", x: 0, y: 0}, 
-//     {id: "C", x: 0, y: 0}, 
-//     {id: "D", x: 0, y: 0}, 
-//     {id: "E", x: 0, y: 0},
-// ]
-
-// let cognate = false

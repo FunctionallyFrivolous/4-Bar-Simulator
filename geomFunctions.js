@@ -69,7 +69,9 @@ function calcOutputAngle(inDeg, open=linkageOpen) {
     let outAngle = Math.atan(halfTan) * 2
     outAngle = getNetAngle(radToDeg(outAngle))
 
-    outAngle = linkToCoord(outAngle, "angle")
+    outAngle = getNetAngle(linkToCoord(outAngle, "angle"))
+
+    // document.getElementById("debugOutputs").innerHTML = `${getNetAngle(coordToLink(outAngle,"angle")).toFixed(1)}`
 
     return outAngle;
 }
@@ -114,7 +116,7 @@ function updateInputLimits() {
         inputClass = "Rocker";
     }
 
-    if (inputClass === "Rocker" & getNodesAngle(getNode("A"), getNode("B")) > getNodesAngle(getNode("D"),getNode("A")) ) {
+    if (inputClass === "Rocker" && inputAngle > 180) {
         A_min = 360-A_min;
         A_max = 360-A_max;
     }
@@ -164,18 +166,19 @@ function updateOutputLimits() {
         B_max = radToDeg(B_max_rad);
         outputClass = "Rocker"
     }
+
     if (!linkageOpen & outputClass !== "0-Rocker") {
         B_min = 360-B_min;
         B_max = 360-B_max;
     }
-    const crossAngle = getNodesAngle(getNode(getLinkByType("output").id[0]), getNode(getLinkByType("input").id[1]))
-    // const 
+    
+    const crossAngle = getNetAngle(coordToLink(getNodesAngle(getNode("D"), getNode("B")),"angle"),false)
 
-    if (!linkageOpen & outputClass === "Rocker" & inputClass === "Rocker" & crossAngle < getNodesAngle(getNode("D"),getNode("A")) ) {
+    if (!linkageOpen & outputClass === "Rocker" && inputClass === "Rocker" && crossAngle < 180) {
         B_min = 360-B_min;
         B_max = 360-B_max;
     }
-    if (linkageOpen & outputClass === "Rocker" & inputClass === "Rocker" & crossAngle > getNodesAngle(getNode("D"),getNode("A")) ) {
+    if (linkageOpen & outputClass === "Rocker" & inputClass === "Rocker" & crossAngle > 180 ) {
         B_min = 360-B_min;
         B_max = 360-B_max;
     }
@@ -185,6 +188,12 @@ function updateOutputLimits() {
         B_min = B_max;
         B_max = B_swap;
     }
+
+    // document.getElementById("debugOutputs").innerHTML = `
+    //     x_ang: ${crossAngle.toFixed(1)} \n<br>
+    //     DA: ${getNodesAngle(getNode("D"),getNode("A")).toFixed(1)} \n<br>
+    //     x_lnk: ${getNetAngle(coordToLink(crossAngle,"angle"),false).toFixed(1)}
+    // `
 
     outputLimits.min = B_min;
     outputLimits.max = B_max;
@@ -247,9 +256,15 @@ function updateOpenCrossed() {
     }
 
     // document.getElementById("debugOutputs").innerHTML = `
-    //     ${AB_th.toFixed(1)}, 
-    //     ${DC_th.toFixed(1)}, 
-    //     ${DB_th.toFixed(1)}
+    //     AB: ${AB_th.toFixed(1)}, 
+    //     DC: ${DC_th.toFixed(1)}, 
+    //     DB: ${DB_th.toFixed(1)}
+    //     \n<br>
+    //     DC_raw: ${DC_raw.toFixed(1)}, 
+    //     DB_raw: ${DB_raw.toFixed(1)}
+    //     \n<br>
+    //     DC: ${getNetAngle(DC_th,false).toFixed(1)}, 
+    //     DB: ${getNetAngle(DB_th,false).toFixed(1)}
     //     `
 
     toggleConfigIcon.text(linkageOpen ? "Open ⇋ Crossed" : "Crossed ⇋ Open")
@@ -266,7 +281,6 @@ function toggleOpenCrossed() {
 }
 
 function updateLinkGeometry() {
-    // cycleCognates()
     nodeDrag
         .attr("cx", d => d.x)
         .attr("cy", d => d.y)
@@ -337,13 +351,11 @@ function updateLinkGeometry() {
 
     updateToolTips()
 
-    // cycleCognates()
-
     // DBLink
-    // .attr("x1", getNode("D").x)
-    // .attr("y1", getNode("D").y)
-    // .attr("x2", getNode("B").x)
-    // .attr("y2", getNode("B").y)
+    //     .attr("x1", getNode("D").x)
+    //     .attr("y1", getNode("D").y)
+    //     .attr("x2", getNode("B").x)
+    //     .attr("y2", getNode("B").y)
 
     // document.getElementById("debugOutputs").innerHTML = getNetAngle(getLinkAngle(getLinkByType("input").id), inputClass === "0-Rocker" ? true : false) //A_angle.toFixed(1)
     // `${linkageOpen ? "Open" : "Crossed"}`
@@ -359,6 +371,20 @@ function updateToolTips() {
     nodeDrag
         .append("title")
         .text(d => `(${d.x.toFixed(1)}, ${d.y.toFixed(1)})`)
+    // toggleCrossoverButton
+    //     .append("title")
+    //     .text(allowCrossover ? "Disabel Crossover" : "Enable Crossover")
+    playButton
+        .append("title")
+        .text("Animate Actuation")
+    reverseButton
+        .append("title")
+        .text("Reverse Actuation Direction")
+    cognateButton
+        .append("title")
+        .text("Cycle Cognates")
+    
+
 }
 
 function getNetAngle(deg, neg=false) {
@@ -429,6 +455,13 @@ function updateTrace() {
     let out_startAngle = outputLimits.max
     let out_endAngle = outputLimits.min
 
+    // document.getElementById("debugOutputs").innerHTML = `
+    //     ${outputLimits.min.toFixed(1)} \n<br>
+    //     ${outputLimits.max.toFixed(1)} \n<br>
+    //     ${out_startAngle.toFixed(1)} \n<br>
+    //     ${out_endAngle.toFixed(1)} \n<br>
+    // `
+
     let dbgtxt = ``
 
     for (i = 0; i < traceSteps+1; i++) {
@@ -437,9 +470,17 @@ function updateTrace() {
         outAngle = calcOutputAngle(inAngle, true)
 
         if (linkageOpen) {
-            const out_temp = outputClass === "0-Rocker" && (outAngle > 180) ? outAngle-360 : outAngle
+            const out_temp = outputClass === "0-Rocker" && (getNetAngle(coordToLink(outAngle,"angle")) > 180) ? getNetAngle(coordToLink(outAngle,"angle"))-360 : getNetAngle(coordToLink(outAngle,"angle"))
             out_startAngle = Math.min(out_startAngle, out_temp)
             out_endAngle = Math.max(out_endAngle, out_temp)
+
+            if (out_temp < outputLimits.min || out_temp > outputLimits.max) {
+                document.getElementById("debugOutputs").innerHTML = `
+                    in: ${inAngle.toFixed(1)}
+                    out: ${outAngle.toFixed(1)}
+                    out_temp: ${out_temp.toFixed(1)}
+                `
+            }
         }
 
         const newB = {x: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false)[0], y: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false)[1]}
@@ -482,7 +523,7 @@ function updateTrace() {
         outAngle = calcOutputAngle(inAngle, false)
 
         if (!linkageOpen) {
-            const out_temp = outputClass === "0-Rocker" && (outAngle > 180) ? outAngle-360 : outAngle
+            const out_temp = outputClass === "0-Rocker" && (getNetAngle(coordToLink(outAngle,"angle")) > 180) ? getNetAngle(coordToLink(outAngle,"angle"))-360 : getNetAngle(coordToLink(outAngle,"angle"))
             out_startAngle = Math.min(out_startAngle, out_temp)
             out_endAngle = Math.max(out_endAngle, out_temp)
         }
@@ -525,12 +566,20 @@ function updateTrace() {
 
     for (i = 0; i < traceSteps/traceReduction+1; i++) {
         outAngle_C = out_startAngle + out_angleStep * i
-        const newC = {x: placeNodePolar(nodeC, nodeD, outAngle_C, linkToCoord(outputLink.len), false)[0], y: placeNodePolar(nodeC, nodeD, outAngle_C, linkToCoord(outputLink.len), false)[1]}
-        const newDC = {x: placeNodePolar(nodeDC, nodeD, outAngle_C+outputLink.tAng, outputLink.tLen, false)[0], y: placeNodePolar(nodeDC, nodeD, outAngle_C+outputLink.tAng, outputLink.tLen, false)[1]}
+        const newC = {x: placeNodePolar(nodeC, nodeD, linkToCoord(outAngle_C,"angle"), linkToCoord(outputLink.len), false)[0], y: placeNodePolar(nodeC, nodeD, linkToCoord(outAngle_C,"angle"), linkToCoord(outputLink.len), false)[1]}
+        const newDC = {x: placeNodePolar(nodeDC, nodeD, linkToCoord(outAngle_C+outputLink.tAng,"angle"), outputLink.tLen, false)[0], y: placeNodePolar(nodeDC, nodeD, linkToCoord(outAngle_C+outputLink.tAng,"angle"), outputLink.tLen, false)[1]}
 
         nodeC.points.push(newC)
         nodeDC.points.push(newDC)
     }
+    // document.getElementById("debugOutputs").innerHTML = `
+    //     ${outputLimits.min.toFixed(1)} \n<br>
+    //     ${outputLimits.max.toFixed(1)} \n<br>
+    //     ${out_startAngle.toFixed(1)} \n<br>
+    //     ${out_endAngle.toFixed(1)} \n<br>
+    //     \n<br>
+    //     ${baseAngle.toFixed(1)} \n<br>
+    // `
 
     in_angleStep = in_angleRange/(traceSteps/traceReduction)
 

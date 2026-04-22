@@ -44,7 +44,9 @@ toggleCrossoverButton
         allowCrossover = !allowCrossover
         updateTrace()
         updateLinkGeometry()
-        
+        // toggleCrossoverButton
+        //     .append("title")
+        //     .text(allowCrossover ? "Disabel Crossover" : "Enable Crossover")
     })
 toggleCrossoverIcon
     .attr("x", buttonMargin*4 + buttonHeight*2+100 + 70/2)
@@ -72,18 +74,22 @@ darkModeButton
     .attr("stroke-opacity", 0.75)
     .on("click", function() {
         darkMode = !darkMode
-        bgColor = darkMode ? darkColor : lightColor
-        fgColor = darkMode ? lightColor : darkColor
-        whtnColor = darkMode ? 0.25 : 0
-        background.attr("fill", bgColor)
-        darkModeIconTop.attr("fill", bgColor)
-        darkModeIconBottom.attr("fill", fgColor)
-        nodeDrag.attr("fill", darkMode ? "white" : "black")
-        document.body.style.backgroundColor = bgColor
-        document.getElementById("pageLab").style.color = fgColor
-        document.getElementById("topView").style.border = `1px solid ${fgColor}`
-        updateLinkGeometry()
+        toggleDarkMode()
     })
+
+function toggleDarkMode(){
+    bgColor = darkMode ? darkColor : lightColor
+    fgColor = darkMode ? lightColor : darkColor
+    whtnColor = darkMode ? 0.25 : 0
+    background.attr("fill", bgColor)
+    darkModeIconTop.attr("fill", bgColor)
+    darkModeIconBottom.attr("fill", fgColor)
+    nodeDrag.attr("fill", darkMode ? "white" : "black")
+    document.body.style.backgroundColor = bgColor
+    document.getElementById("pageLab").style.color = fgColor
+    document.getElementById("topView").style.border = `1px solid ${fgColor}`
+    updateLinkGeometry()
+}
 
 function drawDarkModeIcons(){
 
@@ -110,7 +116,7 @@ function drawDarkModeIcons(){
 }
 
 darkModeIconTop
-    .attr("stroke", fgColor)
+    .attr("stroke", darkColor)
     .attr("stroke-width", 1)
     .style("stroke-linecap", "round")
     .style("stroke-linejoin", "round")
@@ -118,7 +124,7 @@ darkModeIconTop
     .attr("d", drawDarkModeIcons()[0])
     .style("pointer-events", "none")
 darkModeIconBottom
-    .attr("stroke", fgColor)
+    .attr("stroke", darkColor)
     .attr("stroke-width", 1)
     .style("stroke-linecap", "round")
     .style("stroke-linejoin", "round")
@@ -213,7 +219,7 @@ cognateIcon
     .attr("text-anchor", "middle")
     .attr("alignment-baseline", "middle")
     .style("pointer-events", "none")
-    .text("♺")
+    .text("♺") //♻
 
 function startAnimationLoop() {
     playIcon.text("⏸")
