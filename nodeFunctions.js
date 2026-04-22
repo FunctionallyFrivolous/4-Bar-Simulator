@@ -66,14 +66,18 @@ function updateTNodes(snap=false, node="") {
         if (linksData[i].tSnap && node !== linkID) tDeg = linksData[i].tAng
         if (snap) {
             if (node === linkID) {
-            if (Math.abs(tDeg) < snapAngle) tDeg = 0
-            else if (Math.abs(tDeg-180) < snapAngle) tDeg = -180
-            linksData[i].tSnap = true
+                if (Math.abs(tDeg) < snapAngle) {
+                    tDeg = 0
+                    linksData[i].tSnap = true
+                }
+                else if (Math.abs(tDeg-180) < snapAngle) {
+                    tDeg = -180
+                    linksData[i].tSnap = true
+                }
+                else linksData[i].tSnap = false
             }
             else linksData[i].tSnap = false
         }
-
-        // if (linkID === "BC") document.getElementById("debugOutputs").innerHTML = `${linksData[i].tSnap}`
 
         linksData[i].tAng = tDeg
 

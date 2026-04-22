@@ -1,9 +1,4 @@
 // Next Tasks:
-    // Fix bug on linkage config status in certain arrangements (fixed link btwn 90 and 180)
-        // Shows up as incorrect config label and trace line drawn for wrong config
-        // Discovered thanks to the new cognate function!
-        // Oh... this is not an open/crossed issue. This is an outputlink angle calc issue...
-    // Update input/output limits to account for config/crossover status?
     // Animate actuation
         // Initial implementatin complete!
         // Things to add:
