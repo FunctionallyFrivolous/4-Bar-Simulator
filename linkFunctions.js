@@ -1,10 +1,4 @@
-// Functions that manipulated links
-    // Get nodes associated with a given link
 
-// Get nodes associated with a given link
-    // Update later to handle multiple nodes
-    // First two should always be the joint nodes
-    // Why does including a for loop break this...
 function getLinkNodes(link) {
     const getNodes = []
     getNodes[0] = getNode(link[0])
@@ -14,15 +8,11 @@ function getLinkNodes(link) {
     return getNodes
 }
 
-// Re-calc points for all nodes, based on current node coords
-    // Required anytime a node moves for any reason
-    // Called inside of updateLinkageGeometry
 function setLinkNodes() {
 
     for (i=0; i<linksData.length; i++) {
         const link_id = linksData[i].id
         const [sNode, eNode, cNode] = getLinkNodes(link_id)
-        // document.getElementById("debugOutputs").innerHTML = `${cNode}`
 
         linksData[i].points = []
 
@@ -51,8 +41,6 @@ function setLinkAngle(link, deg) {
     const thisLink = getLinkByID(link)
     const linkNodes = getLinkNodes(link)
     const pivotNode = getNode(link[0])
-    // const freeNode = getNode(link[1])
-    // const tNode = getNode(link)
 
     for (i = 0; i < linkNodes.length; i++) {
         const mobileNode = linkNodes[i]
@@ -60,7 +48,6 @@ function setLinkAngle(link, deg) {
             rotateNode(mobileNode, deg, pivotNode)
         }
     }
-    // updateLinkGeometry()
 }
 
 function getLinkLength(link) {

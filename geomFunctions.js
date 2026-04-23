@@ -1,25 +1,22 @@
-// Functions that assess or effect properties of the linkage mechanism
 
-// Function to set the new input link angle to actuate the mechanism
-    // This will be executed as a result of draging the input handle and any other actuation method implemented
 function doActuate(deg) {
     let inAngle = deg
 
-    let checkAngle = getNetAngle(coordToLink(inAngle, "angle"))
+    let checkAngle = coordToLink(inAngle, "angle")
 
     if (inputLimits.min < 0 && checkAngle > 180) {
         checkAngle = checkAngle - 360
     }
     if (inputClass !== "Crank") {
         if (checkAngle < inputLimits.min) {
-            inAngle = getNetAngle(linkToCoord(inputLimits.min, "angle")) + limitThreshold;
+            inAngle = linkToCoord(inputLimits.min, "angle") + limitThreshold;
             recentLimit = "min"
             if (!recentCrossover && checkAngle < inputLimits.min + crossoverDeadband && allowCrossover) {
                 toggleOpenCrossed()
                 recentCrossover = true
             }
         } else if (checkAngle > inputLimits.max) {
-            inAngle = getNetAngle(linkToCoord(inputLimits.max, "angle")) - limitThreshold;
+            inAngle = linkToCoord(inputLimits.max, "angle") - limitThreshold;
             recentLimit = "max"
             if (!recentCrossover && checkAngle > inputLimits.max - crossoverDeadband && allowCrossover) {
                 toggleOpenCrossed()
@@ -32,20 +29,20 @@ function doActuate(deg) {
         } 
     }
 
-    inputAngle = getNetAngle(coordToLink(inAngle, "angle"))
+    inputAngle = coordToLink(inAngle, "angle")
 
-    const outAngle = calcOutputAngle(inputAngle)
-    updateOutputAngle();
+    // const outAngle = calcOutputAngle(inputAngle)
+    outputAngle = calcOutputAngle(inputAngle)
+    // updateOutputAngle();
 
     setLinkAngle(getLinkByType("input").id, inAngle)
-    setLinkAngle(getLinkByType("output").id, outAngle)
+    setLinkAngle(getLinkByType("output").id, outputAngle)
     tNodeFollow()
     
     updateLinkGeometry();
 }
 
-// Function to calc/return the angle of the output link based on all link lengths and input angle
-function calcOutputAngle(inDeg, open=linkageOpen) {
+function calcOutputAngle(inDeg=inputAngle, open=linkageOpen) {
     const a = getLinkByType("input").len
     const b = getLinkByType("output").len
     const c = getLinkByType("coupler").len
@@ -62,13 +59,13 @@ function calcOutputAngle(inDeg, open=linkageOpen) {
     let outAngle = Math.atan(halfTan) * 2
     outAngle = getNetAngle(radToDeg(outAngle))
 
-    outAngle = getNetAngle(linkToCoord(outAngle, "angle"))
+    outAngle = linkToCoord(outAngle, "angle")
 
     return outAngle;
 }
-function updateOutputAngle() {
-    outputAngle = calcOutputAngle(inputAngle)
-}
+// function updateOutputAngle() {
+//     outputAngle = calcOutputAngle(inputAngle)
+// }
 
 function updateInputLimits() {
     const a = getLinkByType("input").len
@@ -146,7 +143,6 @@ function updateOutputLimits() {
     } else if (Number.isNaN(B_min_rad)) {
         B_max = radToDeg(B_max_rad);
         B_min = 360-B_max;
-        // B_min = 360-B_max;
         outputClass = "π-Rocker"
     } else if (Number.isNaN(B_max_rad)) {
         B_min = radToDeg(B_min_rad);
@@ -163,7 +159,7 @@ function updateOutputLimits() {
         B_max = 360-B_max;
     }
     
-    const crossAngle = getNetAngle(coordToLink(getNodesAngle(getNode("D"), getNode("B")),"angle"),false)
+    const crossAngle = coordToLink(getNodesAngle(getNode("D"), getNode("B")),"angle")
 
     if (!linkageOpen & outputClass === "Rocker" && inputClass === "Rocker" && crossAngle < 180) {
         B_min = 360-B_min;
@@ -185,20 +181,20 @@ function updateOutputLimits() {
 
 }
 
-function updateLinkageConfig() {
-    updateOpenCrossed()
-    updateInputLimits()
-    updateOutputLimits()
-}
+// function updateLinkageConfig() {
+//     updateOpenCrossed()
+//     updateInputLimits()
+//     updateOutputLimits()
+// }
 
 function updateOpenCrossed() {
-    const AB_th = getNetAngle(coordToLink(getNodesAngle(getNode("A"), getNode("B")), "angle"))
+    const AB_th = coordToLink(getNodesAngle(getNode("A"), getNode("B")), "angle")
 
-    let DB_th = getNetAngle(coordToLink(getNodesAngle(getNode("D"), getNode("B"), true), "angle"))
-    const BD_th = getNetAngle(coordToLink(getNodesAngle(getNode("B"), getNode("D"), true), "angle"))
+    let DB_th = coordToLink(getNodesAngle(getNode("D"), getNode("B"), true), "angle")
+    const BD_th = coordToLink(getNodesAngle(getNode("B"), getNode("D"), true), "angle")
 
-    let DC_th = getNetAngle(coordToLink(getNodesAngle(getNode("D"), getNode("C"), true), "angle"))
-    const BC_th = getNetAngle(coordToLink(getNodesAngle(getNode("B"), getNode("C"), true), "angle"))
+    let DC_th = coordToLink(getNodesAngle(getNode("D"), getNode("C"), true), "angle")
+    const BC_th = coordToLink(getNodesAngle(getNode("B"), getNode("C"), true), "angle")
     
     if (AB_th < DB_th && DC_th < DB_th) {
         linkageOpen = true
@@ -216,6 +212,7 @@ function updateOpenCrossed() {
 
     openCrossedIcon.text(linkageOpen ? "Open ⇋ Crossed" : "Crossed ⇋ Open")
 } 
+
 function toggleOpenCrossed() {
     const DB_th = getNodesAngle(getNode("D"), getNode("B"))
     const DC_th = getNodesAngle(getNode("D"), getNode("C"))
@@ -250,7 +247,7 @@ function updateLinkGeometry() {
         .attr("points", d => d.points.map(j => `${j.x},${j.y}`).join(" "))
         .attr("stroke", d => d3.interpolateRgb(d.color,"white")(whtnColor))
         .attr("fill", d => d3.interpolateRgb(d.color,"white")(whtnColor))
-        .attr("opacity", d => d.type === "fixed" ? 0 : darkMode ? 0.7 : 0.6)
+        .attr("opacity", d => d.type === "fixed" ? 0 : darkMode ? 0.8 : 0.65)
         // .attr("stroke-width", d => d.type === "fixed" ? 4 : 20)
         .style("display", d => d.visible ? "block" : "none")
     groundLine
@@ -280,7 +277,10 @@ function updateLinkGeometry() {
         .attr("stroke-opacity", inputClass === "Crank" ? 0.25 : 0.75)
         .attr("fill-opacity", inputClass === "Crank" ? 0.25 : 0.75)
 
-    updateLinkageConfig()
+    // updateLinkageConfig()
+    updateOpenCrossed()
+    updateInputLimits()
+    updateOutputLimits()
 
     inputLinkVal
         .attr("fill", d3.interpolateRgb(getLinkByType("input").color,"white")(whtnColor*2))
@@ -304,21 +304,6 @@ function updateLinkGeometry() {
     //     .attr("x2", getNode("B").x)
     //     .attr("y2", getNode("B").y)
 
-}
-
-function updateToolTips() {
-    linkLinesToolTip
-        .text(d => `${d.type} link (L = ${d.len.toFixed(1)})`)
-    nodeDragToolTip
-        .text(d => `(${d.x.toFixed(1)}, ${d.y.toFixed(1)})`)
-}
-
-function getNetAngle(deg, neg=false) {
-    let newDeg = deg
-    if (newDeg > 360) newDeg = newDeg - 360
-    if (!neg & newDeg < 0) newDeg = newDeg + 360
-
-    return newDeg
 }
 
 function updateTrace() {
@@ -363,7 +348,7 @@ function updateTrace() {
         outAngle = calcOutputAngle(inAngle, true)
 
         if (linkageOpen) {
-            const out_temp = outputClass === "0-Rocker" && (getNetAngle(coordToLink(outAngle,"angle")) > 180) ? getNetAngle(coordToLink(outAngle,"angle"))-360 : getNetAngle(coordToLink(outAngle,"angle"))
+            const out_temp = outputClass === "0-Rocker" && (coordToLink(outAngle,"angle") > 180) ? coordToLink(outAngle,"angle")-360 : coordToLink(outAngle,"angle")
             out_startAngle = Math.min(out_startAngle, out_temp)
             out_endAngle = Math.max(out_endAngle, out_temp)
 
@@ -416,7 +401,7 @@ function updateTrace() {
         outAngle = calcOutputAngle(inAngle, false)
 
         if (!linkageOpen) {
-            const out_temp = outputClass === "0-Rocker" && (getNetAngle(coordToLink(outAngle,"angle")) > 180) ? getNetAngle(coordToLink(outAngle,"angle"))-360 : getNetAngle(coordToLink(outAngle,"angle"))
+            const out_temp = outputClass === "0-Rocker" && (coordToLink(outAngle,"angle") > 180) ? coordToLink(outAngle,"angle")-360 : coordToLink(outAngle,"angle")
             out_startAngle = Math.min(out_startAngle, out_temp)
             out_endAngle = Math.max(out_endAngle, out_temp)
         }
@@ -479,7 +464,6 @@ function updateTrace() {
         nodeB.allPoints.push(newB)
         nodeAB.allPoints.push(newAB)
     }
-
 }
 
 function playAnimation() {
@@ -516,24 +500,73 @@ function playAnimation() {
 
     reverseIcon.text(animateDir > 0 ? "⟲" : "⟳")
 
-    newAngle = getNetAngle(linkToCoord(newAngle, "angle"), false)
+    newAngle = linkToCoord(newAngle, "angle")
     doActuate(newAngle)
 
 }
 
+function cycleCognates() {
+    const nodeA = getNode("A")
+    const nodeB = getNode("B")
+    const nodeC = getNode("C")
+    const nodeD = getNode("D")
+    const nodeE = getNode("BC")
+    
+    // Get new D node
+    const nodeD0 = cognateData.find(g => g.id === "D0")
+    nodeD0.x = nodeA.x
+    nodeD0.y = nodeA.y
 
-function toggleDarkMode(){
-    const dMode = localStorage.getItem("darkMode") === "true" ? true : false
-    darkMode = dMode
-    bgColor = darkMode ? darkColor : lightColor
-    fgColor = darkMode ? lightColor : darkColor
-    whtnColor = darkMode ? 0.25 : 0
-    background.attr("fill", bgColor)
-    darkModeIconTop.attr("fill", bgColor)
-    darkModeIconBottom.attr("fill", fgColor)
-    nodeDrag.attr("fill", darkMode ? "white" : "black")
-    document.body.style.backgroundColor = bgColor
-    document.getElementById("pageLab").style.color = fgColor
-    document.getElementById("topView").style.border = `1px solid ${fgColor}`
-    updateLinkGeometry()
+    // Get new A node
+    const distBC = getDistBtwNodes(getNode("B"), getNode("C"))
+    const distBE = getDistBtwNodes(getNode("B"), getNode("BC"))
+    const distAD = getDistBtwNodes(getNode("A"), getNode("D"))
+
+    const distA0D0 = distBE/distBC * distAD
+    const angDAA0 = getAngleBtwNodes(getNode("BC"), getNode("C"), getNode("B"))
+    const angAD = getNodesAngle(nodeA,nodeD,true)
+    const nodeA0 = cognateData.find(g => g.id === "A0")
+    placeNodePolar(nodeA0, nodeA, (angDAA0+angAD), distA0D0, true)
+
+    // Get new C node
+    const angD0C0 = getNodesAngle(getNode("B"), getNode("BC"), false)
+    const distD0C0 = getDistBtwNodes(getNode("B"), getNode("BC"))
+    const nodeC0 = cognateData.find(g => g.id === "C0")
+    placeNodePolar(nodeC0, nodeA, angD0C0, distD0C0, true)
+
+    // Get new B node
+    const angEC0B0 = getAngleBtwNodes(getNode("BC"), getNode("C"), getNode("B"))
+    const distC0E = getDistBtwNodes(nodeC0, getNode("BC"))
+    const distC0B0 = distBE/distBC * distC0E
+    const angC0E0 = getNodesAngle(nodeC0, getNode("BC"), false)
+    const nodeB0 = cognateData.find(g => g.id === "B0")
+    placeNodePolar(nodeB0, nodeC0, angEC0B0 + angC0E0, distC0B0, true)
+
+    const nodeE0 = cognateData.find(g => g.id === "E0")
+    nodeE0.x = nodeE.x
+    nodeE0.y = nodeE.y
+
+    nodeA.x = nodeA0.x
+    nodeA.y = nodeA0.y
+    nodeB.x = nodeB0.x
+    nodeB.y = nodeB0.y
+    nodeC.x = nodeC0.x
+    nodeC.y = nodeC0.y
+    nodeD.x = nodeD0.x
+    nodeD.y = nodeD0.y
+
+    updateTNodes("BC")
+    setLinkNodes()
+}
+
+function defaultLinkage() {
+    for (i = 0; i < nodesData.length; i++) {
+        nodesData[i].x = defaultNodes[i].x
+        nodesData[i].y = defaultNodes[i].y
+    }
+    saveNodes()
+    updateTNodes()
+    setLinkNodes()
+    updateTrace()
+    updateLinkGeometry();
 }

@@ -214,6 +214,7 @@ cognateButton
         cycleCognates()
         updateTrace()
         updateLinkGeometry()
+        saveNodes()
     })
 const cognateToolTip = cognateButton
         .append("title")
@@ -230,12 +231,31 @@ cognateIcon
     .style("pointer-events", "none")
     .text("♺") //♻
 
+resetLinkageButton
+    .attr("x", buttonMargin*6 + buttonHeight*3+100 + 70)
+    .attr("y", windowHeight-buttonMargin-buttonHeight)
+    .attr("width", buttonHeight)
+    .attr("height", buttonHeight)
+    .attr("rx", 5)
+    .attr("ry", 5)
+    .attr("fill", "lightgray")
+    .attr("fill-opacity", 0.75)
+    .attr("stroke", "black")
+    .attr("stroke-width", 1)
+    .attr("stroke-opacity", 0.75)
+    .on("click", function() {
+        defaultLinkage()
+    })
+const resetToolTip = resetLinkageButton
+    .append("title")
+    .text("Reset to Default Linkage")
+
+
 function startAnimationLoop() {
     playIcon.text("⏸")
     animationTimer = d3.timer(() => {
         playAnimation();
-    }
-);
+    });
 }
 function stopAnimationLoop() {
     if (animationTimer) {
