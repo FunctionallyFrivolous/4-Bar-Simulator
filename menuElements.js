@@ -262,5 +262,6 @@ function stopAnimationLoop() {
         animationTimer.stop();
         animationTimer = null;
     }
+    saveNodes()
     playIcon.text("▶")
 }

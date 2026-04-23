@@ -168,7 +168,7 @@ const nodeDrag = nodeDragGroup.selectAll("cirlce")
             traceSteps = traceStepsCoarse
         })
         .on("drag", function(event, d) {
-            if (d.id === "A") return
+            // if (d.id === "A") return
             // if (d.id === "D") {
             //     d.x = Math.max(event.x, getNode("A").x);
             // }

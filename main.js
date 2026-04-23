@@ -27,21 +27,14 @@
                 // If more are desired, dont use localStorage
         // Only thing that really matters is node positions (everything else is more or less a show/hide which can just be untoggled)
             // Should also be able to "undo" a reset to default linkage or cognate cycle(?)
-            // Do NOT need to undo actuation steps (animation/drag input)
-        // Approach:
-            // After every node drag or manual input change, save previous node poitions
-                // E.g. on "start" of drag, save details
-                    // Save all "undo-able" details? Or just for the thing that changed
     // Button Icons:
         // Open/Crossed: generic linkage in current config, with opposite config ghost
         // Crossover: generic linkage at crossover point. Arrows/X indicating if crossover is allowed?
-    // localStorage?
-        // First localStorage application: remember previous darkMode setting!!!
+    // localStorage
         // Next:
-            // Linkage? Save the node positions to localStorage. Apply save positions on loading
-                // First, add a button to revert to default linkage? (since refresh will no longer do that)
             // Show/hide status of ternary nodes
             // Show/hide status of fixed link
+            // Show/hide status of traces?
     // Synthesis Methods
         // Cognates - DONE!
 
