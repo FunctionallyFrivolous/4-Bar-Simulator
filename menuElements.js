@@ -1,7 +1,7 @@
 const buttonHeight = 30;
 const buttonMargin = 5
 
-toggleConfigButton
+openCrossedButton
     .attr("x", buttonMargin*3 + buttonHeight*2)
     .attr("y", windowHeight-35)
     .attr("width", 100)
@@ -16,7 +16,11 @@ toggleConfigButton
     .on("click", function() {
         toggleOpenCrossed()
     })
-toggleConfigIcon
+const openCrossedToolTip = openCrossedButton
+    .append("title")
+    .text("Toggle Open / Crossed")
+
+openCrossedIcon
     .attr("x", buttonMargin*3 + buttonHeight*2+100/2)
     .attr("y", windowHeight-+buttonHeight/2-buttonMargin)
     .attr("font-size", "8pt")
@@ -27,7 +31,7 @@ toggleConfigIcon
     .style("pointer-events", "none")
     .text("Open ⇋ Crossed")
 
-toggleCrossoverButton
+crossoverButton
     .attr("x", buttonMargin*4 + buttonHeight*2+100)
     .attr("y", windowHeight-35)
     .attr("width", 70)
@@ -44,11 +48,14 @@ toggleCrossoverButton
         allowCrossover = !allowCrossover
         updateTrace()
         updateLinkGeometry()
-        // toggleCrossoverButton
-        //     .append("title")
-        //     .text(allowCrossover ? "Disabel Crossover" : "Enable Crossover")
+        crossoverToolTip
+            .text(allowCrossover ? "Disabel Crossover" : "Enable Crossover")
     })
-toggleCrossoverIcon
+const crossoverToolTip = crossoverButton
+    .append("title")
+    .text(allowCrossover ? "Disabel Crossover" : "Enable Crossover")
+
+crossoverIcon
     .attr("x", buttonMargin*4 + buttonHeight*2+100 + 70/2)
     .attr("y", windowHeight-+buttonHeight/2-buttonMargin)
     .attr("font-size", "8pt")
@@ -76,7 +83,12 @@ darkModeButton
         // darkMode = !darkMode
         localStorage.setItem("darkMode", `${!darkMode}`)
         toggleDarkMode()
+        darkModeToolTip
+            .text(darkMode ? "Switch to Light Mode" : "Switch to Dark Mode")
     })
+const darkModeToolTip = darkModeButton
+    .append("title")
+    .text(darkMode ? "Switch to Light Mode" : "Switch to Dark Mode")
 
 function drawDarkModeIcons(){
 
@@ -140,6 +152,9 @@ playButton
             stopAnimationLoop();
         }
     })
+const playToolTip = playButton
+        .append("title")
+        .text("Animate Actuation")
 
 playIcon
     .attr("x", buttonHeight/2+buttonMargin)
@@ -168,6 +183,9 @@ reverseButton
         animateDir = animateDir * -1
         reverseIcon.text(animateDir > 0 ? "⟲" : "⟳")
     })
+const reverseToolTip = reverseButton
+    .append("title")
+    .text("Reverse Actuation Direction")
 
 reverseIcon
     .attr("x", buttonHeight/2 + buttonMargin*2 + buttonHeight)
@@ -197,6 +215,10 @@ cognateButton
         updateTrace()
         updateLinkGeometry()
     })
+const cognateToolTip = cognateButton
+        .append("title")
+        .text("Cycle Cognates")
+
 cognateIcon
     .attr("x", buttonMargin*5 + buttonHeight*2+100+70 + buttonHeight/2)
     .attr("y", windowHeight-buttonHeight/2-buttonMargin)

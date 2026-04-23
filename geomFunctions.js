@@ -32,13 +32,6 @@ function doActuate(deg) {
         } 
     }
 
-    // document.getElementById("debugOutputs").innerHTML = `
-    //     ${checkAngle.toFixed(1)}, 
-    //     ${(inputLimits.min + crossoverDeadband).toFixed(1)},
-    //     ${recentCrossover},
-    //     ${recentLimit},
-    //     `
-    
     inputAngle = getNetAngle(coordToLink(inAngle, "angle"))
 
     const outAngle = calcOutputAngle(inputAngle)
@@ -70,8 +63,6 @@ function calcOutputAngle(inDeg, open=linkageOpen) {
     outAngle = getNetAngle(radToDeg(outAngle))
 
     outAngle = getNetAngle(linkToCoord(outAngle, "angle"))
-
-    // document.getElementById("debugOutputs").innerHTML = `${getNetAngle(coordToLink(outAngle,"angle")).toFixed(1)}`
 
     return outAngle;
 }
@@ -189,12 +180,6 @@ function updateOutputLimits() {
         B_max = B_swap;
     }
 
-    // document.getElementById("debugOutputs").innerHTML = `
-    //     x_ang: ${crossAngle.toFixed(1)} \n<br>
-    //     DA: ${getNodesAngle(getNode("D"),getNode("A")).toFixed(1)} \n<br>
-    //     x_lnk: ${getNetAngle(coordToLink(crossAngle,"angle"),false).toFixed(1)}
-    // `
-
     outputLimits.min = B_min;
     outputLimits.max = B_max;
 
@@ -206,72 +191,30 @@ function updateLinkageConfig() {
     updateOutputLimits()
 }
 
-// Current issue: 
-    // The issue arises when BDC straddles the horizontal
-        // DB above and DC below - OR - DB below and C above
-        // But also only when DA is not horiz
-    // Old version does not have this issue, but also has the luxury of not accounting for angle of DA
-
 function updateOpenCrossed() {
-    const AB_th = coordToLink(getNodesAngle(getNode("A"), getNode("B")), "angle")
-    // const DA_th = getNodesAngle(getNode("D"), getNode("A"), true)
-    let DB_th = coordToLink(getNodesAngle(getNode("D"), getNode("B"), true), "angle")
-    let DC_th = coordToLink(getNodesAngle(getNode("D"), getNode("C"), true), "angle")
+    const AB_th = getNetAngle(coordToLink(getNodesAngle(getNode("A"), getNode("B")), "angle"))
 
-    const DB_raw = DB_th
-    const DC_raw = DC_th
+    let DB_th = getNetAngle(coordToLink(getNodesAngle(getNode("D"), getNode("B"), true), "angle"))
+    const BD_th = getNetAngle(coordToLink(getNodesAngle(getNode("B"), getNode("D"), true), "angle"))
 
-    if (outputClass !== "0-Rocker" && outputClass !== "Crank") {
-        if (AB_th < 0) DB_th = DB_th + 360
-        if (DC_th < 0) DC_th = DC_th + 360
-        if (DC_th < getNetAngle(DB_th,false)) linkageOpen = true
-        else linkageOpen = false
-    } 
-    else if (outputClass === "Crank" || outputClass === "0-Rocker") {
-        if (AB_th >= 0 && DC_th >= 0) {
-            if (DC_th < getNetAngle(DB_th,false)) linkageOpen = true
-            else linkageOpen = false
-        } else if (AB_th >= 0 && DC_th < 0 && AB_th < DB_th){
-            DB_th = coordToLink(getNodesAngle(getNode("B"),getNode("D"), true), "angle")
-            if (DC_th > DB_th) linkageOpen = true
-            else linkageOpen = false
-        // } else if (AB_th >= 0 && DC_th < 0 && AB_th >= DB_th){
-        //     // DB_th = coordToLink(getNodesAngle(getNode("B"),getNode("D"), true), "angle")
-        //     if (DC_th > DB_th) linkageOpen = true
-        //     else linkageOpen = false
-        } else if (AB_th < 0 && DC_th < 0 && AB_th < DB_th){
-            if (DC_th < getNetAngle(DB_th,false)) linkageOpen = false
-            else linkageOpen = true
-        } 
-        else if (AB_th < 0 && DC_th < 0 && AB_th >= DB_th){
-            if (getNetAngle(DC_th,false) > getNetAngle(DB_th,false)) linkageOpen = false
-            else linkageOpen = true
-        }
-        else if (AB_th < 0 && DC_th >= 0 && AB_th < DB_th){
-            DB_th = coordToLink(getNodesAngle(getNode("B"),getNode("D"), true), "angle")
-            if (DC_th < DB_th) linkageOpen = false
-            else linkageOpen = true
-        }
-        else if (AB_th < 0 && DC_th >= 0 && AB_th >= DB_th){
-            DB_th = coordToLink(getNodesAngle(getNode("B"),getNode("D"), true), "angle")
-            if (DC_th < getNetAngle(DB_th,false)) linkageOpen = false
-            else linkageOpen = true
-        }         
-    }
+    let DC_th = getNetAngle(coordToLink(getNodesAngle(getNode("D"), getNode("C"), true), "angle"))
+    const BC_th = getNetAngle(coordToLink(getNodesAngle(getNode("B"), getNode("C"), true), "angle"))
+    
+    if (AB_th < DB_th && DC_th < DB_th) {
+        linkageOpen = true
+    } else if (BC_th < DC_th && BC_th > BD_th) {
+        linkageOpen = true
+    } else linkageOpen = false
 
     // document.getElementById("debugOutputs").innerHTML = `
     //     AB: ${AB_th.toFixed(1)}, 
     //     DC: ${DC_th.toFixed(1)}, 
-    //     DB: ${DB_th.toFixed(1)}
-    //     \n<br>
-    //     DC_raw: ${DC_raw.toFixed(1)}, 
-    //     DB_raw: ${DB_raw.toFixed(1)}
-    //     \n<br>
-    //     DC: ${getNetAngle(DC_th,false).toFixed(1)}, 
-    //     DB: ${getNetAngle(DB_th,false).toFixed(1)}
-    //     `
+    //     DB: ${DB_th.toFixed(1)}, 
+    //     BC: ${BC_th.toFixed(1)}, 
+    //     BD: ${BD_th.toFixed(1)}, 
+    // `
 
-    toggleConfigIcon.text(linkageOpen ? "Open ⇋ Crossed" : "Crossed ⇋ Open")
+    openCrossedIcon.text(linkageOpen ? "Open ⇋ Crossed" : "Crossed ⇋ Open")
 } 
 function toggleOpenCrossed() {
     const DB_th = getNodesAngle(getNode("D"), getNode("B"))
@@ -329,11 +272,11 @@ function updateLinkGeometry() {
         .attr("points", d => d.allPoints.map(j => `${j.x},${j.y}`).join(" "))
         .style("display", d => !d.trace ? "none" : d.id.length === 2 && !linksData.find(l => l.id === d.id).ternary ? "none" : "block")
 
-    toggleCrossoverIcon
+    crossoverIcon
         .attr("opacity", inputClass === "Crank" ? 0.25 : 1)
         // .attr("font-weight", allowCrossover ? "bold" : "none")
         .attr("text-decoration", allowCrossover ? "none" : "line-through")
-    toggleCrossoverButton
+    crossoverButton
         .attr("stroke-opacity", inputClass === "Crank" ? 0.25 : 0.75)
         .attr("fill-opacity", inputClass === "Crank" ? 0.25 : 0.75)
 
@@ -353,7 +296,7 @@ function updateLinkGeometry() {
         .attr("fill", d3.interpolateRgb(getLinkByType("output").color,"white")(whtnColor*2))
         .text(`${outputClass} (${outputLimits.min.toFixed(1)}°, ${outputLimits.max.toFixed(1)}°)`)
 
-    // updateToolTips()
+    updateToolTips()
 
     // DBLink
     //     .attr("x1", getNode("D").x)
@@ -361,34 +304,13 @@ function updateLinkGeometry() {
     //     .attr("x2", getNode("B").x)
     //     .attr("y2", getNode("B").y)
 
-    // document.getElementById("debugOutputs").innerHTML = getNetAngle(getLinkAngle(getLinkByType("input").id), inputClass === "0-Rocker" ? true : false) //A_angle.toFixed(1)
-    // `${linkageOpen ? "Open" : "Crossed"}`
 }
 
 function updateToolTips() {
-    toggleConfigButton
-        .append("title")
-        .text("Toggle Open / Crossed")
-    linkLines
-        .append("title")
+    linkLinesToolTip
         .text(d => `${d.type} link (L = ${d.len.toFixed(1)})`)
-    nodeDrag
-        .append("title")
+    nodeDragToolTip
         .text(d => `(${d.x.toFixed(1)}, ${d.y.toFixed(1)})`)
-    // toggleCrossoverButton
-    //     .append("title")
-    //     .text(allowCrossover ? "Disabel Crossover" : "Enable Crossover")
-    playButton
-        .append("title")
-        .text("Animate Actuation")
-    reverseButton
-        .append("title")
-        .text("Reverse Actuation Direction")
-    cognateButton
-        .append("title")
-        .text("Cycle Cognates")
-    
-
 }
 
 function getNetAngle(deg, neg=false) {
@@ -398,32 +320,6 @@ function getNetAngle(deg, neg=false) {
 
     return newDeg
 }
-
-// function cyclecognate() {
-//     const distAB = getDistBtwNodes(getNode("A"),getNode("B"))
-//     const distBC = getDistBtwNodes(getNode("B"),getNode("C"))
-//     const distCD = getDistBtwNodes(getNode("C"),getNode("D"))
-//     const distDA = getDistBtwNodes(getNode("D"),getNode("A"))
-//     const distBE = getDistBtwNodes(getNode("B"),getNode("BC"))
-//     const distCE = getDistBtwNodes(getNode("C"),getNode("BC"))
-
-//     const angCBE = getAngleBtwNodes(getNode("BC"), getNode("C"), getNode("B"))
-    
-
-//     const newCE = distAB
-//     const newCD = distBE
-
-//     const newBC = distBE/distBC * newCE // New coupler link length
-//     const newBE = distCE/distBC * newCE // New coupler tDist
-
-//     const newDA = distDA/distBC * distBE // New fixed link length
-//     // const rotFixed = 
-
-//     // const newA_Coord = {x: rotateNode(), y: }
-//     const newD_Coord = {x: getNode("A").x, y: getNode("A").y}
-
-// }
-
 
 function updateTrace() {
     updateInputLimits()
@@ -459,14 +355,7 @@ function updateTrace() {
     let out_startAngle = outputLimits.max
     let out_endAngle = outputLimits.min
 
-    // document.getElementById("debugOutputs").innerHTML = `
-    //     ${outputLimits.min.toFixed(1)} \n<br>
-    //     ${outputLimits.max.toFixed(1)} \n<br>
-    //     ${out_startAngle.toFixed(1)} \n<br>
-    //     ${out_endAngle.toFixed(1)} \n<br>
-    // `
-
-    let dbgtxt = ``
+    // let dbgtxt = ``
 
     for (i = 0; i < traceSteps+1; i++) {
 
@@ -576,14 +465,6 @@ function updateTrace() {
         nodeC.points.push(newC)
         nodeDC.points.push(newDC)
     }
-    // document.getElementById("debugOutputs").innerHTML = `
-    //     ${outputLimits.min.toFixed(1)} \n<br>
-    //     ${outputLimits.max.toFixed(1)} \n<br>
-    //     ${out_startAngle.toFixed(1)} \n<br>
-    //     ${out_endAngle.toFixed(1)} \n<br>
-    //     \n<br>
-    //     ${baseAngle.toFixed(1)} \n<br>
-    // `
 
     in_angleStep = in_angleRange/(traceSteps/traceReduction)
 
@@ -598,8 +479,6 @@ function updateTrace() {
         nodeB.allPoints.push(newB)
         nodeAB.allPoints.push(newAB)
     }
-
-    // document.getElementById("debugOutputs").innerHTML = dbgtxt
 
 }
 
@@ -618,7 +497,6 @@ function playAnimation() {
         loop = true
         stepSize = stepSize / 2
     }
-    // const loop = inputClass === "Crank" ? true : false
 
     let newAngle = startAngle + stepSize * animateDir
     newAngle = inputClass === "0-Rocker" && newAngle > 180 ? newAngle - 360 : newAngle

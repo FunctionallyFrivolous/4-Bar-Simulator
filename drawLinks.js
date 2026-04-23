@@ -115,6 +115,9 @@ const linkLines = linkLineGroup.selectAll("polygon")
             updateLinkGeometry();
         })
     )
+const linkLinesToolTip = linkLines
+    .append("title")
+    .text(d => `${d.type} link (L = ${d.len.toFixed(1)})`)
 
 const groundLine = groundLineGroup.selectAll("polyline")
     .data(linksData)
@@ -185,6 +188,9 @@ const nodeDrag = nodeDragGroup.selectAll("cirlce")
             updateLinkGeometry();
         })
     )
+const nodeDragToolTip = nodeDrag
+    .append("title")
+    .text(d => `(${d.x.toFixed(1)}, ${d.y.toFixed(1)})`)
 
 const traceDots = traceDotGroup.selectAll("circle")
     .data(nodesData)
