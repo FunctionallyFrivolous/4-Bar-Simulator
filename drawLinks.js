@@ -39,6 +39,7 @@ const linkLines = linkLineGroup.selectAll("polygon")
     .attr("stroke-width", 25)
     .call(d3.drag()
         .on("start", function(event, d) {
+            saveUndoNodes()
             tempX = event.x
             tempY = event.y
             const pivotNode = getLinkNodes(d.id)[0]
@@ -164,6 +165,7 @@ const nodeDrag = nodeDragGroup.selectAll("cirlce")
     .attr("opacity", 0)
     .call(d3.drag()
         .on("start", function(event, d) {
+            saveUndoNodes()
             nodeDrag.attr("opacity", n => n.id === d.id ? 0.1 : 0)
             traceSteps = traceStepsCoarse
         })

@@ -250,6 +250,40 @@ const resetToolTip = resetLinkageButton
     .append("title")
     .text("Reset to Default Linkage")
 
+undoRedoButton
+    .attr("x", buttonMargin*7 + buttonHeight*4+100 + 70)
+    .attr("y", windowHeight-buttonMargin-buttonHeight)
+    .attr("width", buttonHeight)
+    .attr("height", buttonHeight)
+    .attr("rx", 5)
+    .attr("ry", 5)
+    .attr("fill", "lightgray")
+    .attr("fill-opacity", 0.75)
+    .attr("stroke", "black")
+    .attr("stroke-width", 1)
+    .attr("stroke-opacity", 0.75)
+    .on("click", function() {
+        undoRedo()
+        // setLinkNodes()
+        // updateLinkGeometry()
+        undoRedoToolTip.text(undoStatus ? "Undo" : "Redo")
+        undoRedoIcon.text(undoStatus ? "↶" : "↷")
+    })
+const undoRedoToolTip = undoRedoButton
+    .append("title")
+    .text("Undo")
+
+undoRedoIcon
+    .attr("x", buttonMargin*7 + buttonHeight*4+100+70 + buttonHeight/2)
+    .attr("y", windowHeight-buttonHeight/2-buttonMargin+2)
+    .attr("font-size", "20px")
+    .attr("font-family", "sans-serif")
+    .attr("font-weight", "bold")
+    .attr("text-anchor", "middle")
+    .attr("alignment-baseline", "middle")
+    .style("pointer-events", "none")
+    .text("↶")
+
 
 function startAnimationLoop() {
     playIcon.text("⏸")

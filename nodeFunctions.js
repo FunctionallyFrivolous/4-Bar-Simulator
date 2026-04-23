@@ -103,7 +103,6 @@ function getDistBtwNodes(startNode, endNode) {
 }
 
 function saveNodes() {
-
     for (i = 0; i < nodesData.length; i++) {
         const nodeName = `node${nodesData[i].id}`
 
@@ -113,7 +112,6 @@ function saveNodes() {
 }
 
 function loadNodes() {
-
     for (i = 0; i < nodesData.length; i++) {
         const nodeName = `node${nodesData[i].id}`
 
@@ -122,4 +120,52 @@ function loadNodes() {
             nodesData[i].y = Number(localStorage.getItem(`${nodeName}_y`))
         }
     }
+}
+
+function saveUndoNodes() {
+    for (i = 0; i < nodesData.length; i++) {
+        const nodeName = `undoNode${nodesData[i].id}`
+
+        localStorage.setItem(`${nodeName}_x`, `${nodesData[i].x.toFixed(3)}`)
+        localStorage.setItem(`${nodeName}_y`, `${nodesData[i].y.toFixed(3)}`)
+    }
+    undoStatus = true
+    undoRedoToolTip.text(undoStatus ? "Undo" : "Redo")
+    undoRedoIcon.text(undoStatus ? "↶" : "↷")
+}
+
+function undoRedo() {
+    
+    if (undoStatus) {
+        for (i = 0; i < nodesData.length; i++) {
+            const nodeName = `tempNode${nodesData[i].id}`
+
+            localStorage.setItem(`${nodeName}_x`, `${nodesData[i].x.toFixed(3)}`)
+            localStorage.setItem(`${nodeName}_y`, `${nodesData[i].y.toFixed(3)}`)
+        }
+        for (i = 0; i < nodesData.length; i++) {
+            const nodeName = `undoNode${nodesData[i].id}`
+
+            if (localStorage.getItem(`${nodeName}_x`) !== null) {
+                nodesData[i].x = Number(localStorage.getItem(`${nodeName}_x`))
+                nodesData[i].y = Number(localStorage.getItem(`${nodeName}_y`))
+            }
+        }
+    } else {
+        for (i = 0; i < nodesData.length; i++) {
+            const nodeName = `tempNode${nodesData[i].id}`
+
+            if (localStorage.getItem(`${nodeName}_x`) !== null) {
+                nodesData[i].x = Number(localStorage.getItem(`${nodeName}_x`))
+                nodesData[i].y = Number(localStorage.getItem(`${nodeName}_y`))
+            }
+        }
+    }
+
+    saveNodes()
+    updateTNodes()
+    setLinkNodes()
+    updateTrace()
+    updateLinkGeometry();
+    undoStatus = !undoStatus
 }

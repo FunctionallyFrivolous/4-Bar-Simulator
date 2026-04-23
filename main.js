@@ -13,6 +13,8 @@
             // Animation (show/hide animation controlls)
                 // Separate SVG window?
             // Save/Share options
+    // Fit view button/function
+        //
     // Save/Share (URL)
         // Save:
             // Node positions
@@ -20,13 +22,8 @@
             // Fixed node show/hide status?
             // Trace show/hide statuses
     // Undo/Redo?
-        // Save in localStorage?
-            // Would be nice, since this will persist across page refresh
-            // Local storage can only do strings and only one item at a time (?)
-                // Probably only reasonable for a single undo
-                // If more are desired, dont use localStorage
-        // Only thing that really matters is node positions (everything else is more or less a show/hide which can just be untoggled)
-            // Should also be able to "undo" a reset to default linkage or cognate cycle(?)
+        // Initial implementation complete!
+            // Single level via localStorage, plus redo
     // Button Icons:
         // Open/Crossed: generic linkage in current config, with opposite config ghost
         // Crossover: generic linkage at crossover point. Arrows/X indicating if crossover is allowed?
@@ -73,6 +70,8 @@ let whtnColor = 0
 document.body.style.backgroundColor = bgColor
 document.getElementById("pageLab").style.color = fgColor
 document.getElementById("topView").style.border = `1px solid ${fgColor}`
+
+let undoStatus = true;
 
 const traceStepsCoarse = 1000
 const traceStepsFine = 4000
@@ -148,6 +147,8 @@ const cognateButton = overlayGroup.append("rect")
 const cognateIcon = overlayGroup.append("text")
 const resetLinkageButton = overlayGroup.append("rect")
 const resetLinkageIcon = overlayGroup.append("text")
+const undoRedoButton = overlayGroup.append("rect")
+const undoRedoIcon = overlayGroup.append("text")
 
 const inputLinkVal = overlayGroup.append("text")
 const inputLinkProps = overlayGroup.append("text")
