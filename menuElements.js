@@ -215,8 +215,11 @@ cognateButton
     .attr("stroke-opacity", 0.75)
     .on("click", function() {
         cycleCognates()
-        setLinkNodes()
-        // updateLinkGeometry()
+        updateLinkGeometry()
+        // setLinkNodes()
+        // updateOpenCrossed()
+        // updateInputLimits()
+        // updateOutputLimits()
         updateTrace()
         updateLinkGeometry()
         saveNodes()

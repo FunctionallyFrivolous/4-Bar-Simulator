@@ -27,6 +27,7 @@
             // Show/hide status of ternary nodes
             // Show/hide status of fixed link
             // Show/hide status of traces?
+            // Crossover status
     // Synthesis Methods
         // Cognates - DONE!
 
