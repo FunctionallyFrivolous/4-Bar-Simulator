@@ -31,7 +31,7 @@ openCrossedIcon
     .attr("text-anchor", "middle")
     .attr("alignment-baseline", "middle")
     .style("pointer-events", "none")
-    .text("Open ⇋ Crossed")
+    // .text("Open ⇋ Crossed")
 
 crossoverButton
     .attr("x", buttonMargin*4 + buttonHeight*2+100)
