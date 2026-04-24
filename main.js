@@ -125,14 +125,22 @@ const zoom = d3.zoom()
 svg.call(zoom)
     .on("dblclick.zoom", null);
 
-if (!isNaN(localStorage.getItem("trans_x"))) {
-    svg.transition().duration(0).call(zoom.transform, d3.zoomIdentity
-        .translate(Number(localStorage.getItem("trans_x")), Number(localStorage.getItem("trans_y")))
-        .scale(Number(localStorage.getItem("scale")))
-        // .translate(-midCoord_x, -midCoord_y+20)
-    );
-    viewTransform()
-}
+let trans_x = localStorage.getItem("trans_x")
+let trans_y = localStorage.getItem("trans_y")
+let scale = localStorage.getItem("scale")
+
+trans_x = trans_x === null ? currentZoomTransform.x : Number(trans_x)
+trans_y = trans_y === null ? currentZoomTransform.y : Number(trans_y)
+scale = scale === null ? currentZoomTransform.k : Number(scale)
+
+svg.transition().duration(0).call(zoom.transform, d3.zoomIdentity
+    .translate(trans_x, trans_y)
+    .scale(scale)
+);
+viewTransform()
+
+
+
 
 // Initialize and order svg groups and elements
 const linkLineGroup = zoomGroup.append("g")
