@@ -25,7 +25,7 @@ function fitView(dur=0) {
     const midCoord_x = (minCoord_x + maxCoord_x)/2
     const midCoord_y = (minCoord_y + maxCoord_y)/2
 
-    const centerScale = Math.min(windowWidth/(maxCoord_x-minCoord_x)*0.85,windowHeight/(maxCoord_y-minCoord_y)*0.85)
+    const centerScale = Math.min(windowWidth/(maxCoord_x-minCoord_x)*0.85,windowHeight/(maxCoord_y-minCoord_y)*0.7)
 
     svg.transition().duration(dur).call(zoom.transform, d3.zoomIdentity
         .translate(windowWidth/2, windowHeight/2)
