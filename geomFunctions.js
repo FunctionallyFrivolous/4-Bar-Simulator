@@ -269,18 +269,25 @@ function updateLinkGeometry() {
         .attr("points", d => d.allPoints.map(j => `${j.x},${j.y}`).join(" "))
         .style("display", d => !d.trace ? "none" : d.id.length === 2 && !linksData.find(l => l.id === d.id).ternary ? "none" : "block")
 
+    // updateLinkageConfig()
+    updateOpenCrossed()
+    updateInputLimits()
+    updateOutputLimits()
+
     crossoverIcon
         .attr("opacity", inputClass === "Crank" ? 0.25 : 1)
-        // .attr("font-weight", allowCrossover ? "bold" : "none")
         .attr("text-decoration", allowCrossover ? "none" : "line-through")
     crossoverButton
         .attr("stroke-opacity", inputClass === "Crank" ? 0.25 : 0.75)
         .attr("fill-opacity", inputClass === "Crank" ? 0.25 : 0.75)
 
-    // updateLinkageConfig()
-    updateOpenCrossed()
-    updateInputLimits()
-    updateOutputLimits()
+    cognateIcon
+        .attr("opacity", getLinkByType("coupler").ternary ? 1 : 0.25)
+    cognateButton
+        .attr("stroke-opacity", getLinkByType("coupler").ternary ? 0.75 : 0.25)
+        .attr("fill-opacity", getLinkByType("coupler").ternary ? 0.75 : 0.25)
+        .style("pointer-events", getLinkByType("coupler").ternary ? "auto" : "none")
+
 
     inputLinkVal
         .attr("fill", d3.interpolateRgb(getLinkByType("input").color,"white")(whtnColor*2))
@@ -591,6 +598,7 @@ function defaultLinkage() {
     saveNodes()
     updateTNodes()
     setLinkNodes()
+    updateOpenCrossed()
     updateTrace()
     updateLinkGeometry();
 }

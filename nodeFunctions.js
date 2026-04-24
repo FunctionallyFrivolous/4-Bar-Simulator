@@ -165,6 +165,7 @@ function undoRedo() {
     saveNodes()
     updateTNodes()
     setLinkNodes()
+    updateOpenCrossed()
     updateTrace()
     updateLinkGeometry();
     undoStatus = !undoStatus

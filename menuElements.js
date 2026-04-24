@@ -14,7 +14,9 @@ openCrossedButton
     .attr("stroke-width", 1)
     .attr("stroke-opacity", 0.75)
     .on("click", function() {
+        saveUndoNodes()
         toggleOpenCrossed()
+        saveNodes()
     })
 const openCrossedToolTip = openCrossedButton
     .append("title")
@@ -39,10 +41,10 @@ crossoverButton
     .attr("rx", 5)
     .attr("ry", 5)
     .attr("fill", "lightgray")
-    .attr("fill-opacity", 0.25)
+    // .attr("fill-opacity", 0.25)
     .attr("stroke", "black")
     .attr("stroke-width", 1)
-    .attr("stroke-opacity", 0.25)
+    // .attr("stroke-opacity", 0.25)
     .on("click", function() {
         if (inputClass === "Crank") return
         allowCrossover = !allowCrossover
@@ -63,7 +65,7 @@ crossoverIcon
     .attr("font-weight", "bold")
     .attr("text-anchor", "middle")
     .attr("alignment-baseline", "middle")
-    .attr("opacity", 0.25)
+    // .attr("opacity", 0.25)
     .style("pointer-events", "none")
     .text("Crossover")
 
@@ -213,6 +215,7 @@ cognateButton
     .attr("stroke-opacity", 0.75)
     .on("click", function() {
         cycleCognates()
+        setLinkNodes()
         // updateLinkGeometry()
         updateTrace()
         updateLinkGeometry()
