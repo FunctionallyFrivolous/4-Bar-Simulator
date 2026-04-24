@@ -258,13 +258,11 @@ function nodeDoubleTap(event, d) {
     lastTapTime = now;
 }
 
-// setLinkNodes()
 loadNodes()
-// localStorage.clear()
-toggleDarkMode()
 calcOutputAngle()
-// updateOutputAngle()
 updateTNodes()
 setLinkNodes()
 updateTrace()
-updateLinkGeometry();
+toggleDarkMode()
+// fitView()
+updateLinkGeometry()

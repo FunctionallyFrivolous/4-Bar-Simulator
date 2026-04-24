@@ -303,7 +303,6 @@ function updateLinkGeometry() {
     //     .attr("y1", getNode("D").y)
     //     .attr("x2", getNode("B").x)
     //     .attr("y2", getNode("B").y)
-
 }
 
 function updateTrace() {
@@ -352,13 +351,13 @@ function updateTrace() {
             out_startAngle = Math.min(out_startAngle, out_temp)
             out_endAngle = Math.max(out_endAngle, out_temp)
 
-            if (out_temp < outputLimits.min || out_temp > outputLimits.max) {
-                document.getElementById("debugOutputs").innerHTML = `
-                    in: ${inAngle.toFixed(1)}
-                    out: ${outAngle.toFixed(1)}
-                    out_temp: ${out_temp.toFixed(1)}
-                `
-            }
+            // if (out_temp < outputLimits.min || out_temp > outputLimits.max) {
+            //     document.getElementById("debugOutputs").innerHTML = `
+            //         in: ${inAngle.toFixed(1)}
+            //         out: ${outAngle.toFixed(1)}
+            //         out_temp: ${out_temp.toFixed(1)}
+            //     `
+            // }
         }
 
         const newB = {x: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false)[0], y: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false)[1]}
@@ -386,9 +385,9 @@ function updateTrace() {
             // nodeB.allPoints.push(newB)
             // nodeAB.allPoints.push(newAB)
             if (linkageOpen || inputClass !== "Crank") {
-                nodeBC.allPoints.push(newBC)
                 nodeC.allPoints.push(newC)
                 nodeDC.allPoints.push(newDC)
+                nodeBC.allPoints.push(newBC)
             }
         }
         
@@ -464,6 +463,30 @@ function updateTrace() {
         nodeB.allPoints.push(newB)
         nodeAB.allPoints.push(newAB)
     }
+
+    minCoord_x = null
+    maxCoord_x = null
+    minCoord_y = null
+    maxCoord_y = null
+
+    for (i = 0; i < nodesData.length; i++) {
+        const thisNode = nodesData[i]
+        const thisLink = linksData.find(l => l.id === thisNode.id) 
+        if (!(thisNode.id.length === 2 && !thisLink.ternary)) {
+            for (p = 0; p < thisNode.allPoints.length; p++) {
+                minCoord_x = minCoord_x === null ? thisNode.allPoints[p].x : Math.min(minCoord_x, thisNode.allPoints[p].x)
+                maxCoord_x = maxCoord_x === null ? thisNode.allPoints[p].x : Math.max(maxCoord_x, thisNode.allPoints[p].x)
+                minCoord_y = minCoord_y === null ? thisNode.allPoints[p].y : Math.min(minCoord_y, thisNode.allPoints[p].y)
+                maxCoord_y = maxCoord_y === null ? thisNode.allPoints[p].y : Math.max(maxCoord_y, thisNode.allPoints[p].y)
+            }
+        }
+    }
+    // document.getElementById("debugOutputs").innerHTML = `
+    //     minX: ${minCoord_x.toFixed(1)}, 
+    //     maxX: ${maxCoord_x.toFixed(1)}, 
+    //     minY: ${minCoord_y.toFixed(1)}, 
+    //     maxY: ${maxCoord_y.toFixed(1)}, 
+    // `
 }
 
 function playAnimation() {
@@ -560,6 +583,7 @@ function cycleCognates() {
 }
 
 function defaultLinkage() {
+    saveUndoNodes()
     for (i = 0; i < nodesData.length; i++) {
         nodesData[i].x = defaultNodes[i].x
         nodesData[i].y = defaultNodes[i].y

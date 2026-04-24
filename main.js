@@ -13,17 +13,12 @@
             // Animation (show/hide animation controlls)
                 // Separate SVG window?
             // Save/Share options
-    // Fit view button/function
-        //
     // Save/Share (URL)
         // Save:
             // Node positions
             // Ternary node show/hide status
             // Fixed node show/hide status?
             // Trace show/hide statuses
-    // Undo/Redo?
-        // Initial implementation complete!
-            // Single level via localStorage, plus redo
     // Button Icons:
         // Open/Crossed: generic linkage in current config, with opposite config ghost
         // Crossover: generic linkage at crossover point. Arrows/X indicating if crossover is allowed?
@@ -35,11 +30,17 @@
     // Synthesis Methods
         // Cognates - DONE!
 
+// localStorage.clear()
+
 const windowWidth = 500;
 const windowHeight = 500;
 const windowCenter = {x: windowWidth/2, y: windowHeight/2}
 const originCoords = {x: 140, y: 300}
 const coordScale = 20;
+let minCoord_x = null;
+let maxCoord_x = null;
+let minCoord_y = null;
+let maxCoord_y = null;
 
 let tempX = 0;
 let tempY = 0;
@@ -108,6 +109,9 @@ function viewTransform() {
     // fitViewButton
     //     .attr("fill-opacity", 0)
     //     .attr("stroke-opacity", 0.25)
+    localStorage.setItem("trans_x", `${currentZoomTransform.x}`)
+    localStorage.setItem("trans_y", `${currentZoomTransform.y}`)
+    localStorage.setItem("scale", `${currentZoomTransform.k}`)
 }
 
 const zoom = d3.zoom()
@@ -119,6 +123,15 @@ const zoom = d3.zoom()
     });
 svg.call(zoom)
     .on("dblclick.zoom", null);
+
+if (!isNaN(localStorage.getItem("trans_x"))) {
+    svg.transition().duration(0).call(zoom.transform, d3.zoomIdentity
+        .translate(Number(localStorage.getItem("trans_x")), Number(localStorage.getItem("trans_y")))
+        .scale(Number(localStorage.getItem("scale")))
+        // .translate(-midCoord_x, -midCoord_y+20)
+    );
+    viewTransform()
+}
 
 // Initialize and order svg groups and elements
 const linkLineGroup = zoomGroup.append("g")
@@ -149,6 +162,8 @@ const resetLinkageButton = overlayGroup.append("rect")
 const resetLinkageIcon = overlayGroup.append("text")
 const undoRedoButton = overlayGroup.append("rect")
 const undoRedoIcon = overlayGroup.append("text")
+const fitViewButton = overlayGroup.append("rect")
+const fitViewIcon = overlayGroup.append("path")
 
 const inputLinkVal = overlayGroup.append("text")
 const inputLinkProps = overlayGroup.append("text")

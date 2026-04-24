@@ -74,7 +74,7 @@ function updateTNodes(snap=false, node="") {
     }
     // setLinkNodes()
     tNodeFollow()
-    updateLinkGeometry()
+    // updateLinkGeometry()
 }
 
 function getNodesAngle(startNode, endNode, neg=false) {

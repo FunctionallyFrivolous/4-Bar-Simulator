@@ -83,6 +83,7 @@ darkModeButton
         // darkMode = !darkMode
         localStorage.setItem("darkMode", `${!darkMode}`)
         toggleDarkMode()
+        updateLinkGeometry()
         darkModeToolTip
             .text(darkMode ? "Switch to Light Mode" : "Switch to Dark Mode")
     })
@@ -212,6 +213,7 @@ cognateButton
     .attr("stroke-opacity", 0.75)
     .on("click", function() {
         cycleCognates()
+        // updateLinkGeometry()
         updateTrace()
         updateLinkGeometry()
         saveNodes()
@@ -251,8 +253,8 @@ const resetToolTip = resetLinkageButton
     .text("Reset to Default Linkage")
 
 undoRedoButton
-    .attr("x", buttonMargin*7 + buttonHeight*4+100 + 70)
-    .attr("y", windowHeight-buttonMargin-buttonHeight)
+    .attr("x", windowWidth-buttonMargin-buttonHeight)
+    .attr("y", windowHeight-buttonMargin*3-buttonHeight*3)
     .attr("width", buttonHeight)
     .attr("height", buttonHeight)
     .attr("rx", 5)
@@ -264,8 +266,6 @@ undoRedoButton
     .attr("stroke-opacity", 0.75)
     .on("click", function() {
         undoRedo()
-        // setLinkNodes()
-        // updateLinkGeometry()
         undoRedoToolTip.text(undoStatus ? "Undo" : "Redo")
         undoRedoIcon.text(undoStatus ? "↶" : "↷")
     })
@@ -274,8 +274,8 @@ const undoRedoToolTip = undoRedoButton
     .text("Undo")
 
 undoRedoIcon
-    .attr("x", buttonMargin*7 + buttonHeight*4+100+70 + buttonHeight/2)
-    .attr("y", windowHeight-buttonHeight/2-buttonMargin+2)
+    .attr("x", windowWidth-buttonMargin-buttonHeight/2)
+    .attr("y", windowHeight-buttonMargin*3-buttonHeight*3 + buttonHeight/2 +2)
     .attr("font-size", "20px")
     .attr("font-family", "sans-serif")
     .attr("font-weight", "bold")
@@ -283,6 +283,45 @@ undoRedoIcon
     .attr("alignment-baseline", "middle")
     .style("pointer-events", "none")
     .text("↶")
+
+fitViewButton
+    .attr("x", windowWidth-buttonMargin-buttonHeight)
+    .attr("y", windowHeight-buttonMargin*2-buttonHeight*2)
+    .attr("width", buttonHeight)
+    .attr("height", buttonHeight)
+    .attr("rx", 5)
+    .attr("ry", 5)
+    .attr("fill", "lightgray")
+    .attr("fill-opacity", 0.75)
+    .attr("stroke", "black")
+    .attr("stroke-width", 1)
+    .attr("stroke-opacity", 0.75)
+    .on("click", function() {
+        fitView(500)
+    })
+const fitViewToolTip = fitViewButton
+    .append("title")
+    .text("Fit View")
+
+// fitViewIcon
+//     .attr("x", windowWidth-buttonMargin-buttonHeight/2)
+//     .attr("y", windowHeight-buttonHeight*2-buttonMargin*2 + buttonHeight/2 +2)
+//     .attr("font-size", "12px")
+//     .attr("font-family", "sans-serif")
+//     .attr("font-weight", "bold")
+//     .attr("text-anchor", "middle")
+//     .attr("alignment-baseline", "middle")
+//     .style("pointer-events", "none")
+//     .text("Fit")
+fitViewIcon
+    .attr("stroke", "black")
+    .attr("stroke-width", 1)
+    .attr("fill", "none")
+    .attr("d", drawFitIcon(
+        windowWidth-buttonMargin-buttonHeight/2,
+        windowHeight-buttonHeight*2-buttonMargin*2 + buttonHeight/2)
+    )
+    .style("pointer-events", "none")
 
 
 function startAnimationLoop() {
@@ -298,4 +337,28 @@ function stopAnimationLoop() {
     }
     saveNodes()
     playIcon.text("▶")
+}
+
+function drawFitIcon(x, y) {
+    const boxSize = 14;
+    const snapPath = `
+
+    M ${x-boxSize/2} ${y-boxSize/4}
+    L  ${x-boxSize/2} ${y-boxSize/2}
+    L  ${x-boxSize/4} ${y-boxSize/2}
+
+    M ${x+boxSize/2} ${y-boxSize/4}
+    L  ${x+boxSize/2} ${y-boxSize/2}
+    L  ${x+boxSize/4} ${y-boxSize/2}
+
+    M ${x-boxSize/2} ${y+boxSize/4}
+    L  ${x-boxSize/2} ${y+boxSize/2}
+    L  ${x-boxSize/4} ${y+boxSize/2}
+    
+    M ${x+boxSize/2} ${y+boxSize/4}
+    L  ${x+boxSize/2} ${y+boxSize/2}
+    L  ${x+boxSize/4} ${y+boxSize/2}
+
+    `
+    return snapPath
 }
