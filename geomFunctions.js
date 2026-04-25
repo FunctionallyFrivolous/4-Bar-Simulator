@@ -276,7 +276,8 @@ function updateLinkGeometry() {
 
     crossoverIcon
         .attr("opacity", inputClass === "Crank" ? 0.25 : 1)
-        .attr("text-decoration", allowCrossover ? "none" : "line-through")
+        // .attr("text-decoration", allowCrossover ? "none" : "line-through")
+        .text(allowCrossover ? "⇔" : "⇎")
     crossoverButton
         .attr("stroke-opacity", inputClass === "Crank" ? 0.25 : 0.75)
         .attr("fill-opacity", inputClass === "Crank" ? 0.25 : 0.75)
@@ -606,4 +607,36 @@ function defaultLinkage() {
     updateOpenCrossed()
     updateTrace()
     updateLinkGeometry();
+}
+
+function swapInputOutput() {
+    const nodeA = getNode("A")
+    const nodeB = getNode("B")
+    const nodeAB = getNode("AB")
+    const nodeD = getNode("D")
+    const nodeC = getNode("C")
+    const nodeDC = getNode("DC")
+
+    const oldA = structuredClone(nodeA)
+    const oldB = structuredClone(nodeB)
+    const oldAB = structuredClone(nodeAB)
+    const oldD = structuredClone(nodeD)
+    const oldC = structuredClone(nodeC)
+    const oldDC = structuredClone(nodeDC)
+
+    nodeA.x = oldD.x
+    nodeA.y = oldD.y
+    nodeB.x = oldC.x
+    nodeB.y = oldC.y
+    nodeAB.x = oldDC.x
+    nodeAB.y = oldDC.y
+    nodeD.x = oldA.x
+    nodeD.y = oldA.y
+    nodeC.x = oldB.x
+    nodeC.y = oldB.y
+    nodeDC.x = oldAB.x
+    nodeDC.y = oldAB.y
+
+    setLinkNodes()
+    updateTNodes()
 }

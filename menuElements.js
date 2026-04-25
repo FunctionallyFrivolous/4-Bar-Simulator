@@ -31,12 +31,12 @@ openCrossedIcon
     .attr("text-anchor", "middle")
     .attr("alignment-baseline", "middle")
     .style("pointer-events", "none")
-    // .text("Open ⇋ Crossed")
+    // .text("Open ⇋ Crossed") // ⇵ ⇅
 
 crossoverButton
     .attr("x", buttonMargin*4 + buttonHeight*2+100)
     .attr("y", windowHeight-35)
-    .attr("width", 70)
+    .attr("width", buttonHeight)
     .attr("height", buttonHeight)
     .attr("rx", 5)
     .attr("ry", 5)
@@ -51,23 +51,23 @@ crossoverButton
         updateTrace()
         updateLinkGeometry()
         crossoverToolTip
-            .text(allowCrossover ? "Disabel Crossover" : "Enable Crossover")
+            .text(allowCrossover ? "Crossover (Enabled)" : "Crossover (Disabled)")
     })
 const crossoverToolTip = crossoverButton
     .append("title")
-    .text(allowCrossover ? "Disabel Crossover" : "Enable Crossover")
+    .text(allowCrossover ? "Crossover (Enabled)" : "Crossover (Disabled)")
 
 crossoverIcon
-    .attr("x", buttonMargin*4 + buttonHeight*2+100 + 70/2)
+    .attr("x", buttonMargin*4 + buttonHeight*2+100 + buttonHeight/2)
     .attr("y", windowHeight-+buttonHeight/2-buttonMargin)
-    .attr("font-size", "8pt")
+    .attr("font-size", "16pt")
     .attr("font-family", "sans-serif")
     .attr("font-weight", "bold")
     .attr("text-anchor", "middle")
     .attr("alignment-baseline", "middle")
     // .attr("opacity", 0.25)
     .style("pointer-events", "none")
-    .text("Crossover")
+    // .text("Crossover") //⇎ ⇔
 
 darkModeButton
     .attr("x", windowWidth-buttonMargin-30)
@@ -92,30 +92,6 @@ darkModeButton
 const darkModeToolTip = darkModeButton
     .append("title")
     .text(darkMode ? "Switch to Light Mode" : "Switch to Dark Mode")
-
-function drawDarkModeIcons(){
-
-    const iconX = windowWidth-buttonMargin-30/2
-    const iconY = windowHeight-buttonMargin-buttonHeight/2
-    const iconHeight = 16
-    const iconWidth = 16
-
-    const iconTop = `
-        M ${iconX-iconWidth/2} ${iconY-iconHeight/2}
-        L  ${iconX+iconWidth/2} ${iconY-iconHeight/2}
-        L  ${iconX+iconWidth/2} ${iconY+iconHeight/2}
-        L  ${iconX-iconWidth/2} ${iconY+iconHeight/2}
-        Z
-    `
-
-    const iconBottom = `
-        M ${iconX+iconWidth/2} ${iconY-iconHeight/2}
-        L  ${iconX+iconWidth/2} ${iconY+iconHeight/2}
-        L  ${iconX-iconWidth/2} ${iconY+iconHeight/2}
-        Z
-    `
-    return [iconTop, iconBottom]
-}
 
 darkModeIconTop
     .attr("stroke", darkColor)
@@ -202,7 +178,7 @@ reverseIcon
     .text("⟲")
 
 cognateButton
-    .attr("x", buttonMargin*5 + buttonHeight*2+100 + 70)
+    .attr("x", buttonMargin*6 + buttonHeight*4+100)
     .attr("y", windowHeight-buttonMargin-buttonHeight)
     .attr("width", buttonHeight)
     .attr("height", buttonHeight)
@@ -216,10 +192,6 @@ cognateButton
     .on("click", function() {
         cycleCognates()
         updateLinkGeometry()
-        // setLinkNodes()
-        // updateOpenCrossed()
-        // updateInputLimits()
-        // updateOutputLimits()
         updateTrace()
         updateLinkGeometry()
         saveNodes()
@@ -229,7 +201,7 @@ const cognateToolTip = cognateButton
         .text("Cycle Cognates")
 
 cognateIcon
-    .attr("x", buttonMargin*5 + buttonHeight*2+100+70 + buttonHeight/2)
+    .attr("x", buttonMargin*6 + buttonHeight*4+100 + buttonHeight/2)
     .attr("y", windowHeight-buttonHeight/2-buttonMargin)
     .attr("font-size", "20px")
     .attr("font-family", "sans-serif")
@@ -240,7 +212,7 @@ cognateIcon
     .text("♺") //♻
 
 resetLinkageButton
-    .attr("x", buttonMargin*6 + buttonHeight*3+100 + 70)
+    .attr("x", buttonMargin*7 + buttonHeight*5+100)
     .attr("y", windowHeight-buttonMargin-buttonHeight)
     .attr("width", buttonHeight)
     .attr("height", buttonHeight)
@@ -309,16 +281,6 @@ const fitViewToolTip = fitViewButton
     .append("title")
     .text("Fit View")
 
-// fitViewIcon
-//     .attr("x", windowWidth-buttonMargin-buttonHeight/2)
-//     .attr("y", windowHeight-buttonHeight*2-buttonMargin*2 + buttonHeight/2 +2)
-//     .attr("font-size", "12px")
-//     .attr("font-family", "sans-serif")
-//     .attr("font-weight", "bold")
-//     .attr("text-anchor", "middle")
-//     .attr("alignment-baseline", "middle")
-//     .style("pointer-events", "none")
-//     .text("Fit")
 fitViewIcon
     .attr("stroke", "black")
     .attr("stroke-width", 1)
@@ -329,6 +291,39 @@ fitViewIcon
     )
     .style("pointer-events", "none")
 
+swapInOutButton
+    .attr("x", buttonMargin*5 + buttonHeight*3+100)
+    .attr("y", windowHeight-buttonMargin-buttonHeight)
+    .attr("width", buttonHeight)
+    .attr("height", buttonHeight)
+    .attr("rx", 5)
+    .attr("ry", 5)
+    .attr("fill", "lightgray")
+    .attr("fill-opacity", 0.75)
+    .attr("stroke", "black")
+    .attr("stroke-width", 1)
+    .attr("stroke-opacity", 0.75)
+    .on("click", function() {
+        swapInputOutput()
+        updateLinkGeometry()
+        updateTrace()
+        updateLinkGeometry()
+        saveNodes()
+    })
+const swapInOutToolTip = swapInOutButton
+        .append("title")
+        .text("Swap Input/Output")
+
+swapInOutIcon
+    .attr("x", buttonMargin*5 + buttonHeight*3+100 + buttonHeight/2)
+    .attr("y", windowHeight-buttonHeight/2-buttonMargin)
+    .attr("font-size", "20px")
+    .attr("font-family", "sans-serif")
+    .attr("font-weight", "bold")
+    .attr("text-anchor", "middle")
+    .attr("alignment-baseline", "middle")
+    .style("pointer-events", "none")
+    .text("↹") //♻
 
 function startAnimationLoop() {
     playIcon.text("⏸")
@@ -343,6 +338,30 @@ function stopAnimationLoop() {
     }
     saveNodes()
     playIcon.text("▶")
+}
+
+function drawDarkModeIcons(){
+
+    const iconX = windowWidth-buttonMargin-30/2
+    const iconY = windowHeight-buttonMargin-buttonHeight/2
+    const iconHeight = 16
+    const iconWidth = 16
+
+    const iconTop = `
+        M ${iconX-iconWidth/2} ${iconY-iconHeight/2}
+        L  ${iconX+iconWidth/2} ${iconY-iconHeight/2}
+        L  ${iconX+iconWidth/2} ${iconY+iconHeight/2}
+        L  ${iconX-iconWidth/2} ${iconY+iconHeight/2}
+        Z
+    `
+
+    const iconBottom = `
+        M ${iconX+iconWidth/2} ${iconY-iconHeight/2}
+        L  ${iconX+iconWidth/2} ${iconY+iconHeight/2}
+        L  ${iconX-iconWidth/2} ${iconY+iconHeight/2}
+        Z
+    `
+    return [iconTop, iconBottom]
 }
 
 function drawFitIcon(x, y) {

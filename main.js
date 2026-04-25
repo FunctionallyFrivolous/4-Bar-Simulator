@@ -173,6 +173,8 @@ const undoRedoButton = overlayGroup.append("rect")
 const undoRedoIcon = overlayGroup.append("text")
 const fitViewButton = overlayGroup.append("rect")
 const fitViewIcon = overlayGroup.append("path")
+const swapInOutButton = overlayGroup.append("rect")
+const swapInOutIcon = overlayGroup.append("text")
 
 const inputLinkVal = overlayGroup.append("text")
 const inputLinkProps = overlayGroup.append("text")
