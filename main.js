@@ -1,11 +1,9 @@
 // Next Tasks:
-    // Animate actuation
-        // Initial implementatin complete!
-        // Things to add:
-            // User actuate via slider
-            // User adjust playback speed
-            // User set actuation 
-            // User defined limits
+    // Animation features
+        // User actuate via slider
+        // User adjust playback speed
+        // User set actuation 
+        // User defined limits
     // Organized menu system
         // Static menu bar which expands different grouped/categorized menus
             // Visual Preferences (dark/light mode, show/hide various things)
@@ -24,10 +22,8 @@
         // Crossover: generic linkage at crossover point. Arrows/X indicating if crossover is allowed?
     // localStorage
         // Next:
-            // Show/hide status of ternary nodes
-            // Show/hide status of fixed link
-            // Show/hide status of traces?
             // Crossover status
+            // Animation direction?
     // Synthesis Methods
         // Cognates - DONE!
 
@@ -138,8 +134,6 @@ svg.transition().duration(0).call(zoom.transform, d3.zoomIdentity
     .scale(scale)
 );
 viewTransform()
-
-
 
 
 // Initialize and order svg groups and elements

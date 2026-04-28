@@ -5,6 +5,7 @@ const linksData = [
     {id: "DC", points: [], len: 8, color: "darkblue", type: "output", ternary: false, tAng: 10, tLen: 10, tSnap: false, visible: true},
     {id: "AB", points: [], len: 5, color: "darkred", type: "input", ternary: false, tAng: 10, tLen: 10, tSnap: false, visible: true},
 ];
+
 // To do (here):
     // Calc angle of output link (given link lengths above)
         // Calc node C coords from this. Apply this to the nodesData
@@ -27,6 +28,28 @@ const nodesData = [
 ]
 
 const defaultNodes = structuredClone(nodesData); //Used to reset to default linkage 
+const defaultLinks = structuredClone(linksData)
+
+
+const fixedStatus = localStorage.getItem("fixedStatus")
+if (fixedStatus !== null && fixedStatus !== "") {
+    getLinkByType("fixed").visible = fixedStatus === "true" ? true : false
+}
+for (i = 0; i < linksData.length; i++) {
+    const linkName = linksData[i].id
+    const linkTernary = localStorage.getItem(`${linkName}_t`)
+    if (linkTernary !== null && linkTernary !== "") {
+        linksData[i].ternary = linkTernary === "true" ? true : false
+    }
+}
+
+for (i = 0; i < nodesData.length; i++) {
+    const nodeName = nodesData[i].id
+    const nodeTrace = localStorage.getItem(`${nodeName}_trace`)
+    if (nodeTrace !== null && nodeTrace !== "") {
+        nodesData[i].trace = nodeTrace === "true" ? true : false
+    }
+}
 
 const linkLines = linkLineGroup.selectAll("polygon")
     .data(linksData)
@@ -235,8 +258,10 @@ function linkDoubleTap(event, d) {
     if (now - lastTapTime < 300) {
         if(d.type !== "fixed") {
             d.ternary = !d.ternary
+            localStorage.setItem(`${d.id}_t`, `${d.ternary}`)
         } else {
             d.visible = !d.visible
+            localStorage.setItem("fixedStatus", `${d.visible}`)
         }
         setLinkNodes()
         updateLinkGeometry()
@@ -250,8 +275,10 @@ function nodeDoubleTap(event, d) {
         if(d.ground) {
             const thisLink = getLinkByType("fixed")
             thisLink.visible = !thisLink.visible
+            localStorage.setItem("fixedStatus", `${thisLink.visible}`)
         } else {
             d.trace = !d.trace
+            localStorage.setItem(`${d.id}_trace`, `${d.trace}`)
         }
         updateLinkGeometry()
     }

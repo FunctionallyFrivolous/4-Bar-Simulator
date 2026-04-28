@@ -591,15 +591,26 @@ function cycleCognates() {
     nodeD.x = nodeD0.x
     nodeD.y = nodeD0.y
 
-    updateTNodes("BC")
+    updateTNodes(false, "BC")
     setLinkNodes()
+    tNodeFollow()
 }
 
 function defaultLinkage() {
     saveUndoNodes()
+    getLinkByType("fixed").visible = true
+    localStorage.setItem("fixedStatus", "")
     for (i = 0; i < nodesData.length; i++) {
         nodesData[i].x = defaultNodes[i].x
         nodesData[i].y = defaultNodes[i].y
+        nodesData[i].trace = defaultNodes[i].trace
+
+        localStorage.setItem(`${nodesData[i].id}_trace`, "")
+    }
+    for (i = 0; i < linksData.length; i++) {
+        linksData[i].ternary = defaultLinks[i].ternary
+
+        localStorage.setItem(`${linksData[i].id}_t`, "")
     }
     saveNodes()
     updateTNodes()
