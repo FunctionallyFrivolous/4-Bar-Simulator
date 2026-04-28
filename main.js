@@ -2,7 +2,7 @@
     // Animation features
         // User actuate via slider
         // User adjust playback speed
-        // User set actuation 
+        // User set actuation (input input angle)
         // User defined limits
     // Organized menu system
         // Static menu bar which expands different grouped/categorized menus
@@ -18,14 +18,15 @@
             // Fixed node show/hide status?
             // Trace show/hide statuses
     // Button Icons:
-        // Open/Crossed: generic linkage in current config, with opposite config ghost
-        // Crossover: generic linkage at crossover point. Arrows/X indicating if crossover is allowed?
-    // localStorage
-        // Next:
-            // Crossover status
-            // Animation direction?
+        // Default Linkage?
+    // localStorage - More?
+        // Animation direction? Meh
     // Synthesis Methods
         // Cognates - DONE!
+    // Scale Linkage
+        // Scale all link lengths uniformly
+        // Scale outward from joint A
+        // Option to lock link length ratios and scale by updating a single link length?
 
 // localStorage.clear()
 
@@ -190,3 +191,6 @@ const cognateData = [
     {id: "D0", x: 0, y: 0, color: "black"}, 
     {id: "E0", x: 0, y: 0, color: "darkgreen"},
 ]
+
+const buttonHeight = 30;
+const buttonMargin = 5

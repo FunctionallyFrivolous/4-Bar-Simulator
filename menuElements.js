@@ -1,10 +1,8 @@
-const buttonHeight = 30;
-const buttonMargin = 5
 
 openCrossedButton
     .attr("x", buttonMargin*3 + buttonHeight*2)
     .attr("y", windowHeight-35)
-    .attr("width", 100)
+    .attr("width", buttonHeight)
     .attr("height", buttonHeight)
     .attr("rx", 5)
     .attr("ry", 5)
@@ -23,18 +21,36 @@ const openCrossedToolTip = openCrossedButton
     .text("Toggle Open / Crossed")
 
 openCrossedIcon
-    .attr("x", buttonMargin*3 + buttonHeight*2+100/2)
+    .attr("x", buttonMargin*3 + buttonHeight*2+buttonHeight/2)
     .attr("y", windowHeight-+buttonHeight/2-buttonMargin)
-    .attr("font-size", "8pt")
+    .attr("font-size", "16pt")
     .attr("font-family", "sans-serif")
     .attr("font-weight", "bold")
     .attr("text-anchor", "middle")
     .attr("alignment-baseline", "middle")
     .style("pointer-events", "none")
-    // .text("Open ⇋ Crossed") // ⇵ ⇅
+    // .text("Open ⇋ Crossed") // ⇵ ⇅ ⨁ ⨂ ⨀ ○ ⦶ ⦵
+// openCrossedIcon
+//     .attr("stroke", "black")
+//     .attr("stroke-width", 2)
+//     .style("stroke-linecap", "round")
+//     .style("stroke-linejoin", "round")
+//     .attr("fill", "none")
+//     .attr("d", drawOpenCrossedIcon()[linkageOpen ? 1 : 0])
+//     .style("pointer-events", "none") 
+// const OC_DiagIcon = overlayGroup.append("path")
+//     .attr("stroke", "black")
+//     .attr("stroke-width", 1)
+//     .style("stroke-linecap", "round")
+//     .style("stroke-linejoin", "round")
+//     .style("stroke-dasharray", "2,2")
+//     .attr("fill", "none")
+//     .attr("d", drawOpenCrossedIcon()[2])
+//     .style("pointer-events", "none") 
+
 
 crossoverButton
-    .attr("x", buttonMargin*4 + buttonHeight*2+100)
+    .attr("x", buttonMargin*4 + buttonHeight*3)
     .attr("y", windowHeight-35)
     .attr("width", buttonHeight)
     .attr("height", buttonHeight)
@@ -52,13 +68,15 @@ crossoverButton
         updateLinkGeometry()
         crossoverToolTip
             .text(allowCrossover ? "Crossover (Enabled)" : "Crossover (Disabled)")
+        localStorage.setItem("crossOver", `${allowCrossover}`)
+        
     })
 const crossoverToolTip = crossoverButton
     .append("title")
     .text(allowCrossover ? "Crossover (Enabled)" : "Crossover (Disabled)")
 
 crossoverIcon
-    .attr("x", buttonMargin*4 + buttonHeight*2+100 + buttonHeight/2)
+    .attr("x", buttonMargin*4 + buttonHeight*3 + buttonHeight/2)
     .attr("y", windowHeight-+buttonHeight/2-buttonMargin)
     .attr("font-size", "16pt")
     .attr("font-family", "sans-serif")
@@ -178,7 +196,7 @@ reverseIcon
     .text("⟲")
 
 cognateButton
-    .attr("x", buttonMargin*6 + buttonHeight*4+100)
+    .attr("x", buttonMargin*6 + buttonHeight*5)
     .attr("y", windowHeight-buttonMargin-buttonHeight)
     .attr("width", buttonHeight)
     .attr("height", buttonHeight)
@@ -201,7 +219,7 @@ const cognateToolTip = cognateButton
         .text("Cycle Cognates")
 
 cognateIcon
-    .attr("x", buttonMargin*6 + buttonHeight*4+100 + buttonHeight/2)
+    .attr("x", buttonMargin*6 + buttonHeight*5 + buttonHeight/2)
     .attr("y", windowHeight-buttonHeight/2-buttonMargin)
     .attr("font-size", "20px")
     .attr("font-family", "sans-serif")
@@ -212,7 +230,7 @@ cognateIcon
     .text("♺") //♻
 
 resetLinkageButton
-    .attr("x", buttonMargin*7 + buttonHeight*5+100)
+    .attr("x", buttonMargin*7 + buttonHeight*6)
     .attr("y", windowHeight-buttonMargin-buttonHeight)
     .attr("width", buttonHeight)
     .attr("height", buttonHeight)
@@ -292,7 +310,7 @@ fitViewIcon
     .style("pointer-events", "none")
 
 swapInOutButton
-    .attr("x", buttonMargin*5 + buttonHeight*3+100)
+    .attr("x", buttonMargin*5 + buttonHeight*4)
     .attr("y", windowHeight-buttonMargin-buttonHeight)
     .attr("width", buttonHeight)
     .attr("height", buttonHeight)
@@ -315,7 +333,7 @@ const swapInOutToolTip = swapInOutButton
         .text("Swap Input/Output")
 
 swapInOutIcon
-    .attr("x", buttonMargin*5 + buttonHeight*3+100 + buttonHeight/2)
+    .attr("x", buttonMargin*5 + buttonHeight*4 + buttonHeight/2)
     .attr("y", windowHeight-buttonHeight/2-buttonMargin)
     .attr("font-size", "20px")
     .attr("font-family", "sans-serif")

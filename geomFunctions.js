@@ -210,7 +210,9 @@ function updateOpenCrossed() {
     //     BD: ${BD_th.toFixed(1)}, 
     // `
 
-    openCrossedIcon.text(linkageOpen ? "Open ⇋ Crossed" : "Crossed ⇋ Open")
+    // openCrossedIcon.text(linkageOpen ? "Open ⇋ Crossed" : "Crossed ⇋ Open")
+    openCrossedIcon.text(linkageOpen ? "⨀" : "⨂")
+    // openCrossedIcon.attr("d", drawOpenCrossedIcon()[linkageOpen ? 1 : 0])
 } 
 
 function toggleOpenCrossed() {

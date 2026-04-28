@@ -43,3 +43,32 @@ function fitView(dur=0) {
     //     .attr("fill-opacity", 0.125)
     //     .attr("stroke-opacity", 0.75)
 }
+
+function drawOpenCrossedIcon(){
+
+    const iconX = buttonMargin*3 + buttonHeight*2 + buttonHeight/2
+    const iconY = windowHeight-buttonMargin-buttonHeight/2
+    const iconHeight = 16
+    const iconWidth = 16
+
+    const iconCrossed = `
+        M ${iconX-iconWidth/2} ${iconY+iconHeight/2*0.5}
+        L  ${iconX-iconWidth/2} ${iconY-iconHeight/2*0.25}
+        L  ${iconX} ${iconY+iconHeight/2*1.1}
+        L  ${iconX+iconWidth/2} ${iconY+iconHeight/2*0.5}
+    `
+
+    const iconOpen = `
+        M ${iconX-iconWidth/2} ${iconY+iconHeight/2*0.5}
+        L  ${iconX-iconWidth/2} ${iconY-iconHeight/2*0.25}
+        L  ${iconX+iconWidth/2*0.75} ${iconY-iconHeight/2*0.75}
+        L  ${iconX+iconWidth/2} ${iconY+iconHeight/2*0.5}
+    `
+
+    const iconDiag = `
+        M ${iconX-iconWidth/2} ${iconY-iconHeight/2*0.25}
+        L  ${iconX+iconWidth/2} ${iconY+iconHeight/2*0.5}
+    `
+
+    return [iconCrossed, iconOpen, iconDiag]
+}

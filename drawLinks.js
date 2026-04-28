@@ -35,6 +35,11 @@ const fixedStatus = localStorage.getItem("fixedStatus")
 if (fixedStatus !== null && fixedStatus !== "") {
     getLinkByType("fixed").visible = fixedStatus === "true" ? true : false
 }
+const crossOverStatus = localStorage.getItem("crossOver")
+if (crossOverStatus !== null && crossOverStatus !== "") {
+    allowCrossover = crossOverStatus === "true" ? true : false
+}
+
 for (i = 0; i < linksData.length; i++) {
     const linkName = linksData[i].id
     const linkTernary = localStorage.getItem(`${linkName}_t`)
