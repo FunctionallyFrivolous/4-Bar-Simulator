@@ -7,10 +7,11 @@
     // Organized menu system
         // Static menu bar which expands different grouped/categorized menus
             // Visual Preferences (dark/light mode, show/hide various things)
-            // Linkage Configuration (open/crossed, crossover, manual limits?)
+            // Linkage Configuration (default, open/crossed, crossover, manual limits?, scale?)
             // Animation (show/hide animation controlls)
                 // Separate SVG window?
             // Save/Share options
+            // Synthesis methods
     // Save/Share (URL)
         // Save:
             // Node positions
@@ -170,6 +171,8 @@ const fitViewButton = overlayGroup.append("rect")
 const fitViewIcon = overlayGroup.append("path")
 const swapInOutButton = overlayGroup.append("rect")
 const swapInOutIcon = overlayGroup.append("text")
+const nodeModeButton = overlayGroup.append("rect")
+const nodeModeIcon = overlayGroup.append("text")
 
 const inputLinkVal = overlayGroup.append("text")
 const inputLinkProps = overlayGroup.append("text")

@@ -279,7 +279,7 @@ function updateLinkGeometry() {
     crossoverIcon
         .attr("opacity", inputClass === "Crank" ? 0.25 : 1)
         // .attr("text-decoration", allowCrossover ? "none" : "line-through")
-        .text(allowCrossover ? "⇔" : "⇎")
+        .text(allowCrossover ? "↔" : "⇹")
     crossoverButton
         .attr("stroke-opacity", inputClass === "Crank" ? 0.25 : 0.75)
         .attr("fill-opacity", inputClass === "Crank" ? 0.25 : 0.75)

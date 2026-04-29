@@ -78,6 +78,7 @@ const crossoverToolTip = crossoverButton
 crossoverIcon
     .attr("x", buttonMargin*4 + buttonHeight*3 + buttonHeight/2)
     .attr("y", windowHeight-+buttonHeight/2-buttonMargin)
+    .attr("dy", "0.03em")
     .attr("font-size", "16pt")
     .attr("font-family", "sans-serif")
     .attr("font-weight", "bold")
@@ -230,7 +231,7 @@ cognateIcon
     .text("♺") //♻
 
 resetLinkageButton
-    .attr("x", buttonMargin*7 + buttonHeight*6)
+    .attr("x", buttonMargin*8 + buttonHeight*7)
     .attr("y", windowHeight-buttonMargin-buttonHeight)
     .attr("width", buttonHeight)
     .attr("height", buttonHeight)
@@ -342,6 +343,37 @@ swapInOutIcon
     .attr("alignment-baseline", "middle")
     .style("pointer-events", "none")
     .text("↹") //♻
+
+nodeModeButton
+    .attr("x", buttonMargin*7 + buttonHeight*6)
+    .attr("y", windowHeight-buttonMargin-buttonHeight)
+    .attr("width", buttonHeight)
+    .attr("height", buttonHeight)
+    .attr("rx", 5)
+    .attr("ry", 5)
+    .attr("fill", "lightgray")
+    .attr("fill-opacity", 0.75)
+    .attr("stroke", "black")
+    .attr("stroke-width", 1)
+    .attr("stroke-opacity", 0.75)
+    .on("click", function() {
+        pathNodeSynth(true)
+        updateLinkGeometry()
+        updateTrace()
+        updateLinkGeometry()
+        saveNodes()
+    })
+nodeModeIcon
+    .attr("x", buttonMargin*7 + buttonHeight*6 + buttonHeight/2)
+    .attr("y", windowHeight-buttonHeight/2-buttonMargin)
+    .attr("dy", "0.05em")
+    .attr("font-size", "20px")
+    .attr("font-family", "sans-serif")
+    .attr("font-weight", "bold")
+    .attr("text-anchor", "middle")
+    .attr("alignment-baseline", "middle")
+    .style("pointer-events", "none")
+    .text("↫")
 
 function startAnimationLoop() {
     playIcon.text("⏸")
