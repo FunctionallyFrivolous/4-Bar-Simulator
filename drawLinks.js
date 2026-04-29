@@ -208,6 +208,7 @@ const nodeDrag = nodeDragGroup.selectAll("cirlce")
             // }
             if (d.id.length === 2) updateTNodes(true, d.id)
             else updateTNodes()
+            pathNodeSynth(true)
             setLinkNodes()
             updateTrace()
             updateLinkGeometry();

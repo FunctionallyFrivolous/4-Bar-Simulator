@@ -9,19 +9,20 @@ function pathNodeSynth(doit=false) {
 
     const EC = getDistBtwNodes(nodeE, oldC)
 
-    const angleBAE = getAngleBtwNodes(nodeA, nodeB, nodeE)
+    const angleAEB = getAngleBtwNodes(nodeA, nodeB, nodeE)
     const angleED = getNodesAngle(nodeE, nodeD, false)
-    let angleEC = getNetAngle(angleED - angleBAE)
+    let angleEC = getNetAngle(angleED - angleAEB)
     // if (angleEC > 180) angleEC = angleEC - 360
 
-    const newC = placeNodePolar(oldC, nodeE, angleEC, EC, doit)
 
-    document.getElementById("debugOutputs").innerHTML = `
-        BAE: ${angleBAE.toFixed(1)} \<br>
-        ang_ED: ${angleED.toFixed(1)} \n<br>
-        ang_EC: ${angleEC.toFixed(1)} \n<br>
-        ${newC[0].toFixed(1)}, ${newC[1].toFixed(1)}
-    `
+    const newC = placeNodePolar(oldC, nodeE, angleEC, EC, nodeMode)
+
+    // document.getElementById("debugOutputs").innerHTML = `
+    //     BAE: ${angleAEB.toFixed(1)} \<br>
+    //     ang_ED: ${angleED.toFixed(1)} \n<br>
+    //     ang_EC: ${angleEC.toFixed(1)} \n<br>
+    //     ${newC[0].toFixed(1)}, ${newC[1].toFixed(1)}
+    // `
     setLinkNodes()
     updateTNodes()
 

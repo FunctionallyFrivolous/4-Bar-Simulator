@@ -291,6 +291,9 @@ function updateLinkGeometry() {
         .attr("fill-opacity", getLinkByType("coupler").ternary ? 0.75 : 0.25)
         .style("pointer-events", getLinkByType("coupler").ternary ? "auto" : "none")
 
+    nodeModeIcon
+        .attr("opacity", nodeMode ? 1 : 0.5)
+
 
     inputLinkVal
         .attr("fill", d3.interpolateRgb(getLinkByType("input").color,"white")(whtnColor*2))

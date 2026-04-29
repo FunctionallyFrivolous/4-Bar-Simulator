@@ -24,6 +24,9 @@
         // Animation direction? Meh
     // Synthesis Methods
         // Cognates - DONE!
+        // Nodes
+            // Add ability to cycle through multiple solutions
+                // In some cases a "solution" is actually not a node. Ideally skip these if possible?
     // Scale Linkage
         // Scale all link lengths uniformly
         // Scale outward from joint A
@@ -72,6 +75,8 @@ document.getElementById("pageLab").style.color = fgColor
 document.getElementById("topView").style.border = `1px solid ${fgColor}`
 
 let undoStatus = true;
+
+let nodeMode = false
 
 const traceStepsCoarse = 1000
 const traceStepsFine = 4000

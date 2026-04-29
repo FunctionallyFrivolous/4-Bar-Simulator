@@ -210,10 +210,10 @@ cognateButton
     .attr("stroke-opacity", 0.75)
     .on("click", function() {
         cycleCognates()
+        saveNodes()
         updateLinkGeometry()
         updateTrace()
         updateLinkGeometry()
-        saveNodes()
     })
 const cognateToolTip = cognateButton
         .append("title")
@@ -324,10 +324,10 @@ swapInOutButton
     .attr("stroke-opacity", 0.75)
     .on("click", function() {
         swapInputOutput()
+        saveNodes()
         updateLinkGeometry()
         updateTrace()
         updateLinkGeometry()
-        saveNodes()
     })
 const swapInOutToolTip = swapInOutButton
         .append("title")
@@ -357,12 +357,17 @@ nodeModeButton
     .attr("stroke-width", 1)
     .attr("stroke-opacity", 0.75)
     .on("click", function() {
+        nodeMode = !nodeMode
         pathNodeSynth(true)
         updateLinkGeometry()
         updateTrace()
         updateLinkGeometry()
         saveNodes()
     })
+const nodeModeToolTip = nodeModeButton
+    .append("title")
+    .text("Node Mode")
+
 nodeModeIcon
     .attr("x", buttonMargin*7 + buttonHeight*6 + buttonHeight/2)
     .attr("y", windowHeight-buttonHeight/2-buttonMargin)
