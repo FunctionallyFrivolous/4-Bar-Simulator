@@ -25,6 +25,11 @@
     // Synthesis Methods
         // Cognates - DONE!
         // Nodes - DONE!
+        // Cusps
+            // One cusp
+            // Two cusps
+            // Three cusps?
+        // Symmetric Coupler Curves
     // Scale Linkage
         // Scale all link lengths uniformly
         // Scale outward from joint A

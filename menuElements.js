@@ -383,7 +383,7 @@ nodeModeIcon
     .attr("x", buttonMargin*7 + buttonHeight*6 + buttonHeight/2)
     .attr("y", windowHeight-buttonHeight/2-buttonMargin)
     .attr("dy", "0.05em")
-    .attr("font-size", "20px")
+    .attr("font-size", "16pt")
     .attr("font-family", "sans-serif")
     .attr("font-weight", "bold")
     .attr("text-anchor", "middle")

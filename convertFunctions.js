@@ -12,8 +12,9 @@ function radToDeg(rad) {
 // Functions to convert between values (distances, angles, etc) within the global reference frame and the linkage reference frame
 function coordToLink(val, type, neg=false) {
     let dist = 0;
-    if (type === "x") dist = (val-originCoords.x)/coordScale
-    else if (type === "y") dist = (originCoords.y-val)/coordScale
+    const originNode = getNode("A")
+    if (type === "x") dist = (val-originNode.x)/coordScale
+    else if (type === "y") dist = (originNode.y-val)/coordScale
     else if (type === "angle") {
         dist = getNetAngle(val - baseAngle, neg)
         // if (dist > 180) dist = dist - 360
@@ -23,8 +24,9 @@ function coordToLink(val, type, neg=false) {
 }
 function linkToCoord(val, type, neg=false) {
     let coord = 0;
-    if (type === "x") coord = val*coordScale + originCoords.x
-    else if (type === "y") coord =  originCoords.y - val*coordScale
+    const originNode = getNode("A")
+    if (type === "x") coord = val*coordScale + originNode.x
+    else if (type === "y") coord =  originNode.y - val*coordScale
     else if (type === "angle") {
         coord = getNetAngle(val + baseAngle, neg)
     } else coord = val * coordScale

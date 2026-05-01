@@ -18,7 +18,7 @@ function updateToolTips() {
     linkLinesToolTip
         .text(d => `${d.type} link (L = ${d.len.toFixed(1)})`)
     nodeDragToolTip
-        .text(d => `(${d.x.toFixed(1)}, ${d.y.toFixed(1)})`)
+        .text(d => `(${coordToLink(d.x,"x").toFixed(1)}, ${coordToLink(d.y,"y").toFixed(1)})`)
 }
 
 function fitView(dur=0) {
