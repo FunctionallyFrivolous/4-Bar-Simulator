@@ -13,6 +13,8 @@ openCrossedButton
     .attr("stroke-opacity", 0.75)
     .on("click", function() {
         saveUndoNodes()
+        nodeMode = false
+        nodeIncr = -1
         toggleOpenCrossed()
         saveNodes()
     })

@@ -557,7 +557,9 @@ function updateTrace() {
             const couplerTDist = couplerLink.tLen
             const newBC = {x: placeNodePolar(nodeBC, newB, couplerTAngle, couplerTDist, false)[0], y: placeNodePolar(nodeBC, newB, couplerTAngle, couplerTDist, false)[1]}
 
-            altTraceData.points.push(newBC)
+            if (inputClass === "Rocker") {
+                altTraceData.points.push(newBC)
+            }
         }
         if (swapped_n) {
             mirrorNodeSynth()

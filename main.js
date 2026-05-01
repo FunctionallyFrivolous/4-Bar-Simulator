@@ -12,12 +12,14 @@
                 // Separate SVG window?
             // Save/Share options
             // Synthesis methods
+        // Getting pretty close to needing to get started on this
     // Save/Share (URL)
         // Save:
             // Node positions
             // Ternary node show/hide status
             // Fixed node show/hide status?
             // Trace show/hide statuses
+        // Export GIF!
     // Button Icons:
         // Default Linkage?
     // localStorage - More?
@@ -35,7 +37,9 @@
         // Scale outward from joint A
         // Option to lock link length ratios and scale by updating a single link length?
     // Quirks & Bugs:
-        // Ternary node snapping is based on angle rather than distance
+        // Ternary node snapping is based on angle rather than distance. Results in snap "strength" that varies based on distance from the reference node
+            // This was just the easy/lazy way to get it done. Will fix later
+
 
 // localStorage.clear()
 
