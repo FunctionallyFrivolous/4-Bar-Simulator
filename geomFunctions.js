@@ -492,22 +492,19 @@ function updateTrace() {
 
     let swapped = false
     let alt_angleStep = 0
-    let alt_Open = !linkageOpen
     if (nodeMode && inputClass === "Rocker" && outputClass === "Crank") {
-        swapInputOutput()
         swapped = true
+        swapInputOutput()
         updateOpenCrossed()
-        alt_Open = !linkageOpen
         alt_angleStep = 360/traceSteps
     } else {
         alt_angleStep = in_angleStep
-        alt_Open = !linkageOpen
     }
     for (i = 0; i < traceSteps+1; i++) {
-        inAngle = 0 + in_angleStep * i
+        inAngle = 0 + alt_angleStep * i
 
         const newB = {x: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false)[0], y: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false)[1]}
-        const outAngle_temp = getNetAngle(calcOutputAngle(inAngle, alt_Open))
+        const outAngle_temp = getNetAngle(calcOutputAngle(inAngle, !linkageOpen))
         const newC = {x: placeNodePolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false)[0], y: placeNodePolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false)[1]}
         const couplerAngle = getNodesAngle(newB,newC)
         const couplerTAngle = getNetAngle(couplerAngle + couplerLink.tAng)
@@ -563,61 +560,6 @@ function playAnimation() {
 
 }
 
-function cycleCognates() {
-    const nodeA = getNode("A")
-    const nodeB = getNode("B")
-    const nodeC = getNode("C")
-    const nodeD = getNode("D")
-    const nodeE = getNode("BC")
-    
-    // Get new D node
-    const nodeD0 = cognateData.find(g => g.id === "D0")
-    nodeD0.x = nodeA.x
-    nodeD0.y = nodeA.y
-
-    // Get new A node
-    const distBC = getDistBtwNodes(getNode("B"), getNode("C"))
-    const distBE = getDistBtwNodes(getNode("B"), getNode("BC"))
-    const distAD = getDistBtwNodes(getNode("A"), getNode("D"))
-
-    const distA0D0 = distBE/distBC * distAD
-    const angDAA0 = getAngleBtwNodes(getNode("BC"), getNode("C"), getNode("B"))
-    const angAD = getNodesAngle(nodeA,nodeD,true)
-    const nodeA0 = cognateData.find(g => g.id === "A0")
-    placeNodePolar(nodeA0, nodeA, (angDAA0+angAD), distA0D0, true)
-
-    // Get new C node
-    const angD0C0 = getNodesAngle(getNode("B"), getNode("BC"), false)
-    const distD0C0 = getDistBtwNodes(getNode("B"), getNode("BC"))
-    const nodeC0 = cognateData.find(g => g.id === "C0")
-    placeNodePolar(nodeC0, nodeA, angD0C0, distD0C0, true)
-
-    // Get new B node
-    const angEC0B0 = getAngleBtwNodes(getNode("BC"), getNode("C"), getNode("B"))
-    const distC0E = getDistBtwNodes(nodeC0, getNode("BC"))
-    const distC0B0 = distBE/distBC * distC0E
-    const angC0E0 = getNodesAngle(nodeC0, getNode("BC"), false)
-    const nodeB0 = cognateData.find(g => g.id === "B0")
-    placeNodePolar(nodeB0, nodeC0, angEC0B0 + angC0E0, distC0B0, true)
-
-    const nodeE0 = cognateData.find(g => g.id === "E0")
-    nodeE0.x = nodeE.x
-    nodeE0.y = nodeE.y
-
-    nodeA.x = nodeA0.x
-    nodeA.y = nodeA0.y
-    nodeB.x = nodeB0.x
-    nodeB.y = nodeB0.y
-    nodeC.x = nodeC0.x
-    nodeC.y = nodeC0.y
-    nodeD.x = nodeD0.x
-    nodeD.y = nodeD0.y
-
-    updateTNodes(false, "BC")
-    setLinkNodes()
-    tNodeFollow()
-}
-
 function defaultLinkage() {
     saveUndoNodes()
     getLinkByType("fixed").visible = true
@@ -671,5 +613,5 @@ function swapInputOutput(updateNodes=true) {
     nodeDC.y = oldAB.y
 
     setLinkNodes()
-    if (updateNodes) updateTNodes()
+    updateTNodes()
 }

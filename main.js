@@ -1,6 +1,4 @@
 // Next Tasks:
-    // Quirks & Bugs:
-        //
     // Animation features
         // User actuate via slider
         // User adjust playback speed
@@ -31,6 +29,8 @@
         // Scale all link lengths uniformly
         // Scale outward from joint A
         // Option to lock link length ratios and scale by updating a single link length?
+    // Quirks & Bugs:
+        // Ternary node snapping is based on angle rather than distance
 
 // localStorage.clear()
 
