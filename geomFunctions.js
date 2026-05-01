@@ -204,14 +204,6 @@ function updateOpenCrossed() {
         linkageOpen = true
     } else linkageOpen = false
 
-    // document.getElementById("debugOutputs").innerHTML = `
-    //     AB: ${AB_th.toFixed(1)}, 
-    //     DC: ${DC_th.toFixed(1)}, 
-    //     DB: ${DB_th.toFixed(1)}, 
-    //     BC: ${BC_th.toFixed(1)}, 
-    //     BD: ${BD_th.toFixed(1)}, 
-    // `
-
     // openCrossedIcon.text(linkageOpen ? "Open ⇋ Crossed" : "Crossed ⇋ Open")
     openCrossedIcon.text(linkageOpen ? "⨀" : "⨂")
     // openCrossedIcon.attr("d", drawOpenCrossedIcon()[linkageOpen ? 1 : 0])
@@ -501,8 +493,8 @@ function updateTrace() {
     let swapped = false
     let alt_angleStep = 0
     let alt_Open = !linkageOpen
-    if (inputClass === "Rocker" && outputClass === "Crank") {
-        swapInputOutput(false)
+    if (nodeMode && inputClass === "Rocker" && outputClass === "Crank") {
+        swapInputOutput()
         swapped = true
         updateOpenCrossed()
         alt_Open = !linkageOpen
