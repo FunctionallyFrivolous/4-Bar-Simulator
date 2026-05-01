@@ -82,3 +82,33 @@ function pathNodeSynth(doit=false) {
     return [newC[0], newC[1]]
 
 }
+function mirrorNodeSynth(doit=true) {
+    const nodeA = getNode("A")
+    const nodeE = getNode("BC")
+    const nodeB = getNode("B")
+
+    const nodeC = getNode("C")
+    const nodeD = getNode("D")
+
+    const EB = getDistBtwNodes(nodeE,nodeB)
+    let angleAEB = getAngleBtwNodes(nodeA, nodeB, nodeE)
+    // if (angleAEB > 180) angleAEB = 360-angleAEB
+    const angleEA = getNodesAngle(nodeE,nodeA)
+    const old_angleEB = getNodesAngle(nodeE,nodeB)
+    const new_angleEB = angleEA + angleAEB
+
+    placeNodePolar(nodeB, nodeE, new_angleEB, EB, doit)
+
+    const EC = getDistBtwNodes(nodeE,nodeC)
+    const angleDEC = getAngleBtwNodes(nodeD, nodeC, nodeE)
+    const angleED = getNodesAngle(nodeE,nodeD)
+    const old_angleEC = getNodesAngle(nodeE,nodeC)
+    const new_angleEC = angleED + angleDEC
+
+    placeNodePolar(nodeC, nodeE, new_angleEC, EC, doit)
+
+    // setLinkNodes()
+    // updateTNodes()
+    // updateTrace()
+    // updateLinkGeometry()
+}

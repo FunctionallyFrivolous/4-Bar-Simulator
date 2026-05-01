@@ -490,34 +490,81 @@ function updateTrace() {
         }
     }
 
-    let swapped = false
-    let alt_angleStep = 0
-    if (nodeMode && inputClass === "Rocker" && outputClass === "Crank") {
-        swapped = true
-        swapInputOutput()
+    // let swapped = false
+    // let alt_angleStep = 0
+    // if (nodeMode && inputClass === "Rocker" && outputClass === "Crank") {
+    //     swapped = true
+    //     swapInputOutput()
+    //     updateOpenCrossed()
+    //     alt_angleStep = 360/traceSteps
+    // } else {
+    //     alt_angleStep = in_angleStep
+    // }
+    // for (i = 0; i < traceSteps+1; i++) {
+    //     inAngle = 0 + alt_angleStep * i
+
+    //     const newB = {x: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false)[0], y: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false)[1]}
+    //     const outAngle_temp = getNetAngle(calcOutputAngle(inAngle, !linkageOpen))
+    //     const newC = {x: placeNodePolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false)[0], y: placeNodePolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false)[1]}
+    //     const couplerAngle = getNodesAngle(newB,newC)
+    //     const couplerTAngle = getNetAngle(couplerAngle + couplerLink.tAng)
+    //     const couplerTDist = couplerLink.tLen
+    //     const newBC = {x: placeNodePolar(nodeBC, newB, couplerTAngle, couplerTDist, false)[0], y: placeNodePolar(nodeBC, newB, couplerTAngle, couplerTDist, false)[1]}
+
+    //     if (nodeMode && (inputClass === "Crank" && outputClass === "Rocker" || inputClass === "Rocker" && outputClass === "Crank")) {
+    //         altTraceData.points.push(newBC)
+    //     }
+    // }
+    // if (swapped) {
+    //     swapInputOutput()
+    //     updateOpenCrossed()
+    // }
+
+    let swapped_n = false
+    if (nodeMode && (inputClass === "Rocker" || outputClass === "Rocker")) {
+        mirrorNodeSynth()
+        setLinkNodes()
+        updateTNodes()
         updateOpenCrossed()
-        alt_angleStep = 360/traceSteps
-    } else {
-        alt_angleStep = in_angleStep
-    }
-    for (i = 0; i < traceSteps+1; i++) {
-        inAngle = 0 + alt_angleStep * i
+        updateInputLimits()
+        in_startAngle = inputLimits.min
+        in_endAngle = inputLimits.max
+        in_angleStep = (in_endAngle-in_startAngle)/traceSteps
 
-        const newB = {x: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false)[0], y: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false)[1]}
-        const outAngle_temp = getNetAngle(calcOutputAngle(inAngle, !linkageOpen))
-        const newC = {x: placeNodePolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false)[0], y: placeNodePolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false)[1]}
-        const couplerAngle = getNodesAngle(newB,newC)
-        const couplerTAngle = getNetAngle(couplerAngle + couplerLink.tAng)
-        const couplerTDist = couplerLink.tLen
-        const newBC = {x: placeNodePolar(nodeBC, newB, couplerTAngle, couplerTDist, false)[0], y: placeNodePolar(nodeBC, newB, couplerTAngle, couplerTDist, false)[1]}
+        swapped_n = true
 
-        if (nodeMode && (inputClass === "Crank" && outputClass === "Rocker" || inputClass === "Rocker" && outputClass === "Crank")) {
+        for (i = 0; i < traceSteps+1; i++) {
+            inAngle = in_startAngle + in_angleStep * i
+
+            const newB = {x: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false)[0], y: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false)[1]}
+            const outAngle_temp = getNetAngle(calcOutputAngle(inAngle, linkageOpen))
+            const newC = {x: placeNodePolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false)[0], y: placeNodePolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false)[1]}
+            const couplerAngle = getNodesAngle(newB,newC)
+            const couplerTAngle = getNetAngle(couplerAngle + couplerLink.tAng)
+            const couplerTDist = couplerLink.tLen
+            const newBC = {x: placeNodePolar(nodeBC, newB, couplerTAngle, couplerTDist, false)[0], y: placeNodePolar(nodeBC, newB, couplerTAngle, couplerTDist, false)[1]}
+
             altTraceData.points.push(newBC)
         }
-    }
-    if (swapped) {
-        swapInputOutput()
-        updateOpenCrossed()
+        for (i = 0; i < traceSteps+1; i++) {
+            inAngle = in_endAngle - in_angleStep * i
+
+            const newB = {x: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false)[0], y: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false)[1]}
+            const outAngle_temp = getNetAngle(calcOutputAngle(inAngle, !linkageOpen))
+            const newC = {x: placeNodePolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false)[0], y: placeNodePolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false)[1]}
+            const couplerAngle = getNodesAngle(newB,newC)
+            const couplerTAngle = getNetAngle(couplerAngle + couplerLink.tAng)
+            const couplerTDist = couplerLink.tLen
+            const newBC = {x: placeNodePolar(nodeBC, newB, couplerTAngle, couplerTDist, false)[0], y: placeNodePolar(nodeBC, newB, couplerTAngle, couplerTDist, false)[1]}
+
+            altTraceData.points.push(newBC)
+        }
+        if (swapped_n) {
+            mirrorNodeSynth()
+            setLinkNodes()
+            updateTNodes()
+            updateOpenCrossed()
+        }
     }
 }
 
