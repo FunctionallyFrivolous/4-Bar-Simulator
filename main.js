@@ -1,4 +1,6 @@
 // Next Tasks:
+    // Quirks & Bugs:
+        //
     // Animation features
         // User actuate via slider
         // User adjust playback speed
@@ -24,9 +26,7 @@
         // Animation direction? Meh
     // Synthesis Methods
         // Cognates - DONE!
-        // Nodes
-            // Add ability to cycle through multiple solutions
-                // In some cases a "solution" is actually not a node. Ideally skip these if possible?
+        // Nodes - DONE!
     // Scale Linkage
         // Scale all link lengths uniformly
         // Scale outward from joint A
@@ -77,6 +77,7 @@ document.getElementById("topView").style.border = `1px solid ${fgColor}`
 let undoStatus = true;
 
 let nodeMode = false
+let nodeIncr = -1
 
 const traceStepsCoarse = 1000
 const traceStepsFine = 4000
@@ -152,7 +153,6 @@ const nodeDragGroup = zoomGroup.append("g")
 const traceDotGroup = zoomGroup.append("g")
 const traceLineGroup = zoomGroup.append("g")
 const fullTraceGroup = zoomGroup.append("g")
-
 
 const openCrossedButton = overlayGroup.append("rect")
 const openCrossedIcon = overlayGroup.append("text")

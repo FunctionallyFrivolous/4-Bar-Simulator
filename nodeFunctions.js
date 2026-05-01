@@ -70,11 +70,11 @@ function updateTNodes(snap=false, node="") {
         linksData[i].tAng = tDeg
 
         const tDist = getDistBtwNodes(getNode(linkID), pNode)
-        linksData[i].tLen = tDist        
+        linksData[i].tLen = tDist  
     }
     // setLinkNodes()
     tNodeFollow()
-    // updateLinkGeometry()
+    // updateLinkGeometry() 
 }
 
 function getNodesAngle(startNode, endNode, neg=false) {

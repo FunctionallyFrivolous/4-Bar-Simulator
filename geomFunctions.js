@@ -40,6 +40,8 @@ function doActuate(deg) {
     tNodeFollow()
     
     updateLinkGeometry();
+
+    nodeMode = false
 }
 
 function calcOutputAngle(inDeg=inputAngle, open=linkageOpen) {
@@ -227,6 +229,7 @@ function toggleOpenCrossed() {
 }
 
 function updateLinkGeometry() {
+    pathNodeSynth(false)
     nodeDrag
         .attr("cx", d => d.x)
         .attr("cy", d => d.y)
@@ -270,6 +273,10 @@ function updateLinkGeometry() {
         .attr("stroke", d => d3.interpolateRgb(d.color,"white")(whtnColor*2))
         .attr("points", d => d.allPoints.map(j => `${j.x},${j.y}`).join(" "))
         .style("display", d => !d.trace ? "none" : d.id.length === 2 && !linksData.find(l => l.id === d.id).ternary ? "none" : "block")
+    altTraceLine
+        .attr("stroke", d3.interpolateRgb("darkgreen","white")(whtnColor*2))
+        .attr("points", altTraceData.points.map(j => `${j.x},${j.y}`).join(" "))
+        .style("display", !nodesData.find(n => n.id === "BC").trace || !linksData.find(l => l.id === "BC").ternary ? "none" : "block")
 
     // updateLinkageConfig()
     updateOpenCrossed()
@@ -344,6 +351,7 @@ function updateTrace() {
     for (i = 0; i < nodesData.length; i++) {
         nodesData[i].points = []
         nodesData[i].allPoints = []
+        altTraceData.points = []
     }
 
     let inAngle = in_startAngle
@@ -363,14 +371,6 @@ function updateTrace() {
             const out_temp = outputClass === "0-Rocker" && (coordToLink(outAngle,"angle") > 180) ? coordToLink(outAngle,"angle")-360 : coordToLink(outAngle,"angle")
             out_startAngle = Math.min(out_startAngle, out_temp)
             out_endAngle = Math.max(out_endAngle, out_temp)
-
-            // if (out_temp < outputLimits.min || out_temp > outputLimits.max) {
-            //     document.getElementById("debugOutputs").innerHTML = `
-            //         in: ${inAngle.toFixed(1)}
-            //         out: ${outAngle.toFixed(1)}
-            //         out_temp: ${out_temp.toFixed(1)}
-            //     `
-            // }
         }
 
         const newB = {x: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false)[0], y: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false)[1]}
@@ -387,7 +387,6 @@ function updateTrace() {
         if (nodeBC.allPoints.length > 0) {
             deltaBC = Math.sqrt((newBC.x - nodeBC.allPoints[nodeBC.allPoints.length-1].x)*(newBC.x - nodeBC.allPoints[nodeBC.allPoints.length-1].x) + (nodeBC.allPoints[nodeBC.allPoints.length-1].y - newBC.y)*(nodeBC.allPoints[nodeBC.allPoints.length-1].y - newBC.y))
         }
-
         if (i === 0 || deltaBC > traceDelta) {
             // nodeB.points.push(newB)
             // nodeAB.points.push(newAB)
@@ -403,7 +402,6 @@ function updateTrace() {
                 nodeBC.allPoints.push(newBC)
             }
         }
-        
     }
     // document.getElementById("debugOutputs").innerHTML = dbgtxt
 
@@ -432,7 +430,7 @@ function updateTrace() {
         if (nodeBC.allPoints.length > 0) {
             deltaBC = Math.sqrt((newBC.x - nodeBC.allPoints[nodeBC.allPoints.length-1].x)*(newBC.x - nodeBC.allPoints[nodeBC.allPoints.length-1].x) + (nodeBC.allPoints[nodeBC.allPoints.length-1].y - newBC.y)*(nodeBC.allPoints[nodeBC.allPoints.length-1].y - newBC.y))
         }
-
+        
         if (i === 0 || deltaBC > traceDelta) {
             if (!linkageOpen || (allowCrossover && inputClass !== "Crank")) {
                 nodeBC.points.push(newBC)
@@ -499,12 +497,39 @@ function updateTrace() {
             }
         }
     }
-    // document.getElementById("debugOutputs").innerHTML = `
-    //     minX: ${minCoord_x.toFixed(1)}, 
-    //     maxX: ${maxCoord_x.toFixed(1)}, 
-    //     minY: ${minCoord_y.toFixed(1)}, 
-    //     maxY: ${maxCoord_y.toFixed(1)}, 
-    // `
+
+    let swapped = false
+    let alt_angleStep = 0
+    let alt_Open = !linkageOpen
+    if (inputClass === "Rocker" && outputClass === "Crank") {
+        swapInputOutput(false)
+        swapped = true
+        updateOpenCrossed()
+        alt_Open = !linkageOpen
+        alt_angleStep = 360/traceSteps
+    } else {
+        alt_angleStep = in_angleStep
+        alt_Open = !linkageOpen
+    }
+    for (i = 0; i < traceSteps+1; i++) {
+        inAngle = 0 + in_angleStep * i
+
+        const newB = {x: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false)[0], y: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false)[1]}
+        const outAngle_temp = getNetAngle(calcOutputAngle(inAngle, alt_Open))
+        const newC = {x: placeNodePolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false)[0], y: placeNodePolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false)[1]}
+        const couplerAngle = getNodesAngle(newB,newC)
+        const couplerTAngle = getNetAngle(couplerAngle + couplerLink.tAng)
+        const couplerTDist = couplerLink.tLen
+        const newBC = {x: placeNodePolar(nodeBC, newB, couplerTAngle, couplerTDist, false)[0], y: placeNodePolar(nodeBC, newB, couplerTAngle, couplerTDist, false)[1]}
+
+        if (nodeMode && (inputClass === "Crank" && outputClass === "Rocker" || inputClass === "Rocker" && outputClass === "Crank")) {
+            altTraceData.points.push(newBC)
+        }
+    }
+    if (swapped) {
+        swapInputOutput()
+        updateOpenCrossed()
+    }
 }
 
 function playAnimation() {
@@ -625,7 +650,7 @@ function defaultLinkage() {
     updateLinkGeometry();
 }
 
-function swapInputOutput() {
+function swapInputOutput(updateNodes=true) {
     const nodeA = getNode("A")
     const nodeB = getNode("B")
     const nodeAB = getNode("AB")
@@ -654,5 +679,5 @@ function swapInputOutput() {
     nodeDC.y = oldAB.y
 
     setLinkNodes()
-    updateTNodes()
+    if (updateNodes) updateTNodes()
 }

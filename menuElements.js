@@ -243,6 +243,8 @@ resetLinkageButton
     .attr("stroke-width", 1)
     .attr("stroke-opacity", 0.75)
     .on("click", function() {
+        nodeMode = false
+        nodeIncr = -1
         defaultLinkage()
     })
 const resetToolTip = resetLinkageButton
@@ -357,7 +359,16 @@ nodeModeButton
     .attr("stroke-width", 1)
     .attr("stroke-opacity", 0.75)
     .on("click", function() {
-        nodeMode = !nodeMode
+        // if (!nodeMode) nodeIncr === 0
+        if (nodeIncr === 1) {
+            nodeMode = false
+            nodeIncr = -1
+        }
+        else {
+            nodeMode = true
+            nodeIncr++
+        }
+        // nodeMode = !nodeMode
         pathNodeSynth(true)
         updateLinkGeometry()
         updateTrace()

@@ -30,6 +30,7 @@ const nodesData = [
 const defaultNodes = structuredClone(nodesData); //Used to reset to default linkage 
 const defaultLinks = structuredClone(linksData)
 
+const altTraceData = {points: []}
 
 const fixedStatus = localStorage.getItem("fixedStatus")
 if (fixedStatus !== null && fixedStatus !== "") {
@@ -132,6 +133,7 @@ const linkLines = linkLineGroup.selectAll("polygon")
                 tempX = event.x
                 tempY = event.y
                 updateTNodes(false, d.id)
+                pathNodeSynth(nodeMode)
                 setLinkNodes()
                 updateTrace()
                 updateLinkGeometry();
@@ -208,7 +210,7 @@ const nodeDrag = nodeDragGroup.selectAll("cirlce")
             // }
             if (d.id.length === 2) updateTNodes(true, d.id)
             else updateTNodes()
-            pathNodeSynth(true)
+            pathNodeSynth(nodeMode)
             setLinkNodes()
             updateTrace()
             updateLinkGeometry();
@@ -252,6 +254,15 @@ const fullTraceLines = fullTraceGroup.selectAll("polyline")
     .attr("stroke-width", 2)
     .style("stroke-linecap", "round")
     .style("pointer-events", "none")
+
+const altTraceLine = zoomGroup
+    .append("polyline")
+    .attr("fill", "none")
+    .attr("opacity", 0.2)
+    .attr("stroke-width", 2)
+    .style("stroke-linecap", "round")
+    .style("pointer-events", "none")
+
 
 svg.selectAll(".link")
   .on("pointerdown", linkDoubleTap);
