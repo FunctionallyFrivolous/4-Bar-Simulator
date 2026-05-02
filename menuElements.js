@@ -14,7 +14,12 @@ openCrossedButton
     .on("click", function() {
         saveUndoNodes()
         nodeMode = false
-        nodeIncr = -1
+        cuspMode = false
+        synthModeCycleButton
+            .style("display", "none")
+        synthModeCycleIcon
+            .style("display", "none")
+        synthCycle = 0
         toggleOpenCrossed()
         saveNodes()
     })
@@ -114,22 +119,34 @@ const darkModeToolTip = darkModeButton
     .append("title")
     .text(darkMode ? "Switch to Light Mode" : "Switch to Dark Mode")
 
-darkModeIconTop
-    .attr("stroke", darkColor)
-    .attr("stroke-width", 1)
-    .style("stroke-linecap", "round")
-    .style("stroke-linejoin", "round")
-    .attr("fill", bgColor)
-    .attr("d", drawDarkModeIcons()[0])
+// darkModeIconTop
+//     .attr("stroke", darkColor)
+//     .attr("stroke-width", 1)
+//     .style("stroke-linecap", "round")
+//     .style("stroke-linejoin", "round")
+//     .attr("fill", bgColor)
+//     .attr("d", drawDarkModeIcons()[0])
+//     .style("pointer-events", "none")
+// darkModeIconBottom
+//     .attr("stroke", darkColor)
+//     .attr("stroke-width", 1)
+//     .style("stroke-linecap", "round")
+//     .style("stroke-linejoin", "round")
+//     .attr("fill", fgColor)
+//     .attr("d", drawDarkModeIcons()[1])
+//     .style("pointer-events", "none")
+darkModeIcon
+    .attr("x", windowWidth-buttonMargin-30/2)
+    .attr("y", windowHeight-buttonHeight/2-buttonMargin)
+    .attr("dy", "0.1em")
+    .attr("opacity", 0.85)
+    .attr("font-size", "18pt")
+    .attr("font-family", "sans-serif")
+    .attr("font-weight", "bold")
+    .attr("text-anchor", "middle")
+    .attr("alignment-baseline", "middle")
     .style("pointer-events", "none")
-darkModeIconBottom
-    .attr("stroke", darkColor)
-    .attr("stroke-width", 1)
-    .style("stroke-linecap", "round")
-    .style("stroke-linejoin", "round")
-    .attr("fill", fgColor)
-    .attr("d", drawDarkModeIcons()[1])
-    .style("pointer-events", "none")
+    .text("⬔")
 
 playButton
     .attr("x", buttonMargin)
@@ -233,7 +250,7 @@ cognateIcon
     .text("♺") //♻
 
 resetLinkageButton
-    .attr("x", buttonMargin*8 + buttonHeight*7)
+    .attr("x", buttonMargin*9 + buttonHeight*8)
     .attr("y", windowHeight-buttonMargin-buttonHeight)
     .attr("width", buttonHeight)
     .attr("height", buttonHeight)
@@ -246,7 +263,12 @@ resetLinkageButton
     .attr("stroke-opacity", 0.75)
     .on("click", function() {
         nodeMode = false
-        nodeIncr = -1
+        cuspMode = false
+        synthModeCycleButton
+            .style("display", "none")
+        synthModeCycleIcon
+            .style("display", "none")
+        synthCycle = 0
         defaultLinkage()
     })
 const resetToolTip = resetLinkageButton
@@ -366,16 +388,16 @@ nodeModeButton
     .attr("stroke-width", 1)
     .attr("stroke-opacity", 0.75)
     .on("click", function() {
-        // if (!nodeMode) nodeIncr === 0
-        if (nodeIncr === 1) {
-            nodeMode = false
-            nodeIncr = -1
-        }
-        else {
-            nodeMode = true
-            nodeIncr++
-        }
-        // nodeMode = !nodeMode
+        cuspMode = false
+        nodeMode = !nodeMode
+        synthCycle = 0
+        synthModeCycleButton
+            .attr("x", buttonMargin*7.75 + buttonHeight*6)
+            .style("display", nodeMode ? "block" : "none")
+        synthModeCycleIcon
+            .attr("x", buttonMargin*7 + buttonHeight*6 + buttonHeight/2)
+            .style("display", nodeMode ? "block" : "none")
+        
         pathNodeSynth(true)
         updateLinkGeometry()
         updateTrace()
@@ -389,14 +411,64 @@ const nodeModeToolTip = nodeModeButton
 nodeModeIcon
     .attr("x", buttonMargin*7 + buttonHeight*6 + buttonHeight/2)
     .attr("y", windowHeight-buttonHeight/2-buttonMargin)
-    .attr("dy", "0.05em")
-    .attr("font-size", "16pt")
+    .attr("dy", "0.12em")
+    .attr("font-size", "15pt")
     .attr("font-family", "sans-serif")
     .attr("font-weight", "bold")
     .attr("text-anchor", "middle")
     .attr("alignment-baseline", "middle")
     .style("pointer-events", "none")
-    .text("↫")
+    .text("⌘") // ⌘ , ↫ , ⅏
+
+cuspModeButton
+    .attr("x", buttonMargin*8 + buttonHeight*7)
+    .attr("y", windowHeight-buttonMargin-buttonHeight)
+    .attr("width", buttonHeight)
+    .attr("height", buttonHeight)
+    .attr("rx", 5)
+    .attr("ry", 5)
+    .attr("fill", "lightgray")
+    .attr("fill-opacity", 0.75)
+    .attr("stroke", "black")
+    .attr("stroke-width", 1)
+    .attr("stroke-opacity", 0.75)
+    .on("click", function() {
+        nodeMode = false
+        cuspMode = !cuspMode
+        synthCycle = 0
+        synthModeCycleButton
+            // .attr("x", buttonMargin*8.75 + buttonHeight*7)
+            .style("display", "none")
+        synthModeCycleIcon
+            // .attr("x", buttonMargin*8 + buttonHeight*7 + buttonHeight/2)
+            .style("display", "none")
+
+        pathCuspSynth()
+        updateLinkGeometry()
+        updateTrace()
+        updateLinkGeometry()
+        saveNodes()
+    })
+const cuspModeToolTip = cuspModeButton
+    .append("title")
+    .text("Cusp Mode")
+
+cuspModeIcon
+    .attr("x", buttonMargin*8 + buttonHeight*7 + buttonHeight/2)
+    .attr("y", windowHeight-buttonHeight/2-buttonMargin)
+    .attr("dy", "0.1em")
+    .attr("font-size", "18pt")
+    .attr("font-family", "sans-serif")
+    .attr("font-weight", "bold")
+    .attr("text-anchor", "middle")
+    .attr("alignment-baseline", "middle")
+    .style("pointer-events", "none")
+    .text("⯏") //⎎ , ⥿ , ⯏
+
+// Symbols:
+    // Function generation: ⦡ , ⌔
+    // Other: ⮓, ⮒ , ⌥ , ⬲ , ⬰ , ⥂ , ⥈ , ⤟ , ⤰
+    // Crossover: ↤ ↔ ⇼
 
 function startAnimationLoop() {
     playIcon.text("⏸")
@@ -460,3 +532,50 @@ function drawFitIcon(x, y) {
     `
     return snapPath
 }
+
+
+synthModeCycleButton
+    .attr("x", buttonMargin*8.75 + buttonHeight*7)
+    .attr("y", windowHeight-buttonMargin-buttonHeight*1.75)
+    .attr("width", buttonHeight*0.75)
+    .attr("height", buttonHeight*0.75)
+    .attr("rx", 5)
+    .attr("ry", 5)
+    .attr("fill", fgColor)
+    .attr("fill-opacity", 0.0)
+    .style("display", "none")
+    .on("click", function() {
+        synthCycle++
+        if (nodeMode) {
+            pathNodeSynth(true)
+            updateLinkGeometry()
+            updateTrace()
+            updateLinkGeometry()
+            saveNodes()
+        }
+        // if (cuspMode) {
+        //     pathCuspSynth()
+        //     updateLinkGeometry()
+        //     updateTrace()
+        //     updateLinkGeometry()
+        //     saveNodes()
+        // }
+    })
+const synthModeCycleToolTip = synthModeCycleButton
+    .append("title")
+    .text("Cycle Alt Configs")
+
+synthModeCycleIcon
+    .attr("x", buttonMargin*8 + buttonHeight*7 + buttonHeight/2)
+    .attr("y", windowHeight-buttonMargin-buttonHeight*1.75 + buttonHeight*0.75/2)
+    .attr("dy", "0.075em")
+    .attr("dx", "0.02em")
+    .attr("font-size", "14pt")
+    .attr("font-family", "sans-serif")
+    .attr("font-weight", "bold")
+    .attr("text-anchor", "middle")
+    .attr("fill", fgColor)
+    .attr("alignment-baseline", "middle")
+    .style("pointer-events", "none")
+    .style("display", "none")
+    .text("↻") // ⥁ , ↻ , ⟳

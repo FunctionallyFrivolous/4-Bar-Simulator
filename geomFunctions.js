@@ -42,6 +42,12 @@ function doActuate(deg) {
     updateLinkGeometry();
 
     nodeMode = false
+    cuspMode = false
+    synthModeCycleButton
+        .style("display", "none")
+    synthModeCycleIcon
+        .style("display", "none")
+    synthCycle = 0
 }
 
 function calcOutputAngle(inDeg=inputAngle, open=linkageOpen) {
@@ -292,6 +298,8 @@ function updateLinkGeometry() {
 
     nodeModeIcon
         .attr("opacity", nodeMode ? 1 : 0.5)
+    cuspModeIcon
+        .attr("opacity", cuspMode ? 1 : 0.5)
 
 
     inputLinkVal
@@ -492,7 +500,7 @@ function updateTrace() {
 
     // let swapped = false
     // let alt_angleStep = 0
-    // if (nodeMode && inputClass === "Rocker" && outputClass === "Crank") {
+    // if (inputClass === "Rocker" && outputClass === "Crank") {
     //     swapped = true
     //     swapInputOutput()
     //     updateOpenCrossed()
@@ -511,7 +519,7 @@ function updateTrace() {
     //     const couplerTDist = couplerLink.tLen
     //     const newBC = {x: placeNodePolar(nodeBC, newB, couplerTAngle, couplerTDist, false)[0], y: placeNodePolar(nodeBC, newB, couplerTAngle, couplerTDist, false)[1]}
 
-    //     if (nodeMode && (inputClass === "Crank" && outputClass === "Rocker" || inputClass === "Rocker" && outputClass === "Crank")) {
+    //     if ((inputClass === "Crank" && outputClass === "Rocker" || inputClass === "Rocker" && outputClass === "Crank")) {
     //         altTraceData.points.push(newBC)
     //     }
     // }
@@ -631,36 +639,4 @@ function defaultLinkage() {
     updateOpenCrossed()
     updateTrace()
     updateLinkGeometry();
-}
-
-function swapInputOutput(updateNodes=true) {
-    const nodeA = getNode("A")
-    const nodeB = getNode("B")
-    const nodeAB = getNode("AB")
-    const nodeD = getNode("D")
-    const nodeC = getNode("C")
-    const nodeDC = getNode("DC")
-
-    const oldA = structuredClone(nodeA)
-    const oldB = structuredClone(nodeB)
-    const oldAB = structuredClone(nodeAB)
-    const oldD = structuredClone(nodeD)
-    const oldC = structuredClone(nodeC)
-    const oldDC = structuredClone(nodeDC)
-
-    nodeA.x = oldD.x
-    nodeA.y = oldD.y
-    nodeB.x = oldC.x
-    nodeB.y = oldC.y
-    nodeAB.x = oldDC.x
-    nodeAB.y = oldDC.y
-    nodeD.x = oldA.x
-    nodeD.y = oldA.y
-    nodeC.x = oldB.x
-    nodeC.y = oldB.y
-    nodeDC.x = oldAB.x
-    nodeDC.y = oldAB.y
-
-    setLinkNodes()
-    updateTNodes()
 }

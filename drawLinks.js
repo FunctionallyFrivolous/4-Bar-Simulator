@@ -134,6 +134,7 @@ const linkLines = linkLineGroup.selectAll("polygon")
                 tempY = event.y
                 updateTNodes(false, d.id)
                 pathNodeSynth(nodeMode)
+                pathCuspSynth(cuspMode)
                 setLinkNodes()
                 updateTrace()
                 updateLinkGeometry();
@@ -211,6 +212,7 @@ const nodeDrag = nodeDragGroup.selectAll("cirlce")
             if (d.id.length === 2) updateTNodes(true, d.id)
             else updateTNodes()
             pathNodeSynth(nodeMode)
+            pathCuspSynth(cuspMode)
             setLinkNodes()
             updateTrace()
             updateLinkGeometry();

@@ -39,6 +39,9 @@
     // Quirks & Bugs:
         // Ternary node snapping is based on angle rather than distance. Results in snap "strength" that varies based on distance from the reference node
             // This was just the easy/lazy way to get it done. Will fix later
+        // Fit view result is kind of awkward in some cases
+            // Should not be impacted by hidden ternary nodes, etc.
+            // Also potentially an issue with calc of center location in some cases
 
 
 // localStorage.clear()
@@ -85,8 +88,9 @@ document.getElementById("topView").style.border = `1px solid ${fgColor}`
 
 let undoStatus = true;
 
+let synthCycle = 0
 let nodeMode = false
-let nodeIncr = -1
+let cuspMode = false
 
 const traceStepsCoarse = 1000
 const traceStepsFine = 4000
@@ -170,6 +174,7 @@ const crossoverIcon = overlayGroup.append("text")
 const darkModeButton = overlayGroup.append("rect")
 const darkModeIconTop = overlayGroup.append("path")
 const darkModeIconBottom = overlayGroup.append("path")
+const darkModeIcon = overlayGroup.append("text")
 
 const playButton = overlayGroup.append("rect")
 const playIcon = overlayGroup.append("text")
@@ -187,6 +192,11 @@ const swapInOutButton = overlayGroup.append("rect")
 const swapInOutIcon = overlayGroup.append("text")
 const nodeModeButton = overlayGroup.append("rect")
 const nodeModeIcon = overlayGroup.append("text")
+const cuspModeButton = overlayGroup.append("rect")
+const cuspModeIcon = overlayGroup.append("text")
+
+const synthModeCycleButton = overlayGroup.append("rect")
+const synthModeCycleIcon = overlayGroup.append("text")
 
 const inputLinkVal = overlayGroup.append("text")
 const inputLinkProps = overlayGroup.append("text")

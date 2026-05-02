@@ -6,9 +6,14 @@ function toggleDarkMode(){
     fgColor = darkMode ? lightColor : darkColor
     whtnColor = darkMode ? 0.25 : 0
     background.attr("fill", bgColor)
-    darkModeIconTop.attr("fill", bgColor)
-    darkModeIconBottom.attr("fill", fgColor)
+    // darkModeIconTop.attr("fill", bgColor)
+    // darkModeIconBottom.attr("fill", fgColor)
+    darkModeIcon.text(darkMode ? "⬔" : "⬕")
     nodeDrag.attr("fill", darkMode ? "white" : "black")
+
+    synthModeCycleIcon.attr("fill", fgColor)
+    synthModeCycleButton.attr("fill", fgColor)
+
     document.body.style.backgroundColor = bgColor
     document.getElementById("pageLab").style.color = fgColor
     document.getElementById("topView").style.border = `1px solid ${fgColor}`

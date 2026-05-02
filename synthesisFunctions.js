@@ -1,4 +1,36 @@
 
+function swapInputOutput(updateNodes=true) {
+    const nodeA = getNode("A")
+    const nodeB = getNode("B")
+    const nodeAB = getNode("AB")
+    const nodeD = getNode("D")
+    const nodeC = getNode("C")
+    const nodeDC = getNode("DC")
+
+    const oldA = structuredClone(nodeA)
+    const oldB = structuredClone(nodeB)
+    const oldAB = structuredClone(nodeAB)
+    const oldD = structuredClone(nodeD)
+    const oldC = structuredClone(nodeC)
+    const oldDC = structuredClone(nodeDC)
+
+    nodeA.x = oldD.x
+    nodeA.y = oldD.y
+    nodeB.x = oldC.x
+    nodeB.y = oldC.y
+    nodeAB.x = oldDC.x
+    nodeAB.y = oldDC.y
+    nodeD.x = oldA.x
+    nodeD.y = oldA.y
+    nodeC.x = oldB.x
+    nodeC.y = oldB.y
+    nodeDC.x = oldAB.x
+    nodeDC.y = oldAB.y
+
+    setLinkNodes()
+    updateTNodes()
+}
+
 function cycleCognates() {
     const nodeA = getNode("A")
     const nodeB = getNode("B")
@@ -56,6 +88,7 @@ function cycleCognates() {
 
 function pathNodeSynth(doit=false) {
     if (!nodeMode) return
+    if (synthCycle === 4) synthCycle = 0
 
     getLinkByType("coupler").tSnap = false
 
@@ -70,9 +103,13 @@ function pathNodeSynth(doit=false) {
 
     const angleAEB = getAngleBtwNodes(nodeA, nodeB, nodeE)
     const angleED = getNodesAngle(nodeE, nodeD, false)
-    let angleEC = getNetAngle(angleED - angleAEB - 180*nodeIncr)
+    let angleEC = getNetAngle(angleED - angleAEB - 180*synthCycle)
 
     const newC = placeNodePolar(oldC, nodeE, angleEC, EC, doit)
+
+    // const inputAng = getLinkAngle("AB") - 180*(Math.floor(synthCycle/2))
+    // const inputLen = linkToCoord(getLinkByType("input").len, "dist")
+    // placeNodePolar(nodeB, nodeA, inputAng, inputLen, doit)
 
     setLinkNodes()
     updateTNodes()
@@ -111,4 +148,38 @@ function mirrorNodeSynth(doit=true) {
     // updateTNodes()
     // updateTrace()
     // updateLinkGeometry()
+}
+
+function pathCuspSynth(doit=true) {
+    if (!cuspMode) return
+    // if (synthCycle === 4) synthCycle = 0
+
+    setLinkNodes()
+
+    const nodeE = getNode("BC")
+    const nodeA = getNode("A")
+    const nodeB = getNode("B")
+    const nodeC = getNode("C")
+    const nodeD = getNode("D")
+
+    const inputLength = linkToCoord(getLinkByType("input").len, "dist")
+    const outputLength = linkToCoord(getLinkByType("output").len, "dist")
+
+    let angleAE = getNodesAngle(nodeA, nodeE)// - 180*(Math.floor(synthCycle/2))
+    let angleDE = getNodesAngle(nodeD, nodeE)// - 180*synthCycle
+
+    const outputAng = getNodesAngle(nodeC, nodeD)
+    if (Math.abs(angleDE-outputAng) < 90) angleDE = angleDE - 180
+
+    const inputAng = getNodesAngle(nodeB, nodeA)
+    if (Math.abs(angleAE-inputAng) < 90) angleAE = angleAE - 180
+
+    placeNodePolar(nodeB, nodeA, angleAE, inputLength, doit)
+    placeNodePolar(nodeC, nodeD, angleDE, outputLength, doit)
+
+    setLinkNodes()
+    updateTNodes()
+    updateInputLimits()
+    updateOutputLimits()
+
 }
