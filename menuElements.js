@@ -119,34 +119,34 @@ const darkModeToolTip = darkModeButton
     .append("title")
     .text(darkMode ? "Switch to Light Mode" : "Switch to Dark Mode")
 
-// darkModeIconTop
-//     .attr("stroke", darkColor)
-//     .attr("stroke-width", 1)
-//     .style("stroke-linecap", "round")
-//     .style("stroke-linejoin", "round")
-//     .attr("fill", bgColor)
-//     .attr("d", drawDarkModeIcons()[0])
-//     .style("pointer-events", "none")
-// darkModeIconBottom
-//     .attr("stroke", darkColor)
-//     .attr("stroke-width", 1)
-//     .style("stroke-linecap", "round")
-//     .style("stroke-linejoin", "round")
-//     .attr("fill", fgColor)
-//     .attr("d", drawDarkModeIcons()[1])
-//     .style("pointer-events", "none")
-darkModeIcon
-    .attr("x", windowWidth-buttonMargin-30/2)
-    .attr("y", windowHeight-buttonHeight/2-buttonMargin)
-    .attr("dy", "0.1em")
-    .attr("opacity", 0.85)
-    .attr("font-size", "18pt")
-    .attr("font-family", "sans-serif")
-    .attr("font-weight", "bold")
-    .attr("text-anchor", "middle")
-    .attr("alignment-baseline", "middle")
+darkModeIconTop
+    .attr("stroke", darkColor)
+    .attr("stroke-width", 1)
+    .style("stroke-linecap", "round")
+    .style("stroke-linejoin", "round")
+    .attr("fill", bgColor)
+    .attr("d", drawDarkModeIcons()[0])
     .style("pointer-events", "none")
-    .text("⬔")
+darkModeIconBottom
+    .attr("stroke", darkColor)
+    .attr("stroke-width", 1)
+    .style("stroke-linecap", "round")
+    .style("stroke-linejoin", "round")
+    .attr("fill", fgColor)
+    .attr("d", drawDarkModeIcons()[1])
+    .style("pointer-events", "none")
+// darkModeIcon
+//     .attr("x", windowWidth-buttonMargin-30/2)
+//     .attr("y", windowHeight-buttonHeight/2-buttonMargin)
+//     .attr("opacity", 0.85)
+//     .attr("font-size", "18pt")
+//     .attr("font-family", "sans-serif")
+//     .attr("font-weight", "bold")
+//     .attr("text-anchor", "middle")
+//     .attr("alignment-baseline", "middle")
+//     .attr("dy", "0.1em")
+//     .style("pointer-events", "none")
+//     // .text("⬔")
 
 playButton
     .attr("x", buttonMargin)
@@ -456,14 +456,14 @@ const cuspModeToolTip = cuspModeButton
 cuspModeIcon
     .attr("x", buttonMargin*8 + buttonHeight*7 + buttonHeight/2)
     .attr("y", windowHeight-buttonHeight/2-buttonMargin)
-    .attr("dy", "0.1em")
-    .attr("font-size", "18pt")
+    .attr("font-size", "19pt")
     .attr("font-family", "sans-serif")
     .attr("font-weight", "bold")
     .attr("text-anchor", "middle")
     .attr("alignment-baseline", "middle")
+    .attr("dy", "0.1em")
     .style("pointer-events", "none")
-    .text("⯎") //⎎ , ⥿ , ⯏ , ⯏
+    .text("⎎") //⎎ , ⥿ , ⯏ , ⯎
 
 // Symbols:
     // Function generation: ⦡ , ⌔

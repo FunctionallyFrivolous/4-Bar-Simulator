@@ -175,7 +175,7 @@ const crossoverIcon = overlayGroup.append("text")
 const darkModeButton = overlayGroup.append("rect")
 const darkModeIconTop = overlayGroup.append("path")
 const darkModeIconBottom = overlayGroup.append("path")
-const darkModeIcon = overlayGroup.append("text")
+// const darkModeIcon = overlayGroup.append("text")
 
 const playButton = overlayGroup.append("rect")
 const playIcon = overlayGroup.append("text")
