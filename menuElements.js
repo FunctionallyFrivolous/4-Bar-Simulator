@@ -392,7 +392,7 @@ nodeModeButton
         nodeMode = !nodeMode
         synthCycle = 0
         synthModeCycleButton
-            .attr("x", buttonMargin*7.75 + buttonHeight*6)
+            .attr("x", buttonMargin*7 + buttonHeight*6)
             .style("display", nodeMode ? "block" : "none")
         synthModeCycleIcon
             .attr("x", buttonMargin*7 + buttonHeight*6 + buttonHeight/2)
@@ -437,7 +437,7 @@ cuspModeButton
         cuspMode = !cuspMode
         synthCycle = 0
         synthModeCycleButton
-            // .attr("x", buttonMargin*8.75 + buttonHeight*7)
+            // .attr("x", buttonMargin*8 + buttonHeight*7)
             .style("display", "none")
         synthModeCycleIcon
             // .attr("x", buttonMargin*8 + buttonHeight*7 + buttonHeight/2)
@@ -463,7 +463,7 @@ cuspModeIcon
     .attr("text-anchor", "middle")
     .attr("alignment-baseline", "middle")
     .style("pointer-events", "none")
-    .text("⯏") //⎎ , ⥿ , ⯏
+    .text("⯎") //⎎ , ⥿ , ⯏ , ⯏
 
 // Symbols:
     // Function generation: ⦡ , ⌔
@@ -535,10 +535,10 @@ function drawFitIcon(x, y) {
 
 
 synthModeCycleButton
-    .attr("x", buttonMargin*8.75 + buttonHeight*7)
-    .attr("y", windowHeight-buttonMargin-buttonHeight*1.75)
-    .attr("width", buttonHeight*0.75)
-    .attr("height", buttonHeight*0.75)
+    .attr("x", buttonMargin*8 + buttonHeight*7)
+    .attr("y", windowHeight-buttonMargin-buttonHeight*2)
+    .attr("width", buttonHeight)
+    .attr("height", buttonHeight)
     .attr("rx", 5)
     .attr("ry", 5)
     .attr("fill", fgColor)

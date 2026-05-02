@@ -28,8 +28,9 @@
         // Cognates - DONE!
         // Nodes - DONE!
         // Cusps
-            // One cusp
+            // One cusp - DONE!
             // Two cusps
+                // Add 2ndary button(s) to allow add/remove cusp points
             // Three cusps?
         // Symmetric Coupler Curves
     // Scale Linkage
