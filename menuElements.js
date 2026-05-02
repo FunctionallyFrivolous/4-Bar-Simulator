@@ -246,6 +246,7 @@ cognateIcon
     .attr("font-weight", "bold")
     .attr("text-anchor", "middle")
     .attr("alignment-baseline", "middle")
+    .attr("dy", "0.05em")
     .style("pointer-events", "none")
     .text("♺") //♻
 
@@ -367,11 +368,12 @@ const swapInOutToolTip = swapInOutButton
 swapInOutIcon
     .attr("x", buttonMargin*5 + buttonHeight*4 + buttonHeight/2)
     .attr("y", windowHeight-buttonHeight/2-buttonMargin)
-    .attr("font-size", "20px")
+    .attr("font-size", "21px")
     .attr("font-family", "sans-serif")
     .attr("font-weight", "bold")
     .attr("text-anchor", "middle")
     .attr("alignment-baseline", "middle")
+    .attr("dy", "0.05em")
     .style("pointer-events", "none")
     .text("↹") //♻
 
@@ -456,14 +458,14 @@ const cuspModeToolTip = cuspModeButton
 cuspModeIcon
     .attr("x", buttonMargin*8 + buttonHeight*7 + buttonHeight/2)
     .attr("y", windowHeight-buttonHeight/2-buttonMargin)
-    .attr("font-size", "19pt")
+    .attr("font-size", "22pt")
     .attr("font-family", "sans-serif")
     .attr("font-weight", "bold")
     .attr("text-anchor", "middle")
     .attr("alignment-baseline", "middle")
-    .attr("dy", "0.1em")
+    .attr("dy", "0.05em")
     .style("pointer-events", "none")
-    .text("⎎") //⎎ , ⥿ , ⯏ , ⯎
+    .text("⥿") //⎎ , ⥿ , ⯏ , ⯎
 
 // Symbols:
     // Function generation: ⦡ , ⌔
