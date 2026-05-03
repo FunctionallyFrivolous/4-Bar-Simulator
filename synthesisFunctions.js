@@ -30,9 +30,6 @@ function swapInputOutput(updateNodes=true) {
     setLinkNodes()
     updateTNodes()
 
-    synthModeInputAngle = inputAngle
-    synthModeOpen = linkageOpen
-
 }
 
 function cycleCognates() {
@@ -91,7 +88,10 @@ function cycleCognates() {
 }
 
 function pathNodeSynth(doit=false) {
-    if (!nodeMode) return
+    if (!nodeMode) {
+        altTraceData.points = []
+        return
+    }
     if (synthCycle === 4) synthCycle = 0
 
     getLinkByType("coupler").tSnap = false

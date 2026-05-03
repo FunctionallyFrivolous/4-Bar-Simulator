@@ -71,7 +71,7 @@ crossoverButton
     .on("click", function() {
         if (inputClass === "Crank") return
         allowCrossover = !allowCrossover
-        updateTrace()
+        updateTrace(false)
         updateLinkGeometry()
         crossoverToolTip
             .text(allowCrossover ? "Crossover (Enabled)" : "Crossover (Disabled)")
@@ -358,8 +358,17 @@ swapInOutButton
         swapInputOutput()
         saveNodes()
         updateLinkGeometry()
-        updateTrace()
+        nodeMode = false
+        cuspMode = false
+        synthModeCycleButton
+            .style("display", "none")
+        synthModeCycleIcon
+            .style("display", "none")
+        synthCycle = 0
+        updateTrace(false)
         updateLinkGeometry()
+        // synthModeInputAngle = inputAngle
+        // synthModeOpen = linkageOpen
     })
 const swapInOutToolTip = swapInOutButton
         .append("title")

@@ -336,10 +336,10 @@ function updateLinkGeometry() {
     //     .attr("x2", getNode("B").x)
     //     .attr("y2", getNode("B").y)
 
-    // document.getElementById("debugOutputs").innerHTML = `${synthModeInputAngle.toFixed(1)}`
+    // document.getElementById("debugOutputs").innerHTML = `${synthModeInputAngle} \n<br>`
 }
 
-function updateTrace() {
+function updateTrace(alt=true) {
     updateInputLimits()
     updateOutputLimits()
 
@@ -365,7 +365,6 @@ function updateTrace() {
     for (i = 0; i < nodesData.length; i++) {
         nodesData[i].points = []
         nodesData[i].allPoints = []
-        altTraceData.points = []
     }
 
     let inAngle = in_startAngle
@@ -543,7 +542,11 @@ function updateTrace() {
     // }
 
     let swapped_n = false
-    if (nodeMode && (inputClass === "Rocker" || outputClass === "Rocker")) {
+    if (!nodeMode || (inputClass !== "Rocker" && outputClass !== "Rocker")) {
+        altTraceData.points = []
+    }
+    if (alt && nodeMode && (inputClass === "Rocker" || outputClass === "Rocker")) {
+        altTraceData.points = []
         mirrorNodeSynth()
         setLinkNodes()
         updateTNodes()

@@ -89,6 +89,7 @@ const linkLines = linkLineGroup.selectAll("polygon")
                 eventAngle = getNetAngle(radToDeg(eventAngle))
                 const deltaAngle = eventAngle - tempAngle
                 const newAngle = currentAngle + deltaAngle
+                // document.getElementById("debugOutputs").innerHTML = `${recentLimit}`
 
                 if (recentLimit === "max") {
                     const tempLimit = linkToCoord(inputLimits.max, "angle") - limitThreshold
@@ -153,7 +154,11 @@ const linkLines = linkLineGroup.selectAll("polygon")
         .on("end", function(event,d) {
             traceSteps = traceStepsFine
             saveNodes()
-            if (d.type !== "input") updateTrace()
+            if (d.type !== "input") {
+                updateTrace()
+                synthModeInputAngle = inputAngle
+                synthModeOpen = linkageOpen
+            }
             updateLinkGeometry();
         })
     )
@@ -235,7 +240,9 @@ const nodeDrag = nodeDragGroup.selectAll("cirlce")
             traceSteps = traceStepsFine
             saveNodes()
             updateTrace()
-            updateLinkGeometry();
+            synthModeInputAngle = inputAngle
+            synthModeOpen = linkageOpen
+            updateLinkGeometry()
         })
     )
 const nodeDragToolTip = nodeDrag
@@ -300,7 +307,7 @@ const synthDrag = synthDragGroup.selectAll("circle")
     .attr("stroke-opacity", 0.25)
     .on("click", function(event, d) {
         // if (!nodeMode) return
-        if (nodeMode && d.x.toFixed(1) === getNode("BC").x.toFixed(1) && d.y.toFixed(1) === getNode("BC").y.toFixed(1)) {
+        if (nodeMode && Math.abs(d.x - getNode("BC").x) < limitThreshold && Math.abs(d.y - getNode("BC").y) < limitThreshold) {
             mirrorNodeSynth(true,false)
             setLinkNodes()
             tNodeFollow()
@@ -308,10 +315,13 @@ const synthDrag = synthDragGroup.selectAll("circle")
             updateLinkGeometry()
         } else {
             linkageOpen = synthModeOpen
-            doActuate(linkToCoord(synthModeInputAngle,"angle"))
+            doActuate(getNetAngle(linkToCoord(synthModeInputAngle,"angle")))
         }
         synthModeInputAngle = inputAngle
         synthModeOpen = linkageOpen
+        recentLimit = "none"
+        updateTrace(false)
+        updateLinkGeometry()
     })
     .call(d3.drag()
         .on("start", function(event,d) {

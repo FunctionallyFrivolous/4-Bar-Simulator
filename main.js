@@ -64,7 +64,7 @@ let lastTapTime = 0;
 
 let inputLimits = {min: 0, max: 360};
 let outputLimits = {min: 0, max: 360};
-const limitThreshold = 0.001
+const limitThreshold = 0.0001
 let recentLimit = "none";
 
 let inputAngle = 90;
