@@ -310,6 +310,8 @@ const synthDrag = synthDragGroup.selectAll("circle")
             linkageOpen = synthModeOpen
             doActuate(linkToCoord(synthModeInputAngle,"angle"))
         }
+        synthModeInputAngle = inputAngle
+        synthModeOpen = linkageOpen
     })
     .call(d3.drag()
         .on("start", function(event,d) {
