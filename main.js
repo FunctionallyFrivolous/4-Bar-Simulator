@@ -32,6 +32,7 @@
             // Two cusps
                 // Add 2ndary button(s) to allow add/remove cusp points
             // Three cusps?
+            // Double click points to add/remove?
         // Symmetric Coupler Curves
     // Scale Linkage
         // Scale all link lengths uniformly

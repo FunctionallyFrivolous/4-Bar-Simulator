@@ -13,6 +13,7 @@ function toggleDarkMode(){
 
     synthModeCycleIcon.attr("fill", fgColor)
     synthModeCycleButton.attr("fill", fgColor)
+    reverseIcon.attr("fill", fgColor)
 
     document.body.style.backgroundColor = bgColor
     document.getElementById("pageLab").style.color = fgColor
