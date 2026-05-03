@@ -448,6 +448,9 @@ cuspModeButton
             // .attr("x", buttonMargin*8 + buttonHeight*7 + buttonHeight/2)
             .style("display", "none")
 
+        synthPoints[0].x = getNode("BC").x
+        synthPoints[0].y = getNode("BC").y
+
         pathCuspSynth()
         updateLinkGeometry()
         updateTrace()

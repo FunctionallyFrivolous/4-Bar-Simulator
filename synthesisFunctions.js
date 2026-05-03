@@ -191,4 +191,7 @@ function pathCuspSynth(doit=true) {
     updateInputLimits()
     updateOutputLimits()
 
+    synthModeInputAngle = inputAngle
+    synthModeOpen = linkageOpen
+
 }

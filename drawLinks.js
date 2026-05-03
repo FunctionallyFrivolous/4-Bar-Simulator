@@ -299,8 +299,8 @@ const synthDrag = synthDragGroup.selectAll("circle")
     .attr("stroke-width", 2)
     .attr("stroke-opacity", 0.25)
     .on("click", function(event, d) {
-        if (!nodeMode) return
-        if (d.x.toFixed(1) === getNode("BC").x.toFixed(1) && d.y.toFixed(1) === getNode("BC").y.toFixed(1)) {
+        // if (!nodeMode) return
+        if (nodeMode && d.x.toFixed(1) === getNode("BC").x.toFixed(1) && d.y.toFixed(1) === getNode("BC").y.toFixed(1)) {
             mirrorNodeSynth(true,false)
             setLinkNodes()
             tNodeFollow()
@@ -323,6 +323,7 @@ const synthDrag = synthDragGroup.selectAll("circle")
             d.x = event.x
             d.y = event.y
             pathNodeSynth(nodeMode)
+            pathCuspSynth(cuspMode)
 
             setLinkNodes()
             updateTNodes()

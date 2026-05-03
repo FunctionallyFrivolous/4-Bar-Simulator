@@ -42,7 +42,7 @@ function doActuate(deg) {
     updateLinkGeometry();
 
     // nodeMode = false
-    cuspMode = false
+    // cuspMode = false
     // synthModeCycleButton
     //     .style("display", "none")
     // synthModeCycleIcon
