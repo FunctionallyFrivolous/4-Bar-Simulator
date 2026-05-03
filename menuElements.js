@@ -399,6 +399,9 @@ nodeModeButton
         synthModeCycleIcon
             .attr("x", buttonMargin*7 + buttonHeight*6 + buttonHeight/2)
             .style("display", nodeMode ? "block" : "none")
+
+        synthPoints[0].x = getNode("BC").x
+        synthPoints[0].y = getNode("BC").y
         
         pathNodeSynth(true)
         updateLinkGeometry()
@@ -471,10 +474,12 @@ cuspModeIcon// = overlayGroup.append("path")
     .attr("stroke", "black")
     .attr("stroke-width", 2)
     .attr("fill", "none")
-    .attr("d", drawCuspIcon(
-        buttonMargin*8 + buttonHeight*7+ buttonHeight/2,
-        windowHeight-buttonHeight/2-buttonMargin
-    ))
+    .attr("d", 
+        drawCuspIcon(
+            buttonMargin*8 + buttonHeight*7+ buttonHeight/2,
+            windowHeight-buttonHeight/2-buttonMargin
+        )
+    )
     .style("pointer-events", "none")
 
 // Symbols:

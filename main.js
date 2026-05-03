@@ -89,6 +89,8 @@ document.getElementById("topView").style.border = `1px solid ${fgColor}`
 
 let undoStatus = true;
 
+let synthModeInputAngle = 0
+let synthModeOpen = linkageOpen
 let synthCycle = 0
 let nodeMode = false
 let cuspMode = false
@@ -167,6 +169,9 @@ const nodeDragGroup = zoomGroup.append("g")
 const traceDotGroup = zoomGroup.append("g")
 const traceLineGroup = zoomGroup.append("g")
 const fullTraceGroup = zoomGroup.append("g")
+
+const synthDotGroup = zoomGroup.append("g")
+const synthDragGroup = zoomGroup.append("g")
 
 const openCrossedButton = overlayGroup.append("rect")
 const openCrossedIcon = overlayGroup.append("text")

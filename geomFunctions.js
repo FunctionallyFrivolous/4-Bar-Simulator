@@ -12,14 +12,14 @@ function doActuate(deg) {
             inAngle = linkToCoord(inputLimits.min, "angle") + limitThreshold;
             recentLimit = "min"
             if (!recentCrossover && checkAngle < inputLimits.min + crossoverDeadband && allowCrossover) {
-                toggleOpenCrossed()
+                toggleOpenCrossed(false)
                 recentCrossover = true
             }
         } else if (checkAngle > inputLimits.max) {
             inAngle = linkToCoord(inputLimits.max, "angle") - limitThreshold;
             recentLimit = "max"
             if (!recentCrossover && checkAngle > inputLimits.max - crossoverDeadband && allowCrossover) {
-                toggleOpenCrossed()
+                toggleOpenCrossed(false)
                 recentCrossover = true
             }
         }
@@ -41,13 +41,13 @@ function doActuate(deg) {
     
     updateLinkGeometry();
 
-    nodeMode = false
+    // nodeMode = false
     cuspMode = false
-    synthModeCycleButton
-        .style("display", "none")
-    synthModeCycleIcon
-        .style("display", "none")
-    synthCycle = 0
+    // synthModeCycleButton
+    //     .style("display", "none")
+    // synthModeCycleIcon
+    //     .style("display", "none")
+    // synthCycle = 0
 }
 
 function calcOutputAngle(inDeg=inputAngle, open=linkageOpen) {
@@ -215,19 +215,19 @@ function updateOpenCrossed() {
     // openCrossedIcon.attr("d", drawOpenCrossedIcon()[linkageOpen ? 1 : 0])
 } 
 
-function toggleOpenCrossed() {
+function toggleOpenCrossed(retrace=true) {
     const DB_th = getNodesAngle(getNode("D"), getNode("B"))
     const DC_th = getNodesAngle(getNode("D"), getNode("C"))
     const newDC_th = 2*DB_th - DC_th
     rotateNode(getNode("C"),newDC_th,getNode("D"))
     updateOpenCrossed()
     tNodeFollow()
-    updateTrace()
+    if (retrace) updateTrace()
     updateLinkGeometry()
 }
 
 function updateLinkGeometry() {
-    pathNodeSynth(false)
+    // pathNodeSynth(false)
     nodeDrag
         .attr("cx", d => d.x)
         .attr("cy", d => d.y)
@@ -276,6 +276,18 @@ function updateLinkGeometry() {
         .attr("points", altTraceData.points.map(j => `${j.x},${j.y}`).join(" "))
         .style("display", !nodesData.find(n => n.id === "BC").trace || !linksData.find(l => l.id === "BC").ternary ? "none" : "block")
 
+    synthDots
+        .attr("cx", d => d.x)
+        .attr("cy", d => d.y)
+        .attr("fill", d3.interpolateRgb("darkgreen","white")(whtnColor*2))
+        .style("display", nodeMode || cuspMode ? d => d.display : "none")
+    synthDrag
+        .attr("cx", d => d.x)
+        .attr("cy", d => d.y)
+        .attr("fill", fgColor)
+        .attr("stroke", fgColor)
+        .style("display", nodeMode || cuspMode ? d => d.display : "none")
+
     // updateLinkageConfig()
     updateOpenCrossed()
     updateInputLimits()
@@ -323,6 +335,8 @@ function updateLinkGeometry() {
     //     .attr("y1", getNode("D").y)
     //     .attr("x2", getNode("B").x)
     //     .attr("y2", getNode("B").y)
+
+    // document.getElementById("debugOutputs").innerHTML = `${synthModeInputAngle.toFixed(1)}`
 }
 
 function updateTrace() {

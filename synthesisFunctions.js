@@ -29,6 +29,10 @@ function swapInputOutput(updateNodes=true) {
 
     setLinkNodes()
     updateTNodes()
+
+    synthModeInputAngle = inputAngle
+    synthModeOpen = linkageOpen
+
 }
 
 function cycleCognates() {
@@ -115,6 +119,11 @@ function pathNodeSynth(doit=false) {
     updateTNodes()
     updateInputLimits()
     updateOutputLimits()
+
+    synthModeInputAngle = inputAngle
+    synthModeOpen = linkageOpen
+    // synthPoints[0].x = nodeE.x
+    // synthPoints[0].y = nodeE.y
 
     return [newC[0], newC[1]]
 

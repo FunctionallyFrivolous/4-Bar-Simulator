@@ -27,6 +27,11 @@ const nodesData = [
     {id: "AD", x: 450, y: 250, color: "none", ground: false, trace: false, points: [], allPoints: []},
 ]
 
+const synthPoints = [
+    {id: "E1", x: 260, y: 140, display: "block"},
+    {id: "E2", x: 250, y: 250, display: "none"},
+]
+
 const defaultNodes = structuredClone(nodesData); //Used to reset to default linkage 
 const defaultLinks = structuredClone(linksData)
 
@@ -132,6 +137,10 @@ const linkLines = linkLineGroup.selectAll("polygon")
                 }
                 tempX = event.x
                 tempY = event.y
+                if (d.type === "coupler") {
+                    synthPoints[0].x = getNode(d.id).x
+                    synthPoints[0].y = getNode(d.id).y
+                }
                 updateTNodes(false, d.id)
                 pathNodeSynth(nodeMode)
                 pathCuspSynth(cuspMode)
@@ -144,7 +153,7 @@ const linkLines = linkLineGroup.selectAll("polygon")
         .on("end", function(event,d) {
             traceSteps = traceStepsFine
             saveNodes()
-            updateTrace()
+            if (d.type !== "input") updateTrace()
             updateLinkGeometry();
         })
     )
@@ -209,6 +218,10 @@ const nodeDrag = nodeDragGroup.selectAll("cirlce")
                 d.x = event.x
                 d.y = event.y
             // }
+            if (d.id === "BC") {
+                synthPoints[0].x = d.x
+                synthPoints[0].y = d.y
+            }
             if (d.id.length === 2) updateTNodes(true, d.id)
             else updateTNodes()
             pathNodeSynth(nodeMode)
@@ -265,12 +278,71 @@ const altTraceLine = zoomGroup
     .style("stroke-linecap", "round")
     .style("pointer-events", "none")
 
+const synthDots = synthDotGroup.selectAll("circle")
+    .data(synthPoints)
+    .enter()
+    .append("circle")
+    .attr("cx", d => d.x)
+    .attr("cy", d => d.y)
+    .attr("r", 3)
+    .style("pointer-events", "none")
+
+const synthDrag = synthDragGroup.selectAll("circle")
+    .data(synthPoints)
+    .enter()
+    .append("circle")
+    // .attr("class", "synthPoint")
+    .attr("cx", d => d.x)
+    .attr("cy", d => d.y)
+    .attr("r", 20)
+    .attr("fill-opacity", 0)
+    .attr("stroke-width", 2)
+    .attr("stroke-opacity", 0.25)
+    .on("click", function(event, d) {
+        if (!nodeMode) return
+        if (d.x.toFixed(1) === getNode("BC").x.toFixed(1) && d.y.toFixed(1) === getNode("BC").y.toFixed(1)) {
+            mirrorNodeSynth(true,false)
+            setLinkNodes()
+            tNodeFollow()
+            updateTrace()
+            updateLinkGeometry()
+        } else {
+            linkageOpen = synthModeOpen
+            doActuate(linkToCoord(synthModeInputAngle,"angle"))
+        }
+    })
+    .call(d3.drag()
+        .on("start", function(event,d) {
+            synthDrag.attr("fill-opacity", n => n.id === d.id ? 0.1 : 0)
+        })
+        .on("drag", function(event, d) {
+
+            getNode("BC").x = event.x
+            getNode("BC").y = event.y
+
+            d.x = event.x
+            d.y = event.y
+            pathNodeSynth(nodeMode)
+
+            setLinkNodes()
+            updateTNodes()
+            updateTrace()
+            updateLinkGeometry()
+        })
+        .on("end", function(event,d) {
+            synthDrag.attr("fill-opacity", 0)
+        })
+    )
+
 
 svg.selectAll(".link")
   .on("pointerdown", linkDoubleTap);
 
 svg.selectAll(".node")
   .on("pointerdown", nodeDoubleTap);
+
+svg.selectAll(".synthPoint")
+  .on("pointerdown", synthPointDoubleTap);
 
 function linkDoubleTap(event, d) {
     const now = Date.now();
@@ -299,6 +371,18 @@ function nodeDoubleTap(event, d) {
             d.trace = !d.trace
             localStorage.setItem(`${d.id}_trace`, `${d.trace}`)
         }
+        updateLinkGeometry()
+    }
+    lastTapTime = now;
+}
+
+function synthPointDoubleTap(event, d) {
+    const now = Date.now();
+    if (now - lastTapTime < 300) {
+        mirrorNodeSynth(true,false)
+        // setLinkNodes()
+        // updateTNodes()
+        // updateTrace()
         updateLinkGeometry()
     }
     lastTapTime = now;
