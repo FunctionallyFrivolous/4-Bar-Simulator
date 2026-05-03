@@ -57,16 +57,19 @@ openCrossedIcon
 
 
 crossoverButton
-    .attr("x", buttonMargin*3 + buttonHeight*2)
-    .attr("y", windowHeight-35)
+    .attr("x", buttonMargin*2 + buttonHeight)
+    // .attr("y", windowHeight-35)
+    .attr("y", windowHeight-buttonMargin-buttonHeight*2)
     .attr("width", buttonHeight)
     .attr("height", buttonHeight)
     .attr("rx", 5)
     .attr("ry", 5)
-    .attr("fill", "lightgray")
+    .attr("fill", fgColor)
+    .attr("fill-opacity", 0.0)
+    // .attr("fill", "lightgray")
     // .attr("fill-opacity", 0.25)
-    .attr("stroke", "black")
-    .attr("stroke-width", 1)
+    // .attr("stroke", "black")
+    // .attr("stroke-width", 1)
     // .attr("stroke-opacity", 0.25)
     .on("click", function() {
         if (inputClass === "Crank") return
@@ -82,18 +85,24 @@ const crossoverToolTip = crossoverButton
     .append("title")
     .text(allowCrossover ? "Crossover (Enabled)" : "Crossover (Disabled)")
 
+// crossoverIcon
+//     .attr("x", buttonMargin*3 + buttonHeight*2 + buttonHeight/2)
+//     .attr("y", windowHeight-+buttonHeight/2-buttonMargin)
+//     .attr("dy", "0.03em")
+//     .attr("font-size", "16pt")
+//     .attr("font-family", "sans-serif")
+//     .attr("font-weight", "bold")
+//     .attr("text-anchor", "middle")
+//     .attr("alignment-baseline", "middle")
+//     // .attr("opacity", 0.25)
+//     .style("pointer-events", "none")
+//     // .text("Crossover") //⇎ ⇔
+
 crossoverIcon
-    .attr("x", buttonMargin*3 + buttonHeight*2 + buttonHeight/2)
-    .attr("y", windowHeight-+buttonHeight/2-buttonMargin)
-    .attr("dy", "0.03em")
-    .attr("font-size", "16pt")
-    .attr("font-family", "sans-serif")
-    .attr("font-weight", "bold")
-    .attr("text-anchor", "middle")
-    .attr("alignment-baseline", "middle")
-    // .attr("opacity", 0.25)
+    .attr("stroke-width", 1.5)
+    .attr("fill", "none")
+    .style("stroke-linecap", "round")
     .style("pointer-events", "none")
-    // .text("Crossover") //⇎ ⇔
 
 darkModeButton
     .attr("x", windowWidth-buttonMargin-30)
@@ -221,7 +230,7 @@ reverseIcon
     .text("⟲") //⟲
 
 cognateButton
-    .attr("x", buttonMargin*5 + buttonHeight*4)
+    .attr("x", buttonMargin*4 + buttonHeight*3)
     .attr("y", windowHeight-buttonMargin-buttonHeight)
     .attr("width", buttonHeight)
     .attr("height", buttonHeight)
@@ -244,7 +253,7 @@ const cognateToolTip = cognateButton
         .text("Cycle Cognates")
 
 cognateIcon
-    .attr("x", buttonMargin*5 + buttonHeight*4 + buttonHeight/2)
+    .attr("x", buttonMargin*4 + buttonHeight*3 + buttonHeight/2)
     .attr("y", windowHeight-buttonHeight/2-buttonMargin)
     .attr("font-size", "20px")
     .attr("font-family", "sans-serif")
@@ -256,7 +265,7 @@ cognateIcon
     .text("♺") //♻
 
 resetLinkageButton
-    .attr("x", buttonMargin*8 + buttonHeight*7)
+    .attr("x", buttonMargin*7 + buttonHeight*6)
     .attr("y", windowHeight-buttonMargin-buttonHeight)
     .attr("width", buttonHeight)
     .attr("height", buttonHeight)
@@ -348,7 +357,7 @@ fitViewIcon
     .style("pointer-events", "none")
 
 swapInOutButton
-    .attr("x", buttonMargin*4 + buttonHeight*3)
+    .attr("x", buttonMargin*3 + buttonHeight*2)
     .attr("y", windowHeight-buttonMargin-buttonHeight)
     .attr("width", buttonHeight)
     .attr("height", buttonHeight)
@@ -380,7 +389,7 @@ const swapInOutToolTip = swapInOutButton
         .text("Swap Input/Output")
 
 swapInOutIcon
-    .attr("x", buttonMargin*4 + buttonHeight*3 + buttonHeight/2)
+    .attr("x", buttonMargin*3 + buttonHeight*2 + buttonHeight/2)
     .attr("y", windowHeight-buttonHeight/2-buttonMargin)
     .attr("font-size", "21px")
     .attr("font-family", "sans-serif")
@@ -392,7 +401,7 @@ swapInOutIcon
     .text("↹") //♻
 
 nodeModeButton
-    .attr("x", buttonMargin*6 + buttonHeight*5)
+    .attr("x", buttonMargin*5 + buttonHeight*4)
     .attr("y", windowHeight-buttonMargin-buttonHeight)
     .attr("width", buttonHeight)
     .attr("height", buttonHeight)
@@ -408,10 +417,10 @@ nodeModeButton
         nodeMode = !nodeMode
         synthCycle = 0
         synthModeCycleButton
-            .attr("x", buttonMargin*6 + buttonHeight*5)
+            .attr("x", buttonMargin*5 + buttonHeight*4)
             .style("display", nodeMode ? "block" : "none")
         synthModeCycleIcon
-            .attr("x", buttonMargin*6 + buttonHeight*5 + buttonHeight/2)
+            .attr("x", buttonMargin*5 + buttonHeight*4 + buttonHeight/2)
             .style("display", nodeMode ? "block" : "none")
 
         synthPoints[0].x = getNode("BC").x
@@ -428,7 +437,7 @@ const nodeModeToolTip = nodeModeButton
     .text("Node Mode")
 
 nodeModeIcon
-    .attr("x", buttonMargin*6 + buttonHeight*5 + buttonHeight/2)
+    .attr("x", buttonMargin*5 + buttonHeight*4 + buttonHeight/2)
     .attr("y", windowHeight-buttonHeight/2-buttonMargin)
     .attr("dy", "0.12em")
     .attr("font-size", "15pt")
@@ -440,7 +449,7 @@ nodeModeIcon
     .text("⌘") // ⌘ , ↫ , ⅏
 
 cuspModeButton
-    .attr("x", buttonMargin*7 + buttonHeight*6)
+    .attr("x", buttonMargin*6 + buttonHeight*5)
     .attr("y", windowHeight-buttonMargin-buttonHeight)
     .attr("width", buttonHeight)
     .attr("height", buttonHeight)
@@ -456,10 +465,10 @@ cuspModeButton
         cuspMode = !cuspMode
         synthCycle = 0
         synthModeCycleButton
-            // .attr("x", buttonMargin*7 + buttonHeight*6)
+            // .attr("x", buttonMargin*6 + buttonHeight*5)
             .style("display", "none")
         synthModeCycleIcon
-            // .attr("x", buttonMargin*7 + buttonHeight*6 + buttonHeight/2)
+            // .attr("x", buttonMargin*6 + buttonHeight*5 + buttonHeight/2)
             .style("display", "none")
 
         synthPoints[0].x = getNode("BC").x
@@ -493,9 +502,10 @@ cuspModeIcon// = overlayGroup.append("path")
     .attr("fill", "none")
     .attr("d", 
         drawCuspIcon(
-            buttonMargin*7 + buttonHeight*6+ buttonHeight/2,
+            buttonMargin*6 + buttonHeight*5+ buttonHeight/2,
             windowHeight-buttonHeight/2-buttonMargin
         )
+        // drawCrossoverIcon()
     )
     .style("pointer-events", "none")
 
@@ -503,20 +513,6 @@ cuspModeIcon// = overlayGroup.append("path")
     // Function generation: ⦡ , ⌔
     // Other: ⮓, ⮒ , ⌥ , ⬲ , ⬰ , ⥂ , ⥈ , ⤟ , ⤰
     // Crossover: ↤ ↔ ⇼
-
-function drawCuspIcon(x,y) {
-    const r = 17 / 2;
-    const c = 6;
-
-    return `
-        M ${x+r} ${y-r} 
-        Q ${x} ${y - r + c} ${x-r} ${y-r} 
-        Q ${x - r + c} ${y} ${x-r} ${y+r} 
-        Q ${x} ${y + r - c} ${x+r} ${y+r} 
-        Q ${x + r - c} ${y} ${x+r} ${y-r} 
-        Z
-    `;
-}
 
 function startAnimationLoop() {
     playIcon.text("⏸")
@@ -531,6 +527,21 @@ function stopAnimationLoop() {
     }
     saveNodes()
     playIcon.text("▶")
+}
+
+
+function drawCuspIcon(x,y) {
+    const r = 17 / 2;
+    const c = 6;
+
+    return `
+        M ${x+r} ${y-r} 
+        Q ${x} ${y - r + c} ${x-r} ${y-r} 
+        Q ${x - r + c} ${y} ${x-r} ${y+r} 
+        Q ${x} ${y + r - c} ${x+r} ${y+r} 
+        Q ${x + r - c} ${y} ${x+r} ${y-r} 
+        Z
+    `;
 }
 
 function drawDarkModeIcons(){
@@ -583,7 +594,7 @@ function drawFitIcon(x, y) {
 
 
 synthModeCycleButton
-    .attr("x", buttonMargin*7 + buttonHeight*6)
+    .attr("x", buttonMargin*6 + buttonHeight*5)
     .attr("y", windowHeight-buttonMargin-buttonHeight*2)
     .attr("width", buttonHeight)
     .attr("height", buttonHeight)
@@ -614,7 +625,7 @@ const synthModeCycleToolTip = synthModeCycleButton
     .text("Cycle Alt Configs")
 
 synthModeCycleIcon
-    .attr("x", buttonMargin*7 + buttonHeight*6 + buttonHeight/2)
+    .attr("x", buttonMargin*6 + buttonHeight*5 + buttonHeight/2)
     .attr("y", windowHeight-buttonMargin-buttonHeight*1.75 + buttonHeight*0.75/2)
     .attr("dy", "0.075em")
     .attr("dx", "0.02em")

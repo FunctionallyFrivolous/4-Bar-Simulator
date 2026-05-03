@@ -295,11 +295,15 @@ function updateLinkGeometry() {
 
     crossoverIcon
         .attr("opacity", inputClass === "Crank" ? 0.25 : 1)
+        .attr("d", 
+            drawCrossoverIcon(buttonMargin*2 + buttonHeight+ buttonHeight/2,
+                windowHeight-buttonMargin-buttonHeight*1.75 + buttonHeight*0.75/2)
+            )
         // .attr("text-decoration", allowCrossover ? "none" : "line-through")
-        .text(allowCrossover ? "↔" : "⇹")
-    crossoverButton
-        .attr("stroke-opacity", inputClass === "Crank" ? 0.25 : 0.75)
-        .attr("fill-opacity", inputClass === "Crank" ? 0.25 : 0.75)
+        // .text(allowCrossover ? "↔" : "⇹")
+    // crossoverButton
+    //     .attr("stroke-opacity", inputClass === "Crank" ? 0.25 : 0.75)
+    //     .attr("fill-opacity", inputClass === "Crank" ? 0.25 : 0.75)
 
     cognateIcon
         .attr("opacity", getLinkByType("coupler").ternary ? 1 : 0.25)

@@ -14,6 +14,7 @@ function toggleDarkMode(){
     synthModeCycleIcon.attr("fill", fgColor)
     synthModeCycleButton.attr("fill", fgColor)
     reverseIcon.attr("fill", fgColor)
+    crossoverIcon.attr("stroke", fgColor)
 
     document.body.style.backgroundColor = bgColor
     document.getElementById("pageLab").style.color = fgColor
@@ -77,4 +78,18 @@ function drawOpenCrossedIcon(){
     `
 
     return [iconCrossed, iconOpen, iconDiag]
+}
+
+function drawCrossoverIcon(x,y) {
+    const w = 21 / 2;
+    const ah = w*0.8;
+    const vh = ah/2;
+
+    const xOver = allowCrossover ? `` : `M ${x} ${y-vh} L ${x} ${y+vh}`
+    return [
+        `M ${x-w} ${y} L ${x+w} ${y} 
+        M ${x-w  + ah*0.6} ${y-ah / 2} L ${x-w} ${y} L ${x-w  + ah*0.6} ${y+ah / 2} 
+        M ${x+w - ah*0.6} ${y-ah / 2} L ${x+w} ${y} L ${x+w} ${y} L ${x+w - ah*0.6} ${y+ah / 2}`,
+        xOver
+    ].join(" ");
 }
