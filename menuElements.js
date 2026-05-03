@@ -455,22 +455,46 @@ const cuspModeToolTip = cuspModeButton
     .append("title")
     .text("Cusp Mode")
 
-cuspModeIcon
-    .attr("x", buttonMargin*8 + buttonHeight*7 + buttonHeight/2)
-    .attr("y", windowHeight-buttonHeight/2-buttonMargin)
-    .attr("font-size", "22pt")
-    .attr("font-family", "sans-serif")
-    .attr("font-weight", "bold")
-    .attr("text-anchor", "middle")
-    .attr("alignment-baseline", "middle")
-    .attr("dy", "0.05em")
+// cuspModeIcon
+//     .attr("x", buttonMargin*8 + buttonHeight*7 + buttonHeight/2)
+//     .attr("y", windowHeight-buttonHeight/2-buttonMargin)
+//     .attr("font-size", "20pt")
+//     .attr("font-family", "sans-serif")
+//     .attr("font-weight", "bold")
+//     .attr("text-anchor", "middle")
+//     .attr("alignment-baseline", "middle")
+//     .attr("dy", "0.1em")
+//     .style("pointer-events", "none")
+//     .text("⯏") //⎎ , ⥿ , ⯏ , ⯎
+
+cuspModeIcon// = overlayGroup.append("path")
+    .attr("stroke", "black")
+    .attr("stroke-width", 2)
+    .attr("fill", "none")
+    .attr("d", drawCuspIcon(
+        buttonMargin*8 + buttonHeight*7+ buttonHeight/2,
+        windowHeight-buttonHeight/2-buttonMargin
+    ))
     .style("pointer-events", "none")
-    .text("⥿") //⎎ , ⥿ , ⯏ , ⯎
 
 // Symbols:
     // Function generation: ⦡ , ⌔
     // Other: ⮓, ⮒ , ⌥ , ⬲ , ⬰ , ⥂ , ⥈ , ⤟ , ⤰
     // Crossover: ↤ ↔ ⇼
+
+function drawCuspIcon(x,y) {
+    const r = 17 / 2;
+    const c = 6;
+
+    return `
+        M ${x+r} ${y-r} 
+        Q ${x} ${y - r + c} ${x-r} ${y-r} 
+        Q ${x - r + c} ${y} ${x-r} ${y+r} 
+        Q ${x} ${y + r - c} ${x+r} ${y+r} 
+        Q ${x + r - c} ${y} ${x+r} ${y-r} 
+        Z
+    `;
+}
 
 function startAnimationLoop() {
     playIcon.text("⏸")

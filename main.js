@@ -194,7 +194,7 @@ const swapInOutIcon = overlayGroup.append("text")
 const nodeModeButton = overlayGroup.append("rect")
 const nodeModeIcon = overlayGroup.append("text")
 const cuspModeButton = overlayGroup.append("rect")
-const cuspModeIcon = overlayGroup.append("text")
+const cuspModeIcon = overlayGroup.append("path")
 
 const synthModeCycleButton = overlayGroup.append("rect")
 const synthModeCycleIcon = overlayGroup.append("text")
