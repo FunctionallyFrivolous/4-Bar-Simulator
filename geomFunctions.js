@@ -347,7 +347,7 @@ function updateLinkGeometry() {
     //     .attr("x2", getNode("B").x)
     //     .attr("y2", getNode("B").y)
 
-    document.getElementById("debugOutputs").innerHTML = `${synthModeInputAngle} \n<br>`
+    // document.getElementById("debugOutputs").innerHTML = `${synthModeInputAngle} \n<br>`
 }
 
 function updateTrace(alt=true) {
