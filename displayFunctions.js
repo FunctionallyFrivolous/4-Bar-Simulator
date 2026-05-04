@@ -81,15 +81,15 @@ function drawOpenCrossedIcon(){
 }
 
 function drawCrossoverIcon(x,y) {
-    const w = 21 / 2;
+    const w = 18 / 2;
     const ah = w*0.8;
     const vh = ah/2;
 
     const xOver = allowCrossover ? `` : `M ${x} ${y-vh} L ${x} ${y+vh}`
     return [
         `M ${x-w} ${y} L ${x+w} ${y} 
-        M ${x-w  + ah*0.6} ${y-ah / 2} L ${x-w} ${y} L ${x-w  + ah*0.6} ${y+ah / 2} 
-        M ${x+w - ah*0.6} ${y-ah / 2} L ${x+w} ${y} L ${x+w} ${y} L ${x+w - ah*0.6} ${y+ah / 2}`,
+        M ${x-w  + ah*0.5} ${y-ah / 2} L ${x-w} ${y} L ${x-w  + ah*0.5} ${y+ah / 2} 
+        M ${x+w - ah*0.5} ${y-ah / 2} L ${x+w} ${y} L ${x+w} ${y} L ${x+w - ah*0.5} ${y+ah / 2}`,
         xOver
     ].join(" ");
 }

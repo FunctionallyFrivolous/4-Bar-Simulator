@@ -293,6 +293,12 @@ function updateLinkGeometry() {
     updateInputLimits()
     updateOutputLimits()
 
+    openCrossedButton
+        .attr("fill-opacity", nodeMode || cuspMode ? 0.25 : 0.75)
+        .attr("stroke-opacity", nodeMode || cuspMode ? 0.25 : 0.75)
+        .style("pointer-events", nodeMode || cuspMode ? "none" : "auto")
+    openCrossedIcon.attr("opacity", nodeMode || cuspMode ? 0.25 : 1)
+
     crossoverIcon
         .attr("opacity", inputClass === "Crank" ? 0.25 : 1)
         .attr("d", 
@@ -308,6 +314,7 @@ function updateLinkGeometry() {
     cognateIcon
         .attr("opacity", getLinkByType("coupler").ternary ? 1 : 0.25)
     cognateButton
+        // .attr("opacity", getLinkByType("coupler").ternary ? 0.75 : 0.25)
         .attr("stroke-opacity", getLinkByType("coupler").ternary ? 0.75 : 0.25)
         .attr("fill-opacity", getLinkByType("coupler").ternary ? 0.75 : 0.25)
         .style("pointer-events", getLinkByType("coupler").ternary ? "auto" : "none")
@@ -340,7 +347,7 @@ function updateLinkGeometry() {
     //     .attr("x2", getNode("B").x)
     //     .attr("y2", getNode("B").y)
 
-    // document.getElementById("debugOutputs").innerHTML = `${synthModeInputAngle} \n<br>`
+    document.getElementById("debugOutputs").innerHTML = `${synthModeInputAngle} \n<br>`
 }
 
 function updateTrace(alt=true) {

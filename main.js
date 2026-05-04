@@ -1,7 +1,7 @@
 // Next Tasks:
     // Animation features
         // User actuate via slider
-        // User adjust playback speed
+        // User adjust playback speed (vertical slider above play button?)
         // User set actuation (input input angle)
         // User defined limits
     // Save/Share (URL)

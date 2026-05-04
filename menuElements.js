@@ -244,7 +244,17 @@ cognateButton
     .attr("stroke-width", 1)
     .attr("stroke-opacity", 0.75)
     .on("click", function() {
-        cycleCognates()
+        if (nodeMode || cuspMode) {
+            linkageOpen = synthModeOpen
+            doActuate(getNetAngle(linkToCoord(synthModeInputAngle,"angle")))
+            cycleCognates()
+            setLinkNodes()
+            updateOpenCrossed()
+            synthModeInputAngle = inputAngle
+            synthModeOpen = linkageOpen
+        } else {
+            cycleCognates()
+        }
         saveNodes()
         updateLinkGeometry()
         updateTrace()
