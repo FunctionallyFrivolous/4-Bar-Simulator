@@ -100,6 +100,8 @@ let undoStatus = true;
 
 let synthModeInputAngle = 0
 let synthModeOpen = linkageOpen
+let synthModeTempAngle = 0
+let synthModeTempOpen = linkageOpen
 let synthCycle = 0
 let nodeMode = false
 let cuspMode = false

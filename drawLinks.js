@@ -226,6 +226,9 @@ const nodeDrag = nodeDragGroup.selectAll("cirlce")
             if (d.id === "BC") {
                 synthPoints[0].x = d.x
                 synthPoints[0].y = d.y
+            } else {
+                synthPoints[0].x = getNode("BC").x
+                synthPoints[0].y = getNode("BC").y
             }
             if (d.id.length === 2) updateTNodes(true, d.id)
             else updateTNodes()
@@ -308,7 +311,7 @@ const synthDrag = synthDragGroup.selectAll("circle")
     .on("click", function(event, d) {
         // if (!nodeMode) return
         if (nodeMode && Math.abs(d.x - getNode("BC").x) < limitThreshold && Math.abs(d.y - getNode("BC").y) < limitThreshold) {
-            mirrorNodeSynth(true,false)
+            mirrorNodeSynth(true)
             setLinkNodes()
             tNodeFollow()
             updateTrace()
@@ -325,22 +328,52 @@ const synthDrag = synthDragGroup.selectAll("circle")
     })
     .call(d3.drag()
         .on("start", function(event,d) {
+            synthModeTempAngle = inputAngle
+            synthModeTempOpen = linkageOpen
             synthDrag.attr("fill-opacity", n => n.id === d.id ? 0.1 : 0)
         })
         .on("drag", function(event, d) {
+            
+            linkageOpen = synthModeOpen
+            doActuate(getNetAngle(linkToCoord(synthModeInputAngle,"angle")))
 
             getNode("BC").x = event.x
             getNode("BC").y = event.y
 
             d.x = event.x
             d.y = event.y
+
             pathNodeSynth(nodeMode)
             pathCuspSynth(cuspMode)
 
             setLinkNodes()
             updateTNodes()
             updateTrace()
+
+            updateInputLimits()
+            if (inputLimits.min < 0 && synthModeTempAngle > 180) {
+                synthModeTempAngle = synthModeTempAngle -360
+            } else if (inputLimits.min >= 0 && synthModeTempAngle < 0){
+                synthModeTempAngle = synthModeTempAngle +360
+            }
+
+            linkageOpen = synthModeTempOpen
+            if (synthModeTempAngle > inputLimits.max-limitThreshold || synthModeTempAngle < inputLimits.min+limitThreshold) {
+                mirrorNodeSynth(true)
+                setLinkNodes()
+                // updateOpenCrossed()
+                updateTrace(false)
+                synthModeInputAngle = inputAngle
+                synthModeOpen = linkageOpen
+                document.getElementById("debugOutputs").innerHTML = `${synthModeTempAngle}, ${inputAngle}`
+            }
+            doActuate(getNetAngle(linkToCoord(synthModeTempAngle,"angle")))
+
+            setLinkNodes()
+            updateTNodes()
+            updateTrace(false)
             updateLinkGeometry()
+
         })
         .on("end", function(event,d) {
             synthDrag.attr("fill-opacity", 0)
