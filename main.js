@@ -4,15 +4,6 @@
         // User adjust playback speed
         // User set actuation (input input angle)
         // User defined limits
-    // Organized menu system
-        // Static menu bar which expands different grouped/categorized menus
-            // Visual Preferences (dark/light mode, show/hide various things)
-            // Linkage Configuration (default, open/crossed, crossover, manual limits?, scale?)
-            // Animation (show/hide animation controlls)
-                // Separate SVG window?
-            // Save/Share options
-            // Synthesis methods
-        // Getting pretty close to needing to get started on this
     // Save/Share (URL)
         // Save:
             // Node positions
@@ -21,29 +12,46 @@
             // Trace show/hide statuses
         // Export GIF!
     // Button Icons:
-        // Default Linkage?
+        // Text to path (for cross-browser consistency):
+            // Play/Pause
+        // Better symbols...
+            // Open/Crossed?
+                // Open version is kind of weird, and now it looks too much like the synth mode points...
+        // Needs a symbol...
+            // Default Linkage?
     // localStorage - More?
         // Animation direction? Meh
     // Synthesis Methods
         // Cognates - DONE!
         // Nodes - DONE!
+            // Multi-nodes?
         // Cusps
             // One cusp - DONE!
             // Two cusps
                 // Add 2ndary button(s) to allow add/remove cusp points
             // Three cusps?
             // Double click points to add/remove?
+            // Show locations of joint B & C of the node solution pair
+                // Eventually: Drag these to dictate the input (or output?) angle (OR, just use angle input to drive B location... probably this, but still could be useful to have this angle visuallized)
         // Symmetric Coupler Curves
     // Scale Linkage
         // Scale all link lengths uniformly
         // Scale outward from joint A
         // Option to lock link length ratios and scale by updating a single link length?
+    // Organized menu system
+        // Consolidate buttons/actions whenever possible
+            // E.g. moving the animation reverse and crossover buttons as 2ndary buttons above related primaries (play/pause, open/crossed)
+            // Bonus if hidden when not useful/usable
+        // Interactive actions >>> buttons
+            // E.g. Adding the interactive synth mode points eliminates an entire panel of buttons/inputs that would have been needed
+        // Replace fit view button with double click on background?
+        // Replace undo/redo with keyboard shortcut (ctrl+z)? What about mobile tho?
     // Quirks & Bugs:
         // Ternary node snapping is based on angle rather than distance. Results in snap "strength" that varies based on distance from the reference node
             // This was just the easy/lazy way to get it done. Will fix later
         // Fit view result is kind of awkward in some cases
             // Should not be impacted by hidden ternary nodes, etc.
-            // Also potentially an issue with calc of center location in some cases
+            // Also potentially an issue with calc of center location in some cases?
 
 
 // localStorage.clear()
@@ -202,8 +210,8 @@ const nodeModeIcon = overlayGroup.append("text")
 const cuspModeButton = overlayGroup.append("rect")
 const cuspModeIcon = overlayGroup.append("path")
 
-const synthModeCycleButton = overlayGroup.append("rect")
-const synthModeCycleIcon = overlayGroup.append("text")
+// const synthModeCycleButton = overlayGroup.append("rect")
+// const synthModeCycleIcon = overlayGroup.append("text")
 
 const inputLinkVal = overlayGroup.append("text")
 const inputLinkProps = overlayGroup.append("text")

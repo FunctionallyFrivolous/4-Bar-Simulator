@@ -107,7 +107,20 @@ function pathNodeSynth(doit=false) {
 
     const angleAEB = getAngleBtwNodes(nodeA, nodeB, nodeE)
     const angleED = getNodesAngle(nodeE, nodeD, false)
-    let angleEC = getNetAngle(angleED - angleAEB - 180*synthCycle)
+    let angleEC = getNetAngle(angleED - angleAEB)
+
+    let angleBC = getNodesAngle(nodeB,oldC)
+    let angleBE = getNodesAngle(nodeB,nodeE)
+    let angleCB = getNodesAngle(oldC,nodeB)
+    let angleEB = getNodesAngle(nodeE,nodeB)
+
+    if (Math.abs(angleBC - angleBE) > 180) {
+        if (angleBC < angleBE) {
+            angleEC = angleEC - 180
+        }
+    } else if (angleCB > angleEB) {
+        angleEC = angleEC - 180
+    }
 
     const newC = placeNodePolar(oldC, nodeE, angleEC, EC, doit)
 

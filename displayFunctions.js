@@ -11,8 +11,8 @@ function toggleDarkMode(){
     // darkModeIcon.text(darkMode ? "⬔" : "⬕")
     nodeDrag.attr("fill", darkMode ? "white" : "black")
 
-    synthModeCycleIcon.attr("fill", fgColor)
-    synthModeCycleButton.attr("fill", fgColor)
+    // synthModeCycleIcon.attr("fill", fgColor)
+    // synthModeCycleButton.attr("fill", fgColor)
     reverseIcon.attr("fill", fgColor)
     crossoverIcon.attr("stroke", fgColor)
 

@@ -631,7 +631,9 @@ function playAnimation() {
         }
     }
 
-    reverseIcon.text(animateDir > 0 ? "⟲" : "⟳")
+    reverseIcon
+        // .attr("opacity", animationActive ? 1 : 0.25)
+        .text(animateDir > 0 ? "⟲" : "⟳")
 
     newAngle = linkToCoord(newAngle, "angle")
     doActuate(newAngle)
