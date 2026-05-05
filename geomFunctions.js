@@ -506,13 +506,17 @@ function updateTrace(alt=true) {
 
     for (i = 0; i < nodesData.length; i++) {
         const thisNode = nodesData[i]
-        const thisLink = linksData.find(l => l.id === thisNode.id) 
+        let ternaryShown = false
+        if (thisNode.id.length === 2) {
+            const thisLink = linksData.find(l => l.id === thisNode.id)
+            ternaryShown = thisLink.ternary
+        }
         minCoord_x = minCoord_x === null ? thisNode.x : Math.min(minCoord_x, thisNode.x)
         maxCoord_x = maxCoord_x === null ? thisNode.x : Math.max(maxCoord_x, thisNode.x)
         minCoord_y = minCoord_y === null ? thisNode.y : Math.min(minCoord_y, thisNode.y)
         maxCoord_y = maxCoord_y === null ? thisNode.y : Math.max(maxCoord_y, thisNode.y)
 
-        if (!(thisNode.id.length === 2 && !thisLink.ternary)) {
+        if (!(thisNode.id.length === 2 && !ternaryShown)) {
             for (p = 0; p < thisNode.allPoints.length; p++) {
                 minCoord_x = minCoord_x === null ? thisNode.allPoints[p].x : Math.min(minCoord_x, thisNode.allPoints[p].x)
                 maxCoord_x = maxCoord_x === null ? thisNode.allPoints[p].x : Math.max(maxCoord_x, thisNode.allPoints[p].x)

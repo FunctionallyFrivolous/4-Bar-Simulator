@@ -297,6 +297,7 @@ resetLinkageButton
         //     .style("display", "none")
         synthCycle = 0
         defaultLinkage()
+        fitView(500)
     })
 const resetToolTip = resetLinkageButton
     .append("title")

@@ -143,7 +143,7 @@ const linkLines = linkLineGroup.selectAll("polygon")
                     synthPoints[0].y = getNode(d.id).y
                 }
                 updateTNodes(false, d.id)
-                pathNodeSynth(nodeMode)
+                pathNodeSynth(nodeMode, d.type === "output")
                 pathCuspSynth(cuspMode)
                 setLinkNodes()
                 updateTrace()
@@ -232,7 +232,7 @@ const nodeDrag = nodeDragGroup.selectAll("cirlce")
             }
             if (d.id.length === 2) updateTNodes(true, d.id)
             else updateTNodes()
-            pathNodeSynth(nodeMode)
+            pathNodeSynth(nodeMode, d.id === "C")
             pathCuspSynth(cuspMode)
             setLinkNodes()
             updateTrace()
@@ -328,6 +328,7 @@ const synthDrag = synthDragGroup.selectAll("circle")
     })
     .call(d3.drag()
         .on("start", function(event,d) {
+            saveUndoNodes()
             synthModeTempAngle = inputAngle
             synthModeTempOpen = linkageOpen
             synthDrag.attr("fill-opacity", n => n.id === d.id ? 0.1 : 0)
@@ -346,40 +347,41 @@ const synthDrag = synthDragGroup.selectAll("circle")
             pathNodeSynth(nodeMode)
             pathCuspSynth(cuspMode)
 
+            // setLinkNodes()
+            // updateTNodes()
+            // updateTrace()
+
+            // updateInputLimits()
+            // if (inputLimits.min < 0 && synthModeTempAngle > 180) {
+            //     synthModeTempAngle = synthModeTempAngle -360
+            // } else if (inputLimits.min >= 0 && synthModeTempAngle < 0){
+            //     synthModeTempAngle = synthModeTempAngle +360
+            // }
+
+            // linkageOpen = synthModeTempOpen
+            // if (synthModeTempAngle > inputLimits.max-limitThreshold || synthModeTempAngle < inputLimits.min+limitThreshold) {
+            //     mirrorNodeSynth(true)
+            //     setLinkNodes()
+            //     // updateOpenCrossed()
+            //     updateTrace(false)
+            //     synthModeInputAngle = inputAngle
+            //     synthModeOpen = linkageOpen
+            //     // document.getElementById("debugOutputs").innerHTML = `${synthModeTempAngle}, ${inputAngle}`
+            // }
+            // doActuate(getNetAngle(linkToCoord(synthModeTempAngle,"angle")))
+
             setLinkNodes()
             updateTNodes()
             updateTrace()
-
-            updateInputLimits()
-            if (inputLimits.min < 0 && synthModeTempAngle > 180) {
-                synthModeTempAngle = synthModeTempAngle -360
-            } else if (inputLimits.min >= 0 && synthModeTempAngle < 0){
-                synthModeTempAngle = synthModeTempAngle +360
-            }
-
-            linkageOpen = synthModeTempOpen
-            if (synthModeTempAngle > inputLimits.max-limitThreshold || synthModeTempAngle < inputLimits.min+limitThreshold) {
-                mirrorNodeSynth(true)
-                setLinkNodes()
-                // updateOpenCrossed()
-                updateTrace(false)
-                synthModeInputAngle = inputAngle
-                synthModeOpen = linkageOpen
-                // document.getElementById("debugOutputs").innerHTML = `${synthModeTempAngle}, ${inputAngle}`
-            }
-            doActuate(getNetAngle(linkToCoord(synthModeTempAngle,"angle")))
-
-            setLinkNodes()
-            updateTNodes()
-            updateTrace(false)
+            // updateTrace(false)
             updateLinkGeometry()
 
         })
         .on("end", function(event,d) {
+            saveNodes()
             synthDrag.attr("fill-opacity", 0)
         })
     )
-
 
 svg.selectAll(".link")
   .on("pointerdown", linkDoubleTap);
@@ -387,8 +389,8 @@ svg.selectAll(".link")
 svg.selectAll(".node")
   .on("pointerdown", nodeDoubleTap);
 
-svg.selectAll(".synthPoint")
-  .on("pointerdown", synthPointDoubleTap);
+// svg.selectAll(".synthPoint")
+//   .on("pointerdown", synthPointDoubleTap);
 
 function linkDoubleTap(event, d) {
     const now = Date.now();
@@ -401,6 +403,7 @@ function linkDoubleTap(event, d) {
             localStorage.setItem("fixedStatus", `${d.visible}`)
         }
         setLinkNodes()
+        updateTrace(false)
         updateLinkGeometry()
     }
     lastTapTime = now;
@@ -422,17 +425,17 @@ function nodeDoubleTap(event, d) {
     lastTapTime = now;
 }
 
-function synthPointDoubleTap(event, d) {
-    const now = Date.now();
-    if (now - lastTapTime < 300) {
-        mirrorNodeSynth(true,false)
-        // setLinkNodes()
-        // updateTNodes()
-        // updateTrace()
-        updateLinkGeometry()
-    }
-    lastTapTime = now;
-}
+// function synthPointDoubleTap(event, d) {
+//     const now = Date.now();
+//     if (now - lastTapTime < 300) {
+//         mirrorNodeSynth(true,false)
+//         // setLinkNodes()
+//         // updateTNodes()
+//         // updateTrace()
+//         updateLinkGeometry()
+//     }
+//     lastTapTime = now;
+// }
 
 loadNodes()
 calcOutputAngle()

@@ -87,7 +87,7 @@ function cycleCognates() {
     tNodeFollow()
 }
 
-function pathNodeSynth(doit=false) {
+function pathNodeSynth(doit=false, cDrag=false) {
     if (!nodeMode) {
         altTraceData.points = []
         return
@@ -124,14 +124,35 @@ function pathNodeSynth(doit=false) {
     let angleCA = getNodesAngle(oldC, nodeA)
     let angleEA = getNodesAngle(nodeE, nodeA)
 
-    //&& angleDC < angleDE && angleCD < angleED 
-    if (linkageOpen) {
-        if (angleBC > angleBE && angleCB > angleEB && angleDC < angleDE && angleCD < angleED) {
-            angleEC = angleEC - 180
-        }
-    } else {
-        if (angleBC < angleBE && angleCB < angleEB && angleDC > angleDE && angleCD > angleED) {
-            angleEC = angleEC - 180
+    if (cDrag) {
+        // if (linkageOpen) {
+        //     if (Math.abs(angleBC - angleBE) > 180) {
+        //         if (angleBC < angleBE && angleDC < angleDE) {
+        //             angleEC = angleEC - 180
+        //         }
+        //     } else if (angleCB > angleEB && angleCD < angleED) {
+        //         angleEC = angleEC - 180
+        //     }
+        // } 
+        // else {
+        //     if (Math.abs(angleBC - angleBE) < 180) {
+        //         if (angleBC < angleBE && angleDC < angleDE) {
+        //             angleEC = angleEC - 180
+        //         }
+        //     } else if (angleCB > angleEB && angleCD < angleED) {
+        //         angleEC = angleEC - 180
+        //     }
+        // }
+
+        //&& angleDC < angleDE && angleCD < angleED 
+        if (linkageOpen) {
+            if (angleBC > angleBE && angleCB > angleEB && angleAC > angleAE && angleCA > angleEA && angleDC < angleDE && angleCD < angleED) {
+                angleEC = angleEC - 180
+            }
+        } else {
+            if (angleBC < angleBE && angleCB < angleEB && angleAC < angleAE && angleCA < angleEA && angleDC > angleDE && angleCD > angleED) {
+                angleEC = angleEC - 180
+            }
         }
     }
 

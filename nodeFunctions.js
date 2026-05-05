@@ -109,6 +109,12 @@ function saveNodes() {
         localStorage.setItem(`${nodeName}_x`, `${nodesData[i].x.toFixed(3)}`)
         localStorage.setItem(`${nodeName}_y`, `${nodesData[i].y.toFixed(3)}`)
     }
+    for (i = 0; i < synthPoints.length; i++) {
+        const pointName = `point${synthPoints[i].id}`
+
+        localStorage.setItem(`${pointName}_x`, `${synthPoints[i].x.toFixed(3)}`)
+        localStorage.setItem(`${pointName}_y`, `${synthPoints[i].y.toFixed(3)}`)
+    }
 }
 
 function loadNodes() {
@@ -118,6 +124,14 @@ function loadNodes() {
         if (localStorage.getItem(`${nodeName}_x`) !== null) {
             nodesData[i].x = Number(localStorage.getItem(`${nodeName}_x`))
             nodesData[i].y = Number(localStorage.getItem(`${nodeName}_y`))
+        }
+    }
+    for (i = 0; i < synthPoints.length; i++) {
+        const pointName = `point${synthPoints[i].id}`
+
+        if (localStorage.getItem(`${pointName}_x`) !== null) {
+            synthPoints[i].x = Number(localStorage.getItem(`${pointName}_x`))
+            synthPoints[i].y = Number(localStorage.getItem(`${pointName}_y`))
         }
     }
 }
