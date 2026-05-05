@@ -103,7 +103,7 @@ function pathNodeSynth(doit=false) {
 
     const oldC = getNode("C")
 
-    const EC = getDistBtwNodes(nodeE, oldC)
+    let EC = getDistBtwNodes(nodeE, oldC)
 
     const angleAEB = getAngleBtwNodes(nodeA, nodeB, nodeE)
     const angleED = getNodesAngle(nodeE, nodeD, false)
@@ -114,13 +114,33 @@ function pathNodeSynth(doit=false) {
     let angleCB = getNodesAngle(oldC,nodeB)
     let angleEB = getNodesAngle(nodeE,nodeB)
 
-    if (Math.abs(angleBC - angleBE) > 180) {
-        if (angleBC < angleBE) {
+    let angleDC = getNodesAngle(nodeD, oldC)
+    let angleDE = getNodesAngle(nodeD, nodeE)
+    let angleCD = getNodesAngle(oldC, nodeD)
+    // let angleED = getNodesAngle(nodeE, nodeD)
+
+    let angleAC = getNodesAngle(nodeA, oldC)
+    let angleAE = getNodesAngle(nodeA, nodeE)
+    let angleCA = getNodesAngle(oldC, nodeA)
+    let angleEA = getNodesAngle(nodeE, nodeA)
+
+    //&& angleDC < angleDE && angleCD < angleED 
+    if (linkageOpen) {
+        if (angleBC > angleBE && angleCB > angleEB && angleDC < angleDE && angleCD < angleED) {
             angleEC = angleEC - 180
         }
-    } else if (angleCB > angleEB) {
-        angleEC = angleEC - 180
+    } else {
+        if (angleBC < angleBE && angleCB < angleEB && angleDC > angleDE && angleCD > angleED) {
+            angleEC = angleEC - 180
+        }
     }
+
+    // document.getElementById("debugOutputs").innerHTML = `
+    //     BC: ${angleBC.toFixed(1)} \n<br>
+    //     BE: ${angleBE.toFixed(1)} \n<br>
+    //     CB: ${angleCB.toFixed(1)} \n<br>
+    //     EB: ${angleEB.toFixed(1)} \n<br>
+    // `
 
     const newC = placeNodePolar(oldC, nodeE, angleEC, EC, doit)
 
