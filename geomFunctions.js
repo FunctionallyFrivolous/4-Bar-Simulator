@@ -350,7 +350,7 @@ function updateLinkGeometry() {
     // document.getElementById("debugOutputs").innerHTML = `${synthModeInputAngle} \n<br>`
 }
 
-function updateTrace(alt=true) {
+function updateTrace(alt=true, oc=linkageOpen) {
     updateInputLimits()
     updateOutputLimits()
 
@@ -391,7 +391,7 @@ function updateTrace(alt=true) {
         inAngle = in_startAngle + in_angleStep * i
         outAngle = calcOutputAngle(inAngle, true)
 
-        if (linkageOpen) {
+        if (oc) {
             const out_temp = outputClass === "0-Rocker" && (coordToLink(outAngle,"angle") > 180) ? coordToLink(outAngle,"angle")-360 : coordToLink(outAngle,"angle")
             out_startAngle = Math.min(out_startAngle, out_temp)
             out_endAngle = Math.max(out_endAngle, out_temp)
@@ -414,13 +414,13 @@ function updateTrace(alt=true) {
         if (i === 0 || deltaBC > traceDelta) {
             // nodeB.points.push(newB)
             // nodeAB.points.push(newAB)
-            if (linkageOpen || (allowCrossover && inputClass !== "Crank")) {
+            if (oc || (allowCrossover && inputClass !== "Crank")) {
                 nodeBC.points.push(newBC)
             }
 
             // nodeB.allPoints.push(newB)
             // nodeAB.allPoints.push(newAB)
-            if (linkageOpen || inputClass !== "Crank") {
+            if (oc || inputClass !== "Crank") {
                 nodeC.allPoints.push(newC)
                 nodeDC.allPoints.push(newDC)
                 nodeBC.allPoints.push(newBC)
@@ -434,7 +434,7 @@ function updateTrace(alt=true) {
         inAngle = in_endAngle - in_angleStep * i
         outAngle = calcOutputAngle(inAngle, false)
 
-        if (!linkageOpen) {
+        if (!oc) {
             const out_temp = outputClass === "0-Rocker" && (coordToLink(outAngle,"angle") > 180) ? coordToLink(outAngle,"angle")-360 : coordToLink(outAngle,"angle")
             out_startAngle = Math.min(out_startAngle, out_temp)
             out_endAngle = Math.max(out_endAngle, out_temp)
@@ -456,11 +456,11 @@ function updateTrace(alt=true) {
         }
         
         if (i === 0 || deltaBC > traceDelta) {
-            if (!linkageOpen || (allowCrossover && inputClass !== "Crank")) {
+            if (!oc || (allowCrossover && inputClass !== "Crank")) {
                 nodeBC.points.push(newBC)
             }
             
-            if (!linkageOpen || inputClass !== "Crank") {
+            if (!oc || inputClass !== "Crank") {
                 nodeBC.allPoints.push(newBC)
                 nodeC.allPoints.push(newC)
                 nodeDC.allPoints.push(newDC)

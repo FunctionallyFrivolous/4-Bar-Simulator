@@ -316,11 +316,6 @@ undoRedoButton
     .attr("stroke-width", 1)
     .attr("stroke-opacity", 0.75)
     .on("click", function() {
-        // mirrorNodeSynth()
-        // setLinkNodes()
-        // updateTNodes()
-        // updateTrace()
-        // updateLinkGeometry()
         undoRedo()
         undoRedoToolTip.text(undoStatus ? "Undo" : "Redo")
         undoRedoIcon.text(undoStatus ? "↶" : "↷")

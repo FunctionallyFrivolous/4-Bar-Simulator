@@ -109,65 +109,15 @@ function pathNodeSynth(doit=false, cDrag=false) {
     const angleED = getNodesAngle(nodeE, nodeD, false)
     let angleEC = getNetAngle(angleED - angleAEB)
 
-    let angleBC = getNodesAngle(nodeB,oldC)
-    let angleBE = getNodesAngle(nodeB,nodeE)
-    let angleCB = getNodesAngle(oldC,nodeB)
-    let angleEB = getNodesAngle(nodeE,nodeB)
+    // if (cDrag) {
+        const old_angleEC = getNodesAngle(nodeE, oldC, false)
 
-    let angleDC = getNodesAngle(nodeD, oldC)
-    let angleDE = getNodesAngle(nodeD, nodeE)
-    let angleCD = getNodesAngle(oldC, nodeD)
-    // let angleED = getNodesAngle(nodeE, nodeD)
-
-    let angleAC = getNodesAngle(nodeA, oldC)
-    let angleAE = getNodesAngle(nodeA, nodeE)
-    let angleCA = getNodesAngle(oldC, nodeA)
-    let angleEA = getNodesAngle(nodeE, nodeA)
-
-    if (cDrag) {
-        // if (linkageOpen) {
-        //     if (Math.abs(angleBC - angleBE) > 180) {
-        //         if (angleBC < angleBE && angleDC < angleDE) {
-        //             angleEC = angleEC - 180
-        //         }
-        //     } else if (angleCB > angleEB && angleCD < angleED) {
-        //         angleEC = angleEC - 180
-        //     }
-        // } 
-        // else {
-        //     if (Math.abs(angleBC - angleBE) < 180) {
-        //         if (angleBC < angleBE && angleDC < angleDE) {
-        //             angleEC = angleEC - 180
-        //         }
-        //     } else if (angleCB > angleEB && angleCD < angleED) {
-        //         angleEC = angleEC - 180
-        //     }
-        // }
-
-        //&& angleDC < angleDE && angleCD < angleED 
-        if (linkageOpen) {
-            if (angleBC > angleBE && angleCB > angleEB && angleAC > angleAE && angleCA > angleEA && angleDC < angleDE && angleCD < angleED) {
-                angleEC = angleEC - 180
-            }
-        } else {
-            if (angleBC < angleBE && angleCB < angleEB && angleAC < angleAE && angleCA < angleEA && angleDC > angleDE && angleCD > angleED) {
-                angleEC = angleEC - 180
-            }
+        if (Math.abs(old_angleEC+180-angleEC) < Math.abs(old_angleEC-angleEC)) {
+            angleEC = angleEC - 180 
         }
-    }
-
-    // document.getElementById("debugOutputs").innerHTML = `
-    //     BC: ${angleBC.toFixed(1)} \n<br>
-    //     BE: ${angleBE.toFixed(1)} \n<br>
-    //     CB: ${angleCB.toFixed(1)} \n<br>
-    //     EB: ${angleEB.toFixed(1)} \n<br>
-    // `
+    // }
 
     const newC = placeNodePolar(oldC, nodeE, angleEC, EC, doit)
-
-    // const inputAng = getLinkAngle("AB") - 180*(Math.floor(synthCycle/2))
-    // const inputLen = linkToCoord(getLinkByType("input").len, "dist")
-    // placeNodePolar(nodeB, nodeA, inputAng, inputLen, doit)
 
     setLinkNodes()
     updateTNodes()

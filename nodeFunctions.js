@@ -88,10 +88,48 @@ function getNode(id) {
     return node
 }
 
+function getAngleBtwnLines(line1_start, line1_end, line2_start, line2_end) {
+    const line1 = getNodesAngle(line1_start, line1_end, false)
+    const line2 = getNodesAngle(line2_start, line2_end, false)
+    const line1_alt = getNodesAngle(line1_end, line1_start, false)
+    const line2_alt = getNodesAngle(line2_end, line2_start, false)
+
+    const tempAng1 = Math.abs(line2 - line1)
+    const tempAng2 = Math.abs(line1 - line2)
+    const tempAng3 = Math.abs(line2_alt - line1_alt)
+    const tempAng4 = Math.abs(line1_alt - line2_alt)
+
+    const minAng = Math.min(tempAng1, tempAng2, tempAng3, tempAng4)
+
+    let startAng = line1
+    let endAng = line2
+
+    if (!(tempAng1 === minAng && tempAng2 === minAng)) {
+        startAng = line1_alt
+        endAng = line2_alt
+    }
+
+    let btwnAngle = line2-line1
+
+    // if (endAng < startAng) {
+    //     btwnAngle = 360 - btwnAngle
+    // }
+
+    // document.getElementById("debugOutputs").innerHTML = `
+    //     ${endAng.toFixed(1)} \n<br>
+    //     ${startAng.toFixed(1)} \n<br>
+    //     ${btwnAngle.toFixed(1)} \n<br>
+    //     `
+
+    return btwnAngle
+}
+
 function getAngleBtwNodes(node, from, origin) {
-    const fromAngle = getNodesAngle(origin, from)
-    const nodeAngle = getNodesAngle(origin, node)
-    const totAngle = getNetAngle(nodeAngle - fromAngle)
+    // const fromAngle = getNodesAngle(origin, from)
+    // const nodeAngle = getNodesAngle(origin, node)
+    // const totAngle = getNetAngle(nodeAngle - fromAngle)
+
+    const totAngle = getAngleBtwnLines(origin, from, origin, node)
 
     return totAngle
 }
