@@ -140,6 +140,27 @@ function getDistBtwNodes(startNode, endNode) {
     return nDist
 }
 
+function getLinesIntersection(line1_start, line1_end, line2_start, line2_end) {
+
+    const x1 = line1_start.x
+    const y1 = line1_start.y
+    const x2 = line1_end.x
+    const y2 = line1_end.y
+    const x3 = line2_start.x
+    const y3 = line2_start.y
+    const x4 = line2_end.x
+    const y4 = line2_end.y
+
+    const denom = (x1-x2)*(y3-y4)-(y1-y2)*(x3-x4)
+
+    if (denom === 0) return
+
+    const point_x = ((x1*y2 - y1*x2)*(x3-x4)-(x1-x2)*(x3*y4 - y3*x4))/denom
+    const point_y = ((x1*y2 - y1*x2)*(y3-y4)-(y1-y2)*(x3*y4 - y3*x4))/denom
+
+    return [point_x, point_y]
+}
+
 function saveNodes() {
     for (i = 0; i < nodesData.length; i++) {
         const nodeName = `node${nodesData[i].id}`

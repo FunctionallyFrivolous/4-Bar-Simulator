@@ -288,6 +288,56 @@ function updateLinkGeometry() {
         .attr("stroke", fgColor)
         .style("display", nodeMode || cuspMode ? d => d.display : "none")
 
+    // intersectionDot
+    //     .attr("cx", getLinesIntersection(getNode("B"),getNode("A"),getNode("C"),getNode("D"))[0])
+    //     .attr("cy", getLinesIntersection(getNode("B"),getNode("A"),getNode("C"),getNode("D"))[1])
+    //     .attr("fill", fgColor)
+    // lineAE
+    //     .attr("x1", getNode("A").x)
+    //     .attr("y1", getNode("A").y)
+    //     .attr("x2", synthPoints[0].x)
+    //     .attr("y2", synthPoints[0].y)
+    //     .attr("stroke", fgColor)
+    // lineDE
+    //     .attr("x1", getNode("D").x)
+    //     .attr("y1", getNode("D").y)
+    //     .attr("x2", synthPoints[0].x)
+    //     .attr("y2", synthPoints[0].y)
+    //     .attr("stroke", fgColor)
+    // kFCircle
+    //     .attr("cx", getCircle3Points(
+    //         getNode("A"), getNode("D"), synthPoints[0])[0])
+    //     .attr("cy", getCircle3Points(
+    //         getNode("A"), getNode("D"), synthPoints[0])[1])
+    //     .attr("r", getCircle3Points(
+    //         getNode("A"), getNode("D"), synthPoints[0])[2]/2)
+    //     .attr("stroke", fgColor)
+    // ADCircle
+    //     .attr("cx", getCircle2Points(getNode("A"), getNode("D"))[0])
+    //     .attr("cy", getCircle2Points(getNode("A"), getNode("D"))[1])
+    //     .attr("r", getCircle2Points(getNode("A"), getNode("D"))[2]/2)
+    //     .attr("stroke", fgColor)
+    // inputCircle
+    //     .attr("cx", getNode("A").x)
+    //     .attr("cy", getNode("A").y)
+    //     .attr("r", 6*20)
+    //     .attr("stroke", fgColor)
+    // outputCircle
+    //     .attr("cx", getNode("D").x)
+    //     .attr("cy", getNode("D").y)
+    //     .attr("r", 4.5*20)
+    //     .attr("stroke", fgColor)
+
+    // const angAEB = getAngleBtwNodes(getNode("B"), getNode("A"), getNode("BC"))
+    // const angDEC = getAngleBtwNodes(getNode("C"), getNode("D"), getNode("BC"))
+
+    // document.getElementById("debugOutputs").innerHTML = `
+    //         ${angAEB.toFixed(1)} \n<br>
+    //         ${angDEC.toFixed(1)} \n<br>
+    // `
+
+
+
     // updateLinkageConfig()
     updateOpenCrossed()
     updateInputLimits()

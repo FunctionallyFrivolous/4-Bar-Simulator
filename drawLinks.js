@@ -347,33 +347,32 @@ const synthDrag = synthDragGroup.selectAll("circle")
             pathNodeSynth(nodeMode)
             pathCuspSynth(cuspMode)
 
+            // setLinkNodes()
+            // updateTNodes()
+            // updateTrace()
+
+            // updateInputLimits()
+            // if (inputLimits.min < 0 && synthModeTempAngle > 180) {
+            //     synthModeTempAngle = synthModeTempAngle -360
+            // } else if (inputLimits.min >= 0 && synthModeTempAngle < 0){
+            //     synthModeTempAngle = synthModeTempAngle +360
+            // }
+
+            // linkageOpen = synthModeTempOpen
+            // if (synthModeTempAngle > inputLimits.max-limitThreshold || synthModeTempAngle < inputLimits.min+limitThreshold) {
+            //     mirrorNodeSynth(true)
+            //     setLinkNodes()
+            //     // updateOpenCrossed()
+            //     updateTrace()
+            //     synthModeInputAngle = inputAngle
+            //     synthModeOpen = linkageOpen
+            // }
+            // doActuate(getNetAngle(linkToCoord(synthModeTempAngle,"angle")))
+
             setLinkNodes()
             updateTNodes()
             updateTrace()
-
-            updateInputLimits()
-            if (inputLimits.min < 0 && synthModeTempAngle > 180) {
-                synthModeTempAngle = synthModeTempAngle -360
-            } else if (inputLimits.min >= 0 && synthModeTempAngle < 0){
-                synthModeTempAngle = synthModeTempAngle +360
-            }
-
-            linkageOpen = synthModeTempOpen
-            if (synthModeTempAngle > inputLimits.max-limitThreshold || synthModeTempAngle < inputLimits.min+limitThreshold) {
-                mirrorNodeSynth(true)
-                setLinkNodes()
-                // updateOpenCrossed()
-                updateTrace()
-                synthModeInputAngle = inputAngle
-                synthModeOpen = linkageOpen
-            }
-            doActuate(getNetAngle(linkToCoord(synthModeTempAngle,"angle")))
-            // if (synthModeOpen !== linkageOpen) mirrorNodeSynth(true)
-
-            setLinkNodes()
-            updateTNodes()
-            // updateTrace()
-            updateTrace(false, synthModeOpen)
+            // updateTrace(false, synthModeOpen)
             updateLinkGeometry()
 
         })

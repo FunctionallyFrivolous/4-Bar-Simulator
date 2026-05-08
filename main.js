@@ -238,5 +238,31 @@ const cognateData = [
     {id: "E0", x: 0, y: 0, color: "darkgreen"},
 ]
 
+// const intersectionDot = zoomGroup
+//     .append("circle")
+//     .attr("r", 5)
+// const lineAE = zoomGroup.append("line")
+//     .attr("stroke-width", 0.5)
+//     .style("pointer-events", "none")
+// const lineDE = zoomGroup.append("line")
+//     .attr("stroke-width", 0.5)
+//     .style("pointer-events", "none")
+// const kFCircle = zoomGroup.append("circle")
+//     .attr("fill", "none")
+//     .attr("stroke-width", 0.5)
+//     .style("pointer-events", "none")
+// const ADCircle = zoomGroup.append("circle")
+//     .attr("fill", "none")
+//     .attr("stroke-width", 0.5)
+//     .style("pointer-events", "none")
+// const inputCircle = zoomGroup.append("circle")
+//     .attr("fill", "none")
+//     .attr("stroke-width", 0.5)
+//     .style("pointer-events", "none")
+// const outputCircle = zoomGroup.append("circle")
+//     .attr("fill", "none")
+//     .attr("stroke-width", 0.5)
+//     .style("pointer-events", "none")
+
 const buttonHeight = 30;
 const buttonMargin = 5
