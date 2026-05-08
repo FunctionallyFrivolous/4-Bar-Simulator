@@ -29,7 +29,25 @@ function swapInputOutput(updateNodes=true) {
 
     setLinkNodes()
     updateTNodes()
+}
 
+function invertLinkage() {
+    const nodeA = getNode("A")
+    const nodeB = getNode("B")
+    const nodeD = getNode("D")
+    const nodeC = getNode("C")
+
+    const distAB = getDistBtwNodes(nodeB, nodeA)
+    const distDC = getDistBtwNodes(nodeD, nodeC)
+
+    const angleAB = coordToLink(getNodesAngle(nodeA, nodeB),"angle")
+    const angleDC = coordToLink(getNodesAngle(nodeD, nodeC),"angle")
+
+    placeNodePolar(nodeB, nodeA, linkToCoord(-angleAB, "angle"), distAB, true)
+    placeNodePolar(nodeC, nodeD, linkToCoord(-angleDC, "angle"), distDC, true)
+
+    setLinkNodes()
+    tNodeFollow()
 }
 
 function cycleCognates() {

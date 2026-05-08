@@ -17,14 +17,14 @@ const linksData = [
         // Keep a simple logic here for initial nodes placement. E.g. mid-link w/ constant offset
         // Short term: manually dictate node coords
 const nodesData = [
-    {id: "A", x: originCoords.x, y: originCoords.y, color: "none", ground: true, trace: false, points: [], allPoints: []}, 
-    {id: "B", x: originCoords.x, y: originCoords.y-getLinkByID("AB").len*coordScale, color: "darkred", ground: false, trace: false, points: [], allPoints: []},  
-    {id: "C", x: originCoords.x+11.7*coordScale, y: originCoords.y-7.8*coordScale, color: "darkblue", ground: false, trace: false, points: [], allPoints: []},
-    {id: "D", x: originCoords.x+getLinkByID("AD").len*coordScale, y: originCoords.y, color: "none", ground: true, trace: false, points: [], allPoints: []},
-    {id: "AB", x: 100, y: 250, color: "darkred", ground: false, trace: false, points: [], allPoints: []},
-    {id: "BC", x: 260, y: 140, color: "darkgreen", ground: false, trace: true, points: [], allPoints: []},
-    {id: "DC", x: 400, y: 250, color: "darkblue", ground: false, trace: false, points: [], allPoints: []},
-    {id: "AD", x: 450, y: 250, color: "none", ground: false, trace: false, points: [], allPoints: []},
+    {id: "A", x: originCoords.x, y: originCoords.y, color: "none", ground: true, trace: false, points: [], allPoints: [], extraPoints: []}, 
+    {id: "B", x: originCoords.x, y: originCoords.y-getLinkByID("AB").len*coordScale, color: "darkred", ground: false, trace: false, points: [], allPoints: [], extraPoints: []},  
+    {id: "C", x: originCoords.x+11.7*coordScale, y: originCoords.y-7.8*coordScale, color: "darkblue", ground: false, trace: false, points: [], allPoints: [], extraPoints: []},
+    {id: "D", x: originCoords.x+getLinkByID("AD").len*coordScale, y: originCoords.y, color: "none", ground: true, trace: false, points: [], allPoints: [], extraPoints: []},
+    {id: "AB", x: 100, y: 250, color: "darkred", ground: false, trace: false, points: [], allPoints: [], extraPoints: []},
+    {id: "BC", x: 260, y: 140, color: "darkgreen", ground: false, trace: true, points: [], allPoints: [], extraPoints: []},
+    {id: "DC", x: 400, y: 250, color: "darkblue", ground: false, trace: false, points: [], allPoints: [], extraPoints: []},
+    {id: "AD", x: 450, y: 250, color: "none", ground: false, trace: false, points: [], allPoints: [], extraPoints: []},
 ]
 
 const synthPoints = [
@@ -279,6 +279,15 @@ const fullTraceLines = fullTraceGroup.selectAll("polyline")
     .attr("stroke-width", 2)
     .style("stroke-linecap", "round")
     .style("pointer-events", "none")
+const extraTraceLines = extraTraceGroup.selectAll("polyline")
+    .data(nodesData)
+    .enter()
+    .append("polyline")
+    .attr("fill", "none")
+    .attr("opacity", 0.2)
+    .attr("stroke-width", 2)
+    .style("stroke-linecap", "round")
+    .style("pointer-events", "none")
 
 const altTraceLine = zoomGroup
     .append("polyline")
@@ -310,6 +319,14 @@ const synthDrag = synthDragGroup.selectAll("circle")
     .attr("stroke-opacity", 0.25)
     .on("click", function(event, d) {
         // if (!nodeMode) return
+        if (invertStatus) {
+            invertLinkage()
+            invertStatus = false
+        }
+        if (swapStatus) {
+            swapInputOutput()
+            swapStatus = false
+        }
         if (nodeMode && Math.abs(d.x - getNode("BC").x) < limitThreshold && Math.abs(d.y - getNode("BC").y) < limitThreshold) {
             mirrorNodeSynth(true)
             setLinkNodes()

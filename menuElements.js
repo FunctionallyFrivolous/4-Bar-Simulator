@@ -232,7 +232,7 @@ reverseIcon
     .text("⟲") //⟲
 
 cognateButton
-    .attr("x", buttonMargin*4 + buttonHeight*3)
+    .attr("x", buttonMargin*5 + buttonHeight*4)
     .attr("y", windowHeight-buttonMargin-buttonHeight)
     .attr("width", buttonHeight)
     .attr("height", buttonHeight)
@@ -265,7 +265,7 @@ const cognateToolTip = cognateButton
         .text("Cycle Cognates")
 
 cognateIcon
-    .attr("x", buttonMargin*4 + buttonHeight*3 + buttonHeight/2)
+    .attr("x", buttonMargin*5 + buttonHeight*4 + buttonHeight/2)
     .attr("y", windowHeight-buttonHeight/2-buttonMargin)
     .attr("font-size", "20px")
     .attr("font-family", "sans-serif")
@@ -277,7 +277,7 @@ cognateIcon
     .text("♺") //♻
 
 resetLinkageButton
-    .attr("x", buttonMargin*7 + buttonHeight*6)
+    .attr("x", buttonMargin*8 + buttonHeight*7)
     .attr("y", windowHeight-buttonMargin-buttonHeight)
     .attr("width", buttonHeight)
     .attr("height", buttonHeight)
@@ -377,11 +377,12 @@ swapInOutButton
     .attr("stroke-width", 1)
     .attr("stroke-opacity", 0.75)
     .on("click", function() {
+        swapStatus = !swapStatus
         swapInputOutput()
         saveNodes()
         updateLinkGeometry()
-        nodeMode = false
-        cuspMode = false
+        // nodeMode = false
+        // cuspMode = false
         // synthModeCycleButton
         //     .style("display", "none")
         // synthModeCycleIcon
@@ -404,12 +405,12 @@ swapInOutIcon
     .attr("font-weight", "bold")
     .attr("text-anchor", "middle")
     .attr("alignment-baseline", "middle")
-    .attr("dy", "0.05em")
+    .attr("dy", "0.1em")
     .style("pointer-events", "none")
-    .text("↹") //♻
+    .text("⭾") //♻ ⭾ ↹
 
-nodeModeButton
-    .attr("x", buttonMargin*5 + buttonHeight*4)
+invertLinkageButton
+    .attr("x", buttonMargin*4 + buttonHeight*3)
     .attr("y", windowHeight-buttonMargin-buttonHeight)
     .attr("width", buttonHeight)
     .attr("height", buttonHeight)
@@ -421,6 +422,50 @@ nodeModeButton
     .attr("stroke-width", 1)
     .attr("stroke-opacity", 0.75)
     .on("click", function() {
+        invertStatus = !invertStatus
+        invertLinkage()
+        saveNodes()
+        updateTrace()
+        updateLinkGeometry()
+        // nodeMode = false
+        // cuspMode = false
+        // synthCycle = 0
+        updateTrace(false)
+        updateLinkGeometry()
+    })
+const invertLinkageToolTip = invertLinkageButton
+        .append("title")
+        .text("Invert Linkage")
+
+invertLinkageIcon
+    .attr("x", buttonMargin*4 + buttonHeight*3 + buttonHeight/2)
+    .attr("y", windowHeight-buttonHeight/2-buttonMargin)
+    .attr("font-size", "21px")
+    .attr("font-family", "sans-serif")
+    .attr("font-weight", "bold")
+    .attr("text-anchor", "middle")
+    .attr("alignment-baseline", "middle")
+    .attr("dy", "0.1em")
+    .style("pointer-events", "none")
+    .text("⭿") //♻
+
+// InvertLinkage: 
+
+nodeModeButton
+    .attr("x", buttonMargin*6 + buttonHeight*5)
+    .attr("y", windowHeight-buttonMargin-buttonHeight)
+    .attr("width", buttonHeight)
+    .attr("height", buttonHeight)
+    .attr("rx", 5)
+    .attr("ry", 5)
+    .attr("fill", "lightgray")
+    .attr("fill-opacity", 0.75)
+    .attr("stroke", "black")
+    .attr("stroke-width", 1)
+    .attr("stroke-opacity", 0.75)
+    .on("click", function() {
+        invertStatus = false
+        swapStatus = false
         cuspMode = false
         nodeMode = !nodeMode
         synthCycle = 0
@@ -445,7 +490,7 @@ const nodeModeToolTip = nodeModeButton
     .text("Node Mode")
 
 nodeModeIcon
-    .attr("x", buttonMargin*5 + buttonHeight*4 + buttonHeight/2)
+    .attr("x", buttonMargin*6 + buttonHeight*5 + buttonHeight/2)
     .attr("y", windowHeight-buttonHeight/2-buttonMargin)
     .attr("dy", "0.12em")
     .attr("font-size", "15pt")
@@ -457,7 +502,7 @@ nodeModeIcon
     .text("⌘") // ⌘ , ↫ , ⅏
 
 cuspModeButton
-    .attr("x", buttonMargin*6 + buttonHeight*5)
+    .attr("x", buttonMargin*7 + buttonHeight*6)
     .attr("y", windowHeight-buttonMargin-buttonHeight)
     .attr("width", buttonHeight)
     .attr("height", buttonHeight)
@@ -469,6 +514,8 @@ cuspModeButton
     .attr("stroke-width", 1)
     .attr("stroke-opacity", 0.75)
     .on("click", function() {
+        invertStatus = false
+        swapStatus = false
         nodeMode = false
         cuspMode = !cuspMode
         synthCycle = 0
@@ -510,7 +557,7 @@ cuspModeIcon// = overlayGroup.append("path")
     .attr("fill", "none")
     .attr("d", 
         drawCuspIcon(
-            buttonMargin*6 + buttonHeight*5+ buttonHeight/2,
+            buttonMargin*7 + buttonHeight*6+ buttonHeight/2,
             windowHeight-buttonHeight/2-buttonMargin
         )
         // drawCrossoverIcon()

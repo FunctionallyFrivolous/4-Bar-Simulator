@@ -271,6 +271,10 @@ function updateLinkGeometry() {
         .attr("stroke", d => d3.interpolateRgb(d.color,"white")(whtnColor*2))
         .attr("points", d => d.allPoints.map(j => `${j.x},${j.y}`).join(" "))
         .style("display", d => !d.trace ? "none" : d.id.length === 2 && !linksData.find(l => l.id === d.id).ternary ? "none" : "block")
+    extraTraceLines
+        .attr("stroke", d => d3.interpolateRgb(d.color,"white")(whtnColor*2))
+        .attr("points", d => d.extraPoints.map(j => `${j.x},${j.y}`).join(" "))
+        .style("display", d => !d.trace ? "none" : d.id.length === 2 && !linksData.find(l => l.id === d.id).ternary ? "none" : "block")
     altTraceLine
         .attr("stroke", d3.interpolateRgb("darkgreen","white")(whtnColor*2))
         .attr("points", altTraceData.points.map(j => `${j.x},${j.y}`).join(" "))
@@ -328,8 +332,8 @@ function updateLinkGeometry() {
     //     .attr("r", 4.5*20)
     //     .attr("stroke", fgColor)
 
-    // const angAEB = getAngleBtwNodes(getNode("B"), getNode("A"), getNode("BC"))
-    // const angDEC = getAngleBtwNodes(getNode("C"), getNode("D"), getNode("BC"))
+    const angAEB = getAngleBtwNodes(getNode("B"), getNode("A"), getNode("BC"))
+    const angDEC = getAngleBtwNodes(getNode("C"), getNode("D"), getNode("BC"))
 
     // document.getElementById("debugOutputs").innerHTML = `
     //         ${angAEB.toFixed(1)} \n<br>
@@ -426,6 +430,7 @@ function updateTrace(alt=true, oc=linkageOpen) {
     for (i = 0; i < nodesData.length; i++) {
         nodesData[i].points = []
         nodesData[i].allPoints = []
+        nodesData[i].extraPoints = []
     }
 
     let inAngle = in_startAngle
@@ -476,6 +481,7 @@ function updateTrace(alt=true, oc=linkageOpen) {
                 nodeBC.allPoints.push(newBC)
             }
         }
+        if ((nodeMode || cuspMode) && !linkageOpen && inputClass === "Crank") nodeBC.extraPoints.push(newBC)
     }
     // document.getElementById("debugOutputs").innerHTML = dbgtxt
 
@@ -516,6 +522,7 @@ function updateTrace(alt=true, oc=linkageOpen) {
                 nodeDC.allPoints.push(newDC)
             }
         }
+        if ((nodeMode || cuspMode) && linkageOpen && inputClass === "Crank") nodeBC.extraPoints.push(newBC)
     }
 
     if (allowCrossover && inputClass !== "Crank") {
@@ -576,41 +583,92 @@ function updateTrace(alt=true, oc=linkageOpen) {
         }
     }
 
-    // let swapped = false
-    // let alt_angleStep = 0
-    // if (inputClass === "Rocker" && outputClass === "Crank") {
-    //     swapped = true
-    //     swapInputOutput()
-    //     updateOpenCrossed()
-    //     alt_angleStep = 360/traceSteps
-    // } else {
-    //     alt_angleStep = in_angleStep
-    // }
-    // for (i = 0; i < traceSteps+1; i++) {
-    //     inAngle = 0 + alt_angleStep * i
+    // Show unreachable coupler curve regions - Crank-Rocker & Rocker-Crank
+    if ((nodeMode || cuspMode) && (inputClass === "Crank" || outputClass === "Crank")) {
+        let swapped = false
+        let alt_angleStep = 0
+        if (inputClass === "Rocker" && outputClass === "Crank") {
+            swapped = true
+            swapInputOutput()
+            updateOpenCrossed()
+            alt_angleStep = 360/traceSteps
+        } else {
+            alt_angleStep = in_angleStep
+        }
+        for (i = 0; i < traceSteps+1; i++) {
+            inAngle = 0 + alt_angleStep * i
 
-    //     const newB = {x: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false)[0], y: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false)[1]}
-    //     const outAngle_temp = getNetAngle(calcOutputAngle(inAngle, !linkageOpen))
-    //     const newC = {x: placeNodePolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false)[0], y: placeNodePolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false)[1]}
-    //     const couplerAngle = getNodesAngle(newB,newC)
-    //     const couplerTAngle = getNetAngle(couplerAngle + couplerLink.tAng)
-    //     const couplerTDist = couplerLink.tLen
-    //     const newBC = {x: placeNodePolar(nodeBC, newB, couplerTAngle, couplerTDist, false)[0], y: placeNodePolar(nodeBC, newB, couplerTAngle, couplerTDist, false)[1]}
+            const newB = {x: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false)[0], y: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false)[1]}
+            const outAngle_temp = getNetAngle(calcOutputAngle(inAngle, !linkageOpen))
+            const newC = {x: placeNodePolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false)[0], y: placeNodePolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false)[1]}
+            const couplerAngle = getNodesAngle(newB,newC)
+            const couplerTAngle = getNetAngle(couplerAngle + couplerLink.tAng)
+            const couplerTDist = couplerLink.tLen
+            const newBC = {x: placeNodePolar(nodeBC, newB, couplerTAngle, couplerTDist, false)[0], y: placeNodePolar(nodeBC, newB, couplerTAngle, couplerTDist, false)[1]}
 
-    //     if ((inputClass === "Crank" && outputClass === "Rocker" || inputClass === "Rocker" && outputClass === "Crank")) {
-    //         altTraceData.points.push(newBC)
-    //     }
-    // }
-    // if (swapped) {
-    //     swapInputOutput()
-    //     updateOpenCrossed()
-    // }
+            if ((inputClass === "Crank" && outputClass === "Rocker" || inputClass === "Rocker" && outputClass === "Crank")) {
+                nodeBC.extraPoints.push(newBC)
+            }
+        }
+        if (swapped) {
+            swapInputOutput()
+            updateOpenCrossed()
+        }
+    }
 
+    // Show unreachable coupler curve regions - Double Rocker
+    if ((nodeMode || cuspMode) && (inputClass === "Rocker" && outputClass === "Rocker")) {
+        let swapped = false
+        invertLinkage()
+        updateOpenCrossed()
+        updateInputLimits()
+        in_startAngle = inputLimits.min
+        in_endAngle = inputLimits.max
+        in_angleStep = (in_endAngle-in_startAngle)/traceSteps
+
+        swapped = true
+
+        for (i = 0; i < traceSteps+1; i++) {
+            inAngle = in_startAngle + in_angleStep * i
+
+            const newB = {x: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false)[0], y: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false)[1]}
+            const outAngle_temp = getNetAngle(calcOutputAngle(inAngle, linkageOpen))
+            const newC = {x: placeNodePolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false)[0], y: placeNodePolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false)[1]}
+            const couplerAngle = getNodesAngle(newB,newC)
+            const couplerTAngle = getNetAngle(couplerAngle + couplerLink.tAng)
+            const couplerTDist = couplerLink.tLen
+            const newBC = {x: placeNodePolar(nodeBC, newB, couplerTAngle, couplerTDist, false)[0], y: placeNodePolar(nodeBC, newB, couplerTAngle, couplerTDist, false)[1]}
+
+            nodeBC.extraPoints.push(newBC)
+        }
+        for (i = 0; i < traceSteps+1; i++) {
+            inAngle = in_endAngle - in_angleStep * i
+
+            const newB = {x: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false)[0], y: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false)[1]}
+            const outAngle_temp = getNetAngle(calcOutputAngle(inAngle, !linkageOpen))
+            const newC = {x: placeNodePolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false)[0], y: placeNodePolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false)[1]}
+            const couplerAngle = getNodesAngle(newB,newC)
+            const couplerTAngle = getNetAngle(couplerAngle + couplerLink.tAng)
+            const couplerTDist = couplerLink.tLen
+            const newBC = {x: placeNodePolar(nodeBC, newB, couplerTAngle, couplerTDist, false)[0], y: placeNodePolar(nodeBC, newB, couplerTAngle, couplerTDist, false)[1]}
+
+            nodeBC.extraPoints.push(newBC)
+        }
+
+        if (swapped) {
+            invertLinkage()
+            updateOpenCrossed()
+            updateInputLimits()
+        }
+
+    }
+
+    // Show unreachable coupler curve regions - Intersecting loops
     let swapped_n = false
     if (!nodeMode || (inputClass !== "Rocker" && outputClass !== "Rocker")) {
         altTraceData.points = []
     }
-    if (alt && nodeMode && (inputClass === "Rocker" || outputClass === "Rocker")) {
+    if (alt && nodeMode && ((inputClass === "Rocker" && outputClass === "Crank") || (outputClass === "Rocker" && inputClass === "Crank"))) {
         altTraceData.points = []
         mirrorNodeSynth()
         setLinkNodes()
@@ -717,6 +775,9 @@ function defaultLinkage() {
 
         localStorage.setItem(`${linksData[i].id}_t`, "")
     }
+    synthPoints[0].x = getNode("BC").x
+    synthPoints[0].y = getNode("BC").y
+
     saveNodes()
     updateTNodes()
     setLinkNodes()

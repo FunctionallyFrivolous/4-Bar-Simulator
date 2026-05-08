@@ -202,6 +202,13 @@ function saveUndoNodes() {
         localStorage.setItem(`${nodeName}_x`, `${nodesData[i].x.toFixed(3)}`)
         localStorage.setItem(`${nodeName}_y`, `${nodesData[i].y.toFixed(3)}`)
     }
+    for (i = 0; i < synthPoints.length; i++) {
+        const pointName = `undoPoint${synthPoints[i].id}`
+
+        localStorage.setItem(`${pointName}_x`, `${synthPoints[i].x.toFixed(3)}`)
+        localStorage.setItem(`${pointName}_y`, `${synthPoints[i].y.toFixed(3)}`)
+    }
+    
     undoStatus = true
     undoRedoToolTip.text(undoStatus ? "Undo" : "Redo")
     undoRedoIcon.text(undoStatus ? "↶" : "↷")
@@ -216,6 +223,13 @@ function undoRedo() {
             localStorage.setItem(`${nodeName}_x`, `${nodesData[i].x.toFixed(3)}`)
             localStorage.setItem(`${nodeName}_y`, `${nodesData[i].y.toFixed(3)}`)
         }
+        for (i = 0; i < synthPoints.length; i++) {
+            const pointName = `tempPoint${synthPoints[i].id}`
+
+            localStorage.setItem(`${pointName}_x`, `${synthPoints[i].x.toFixed(3)}`)
+            localStorage.setItem(`${pointName}_y`, `${synthPoints[i].y.toFixed(3)}`)
+        }
+
         for (i = 0; i < nodesData.length; i++) {
             const nodeName = `undoNode${nodesData[i].id}`
 
@@ -224,6 +238,15 @@ function undoRedo() {
                 nodesData[i].y = Number(localStorage.getItem(`${nodeName}_y`))
             }
         }
+        for (i = 0; i < synthPoints.length; i++) {
+            const pointName = `undoPoint${synthPoints[i].id}`
+
+            if (localStorage.getItem(`${pointName}_x`) !== null) {
+                synthPoints[i].x = Number(localStorage.getItem(`${pointName}_x`))
+                synthPoints[i].y = Number(localStorage.getItem(`${pointName}_y`))
+            }
+        }
+
     } else {
         for (i = 0; i < nodesData.length; i++) {
             const nodeName = `tempNode${nodesData[i].id}`
@@ -233,7 +256,18 @@ function undoRedo() {
                 nodesData[i].y = Number(localStorage.getItem(`${nodeName}_y`))
             }
         }
+        for (i = 0; i < synthPoints.length; i++) {
+            const pointName = `tempPoint${synthPoints[i].id}`
+
+            if (localStorage.getItem(`${pointName}_x`) !== null) {
+                synthPoints[i].x = Number(localStorage.getItem(`${pointName}_x`))
+                synthPoints[i].y = Number(localStorage.getItem(`${pointName}_y`))
+            }
+        }
     }
+
+    // synthPoints[0].x = getNode("BC").x
+    // synthPoints[0].y = getNode("BC").y
 
     saveNodes()
     updateTNodes()

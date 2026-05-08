@@ -96,6 +96,8 @@ document.getElementById("pageLab").style.color = fgColor
 document.getElementById("topView").style.border = `1px solid ${fgColor}`
 
 let undoStatus = true;
+let invertStatus = false;
+let swapStatus = false
 
 let synthModeInputAngle = 0
 let synthModeOpen = linkageOpen
@@ -182,6 +184,7 @@ const nodeDragGroup = zoomGroup.append("g")
 const traceDotGroup = zoomGroup.append("g")
 const traceLineGroup = zoomGroup.append("g")
 const fullTraceGroup = zoomGroup.append("g")
+const extraTraceGroup = zoomGroup.append("g")
 
 const synthDotGroup = zoomGroup.append("g")
 const synthDragGroup = zoomGroup.append("g")
@@ -209,6 +212,8 @@ const fitViewButton = overlayGroup.append("rect")
 const fitViewIcon = overlayGroup.append("path")
 const swapInOutButton = overlayGroup.append("rect")
 const swapInOutIcon = overlayGroup.append("text")
+const invertLinkageButton = overlayGroup.append("rect")
+const invertLinkageIcon = overlayGroup.append("text")
 const nodeModeButton = overlayGroup.append("rect")
 const nodeModeIcon = overlayGroup.append("text")
 const cuspModeButton = overlayGroup.append("rect")
@@ -241,28 +246,28 @@ const cognateData = [
 // const intersectionDot = zoomGroup
 //     .append("circle")
 //     .attr("r", 5)
-// const lineAE = zoomGroup.append("line")
-//     .attr("stroke-width", 0.5)
-//     .style("pointer-events", "none")
-// const lineDE = zoomGroup.append("line")
-//     .attr("stroke-width", 0.5)
-//     .style("pointer-events", "none")
-// const kFCircle = zoomGroup.append("circle")
-//     .attr("fill", "none")
-//     .attr("stroke-width", 0.5)
-//     .style("pointer-events", "none")
-// const ADCircle = zoomGroup.append("circle")
-//     .attr("fill", "none")
-//     .attr("stroke-width", 0.5)
-//     .style("pointer-events", "none")
-// const inputCircle = zoomGroup.append("circle")
-//     .attr("fill", "none")
-//     .attr("stroke-width", 0.5)
-//     .style("pointer-events", "none")
-// const outputCircle = zoomGroup.append("circle")
-//     .attr("fill", "none")
-//     .attr("stroke-width", 0.5)
-//     .style("pointer-events", "none")
+const lineAE = zoomGroup.append("line")
+    .attr("stroke-width", 0.5)
+    .style("pointer-events", "none")
+const lineDE = zoomGroup.append("line")
+    .attr("stroke-width", 0.5)
+    .style("pointer-events", "none")
+const kFCircle = zoomGroup.append("circle")
+    .attr("fill", "none")
+    .attr("stroke-width", 0.5)
+    .style("pointer-events", "none")
+const ADCircle = zoomGroup.append("circle")
+    .attr("fill", "none")
+    .attr("stroke-width", 0.5)
+    .style("pointer-events", "none")
+const inputCircle = zoomGroup.append("circle")
+    .attr("fill", "none")
+    .attr("stroke-width", 0.5)
+    .style("pointer-events", "none")
+const outputCircle = zoomGroup.append("circle")
+    .attr("fill", "none")
+    .attr("stroke-width", 0.5)
+    .style("pointer-events", "none")
 
 const buttonHeight = 30;
 const buttonMargin = 5
