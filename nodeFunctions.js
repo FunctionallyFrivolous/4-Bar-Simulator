@@ -28,7 +28,8 @@ function placeNodePolar(node, origin, deg, dist, doit=false) {
         node.y = newY
     }
 
-    return [newX, newY]
+    const newNode = {x: newX, y: newY}
+    return newNode
 }
 
 function tNodeFollow() {
@@ -159,6 +160,15 @@ function getLinesIntersection(line1_start, line1_end, line2_start, line2_end) {
     const point_y = ((x1*y2 - y1*x2)*(y3-y4)-(y1-y2)*(x3*y4 - y3*x4))/denom
 
     return [point_x, point_y]
+}
+
+function getMidNode(startNode, endNode) {
+    const midNode_x = (startNode.x + endNode.x)/2
+    const midNode_y = (startNode.y + endNode.y)/2
+
+    const midNode = {x: midNode_x, y: midNode_y}
+
+    return midNode
 }
 
 function saveNodes() {

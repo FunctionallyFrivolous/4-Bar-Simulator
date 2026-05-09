@@ -147,7 +147,7 @@ function pathNodeSynth(doit=false, cDrag=false) {
     // synthPoints[0].x = nodeE.x
     // synthPoints[0].y = nodeE.y
 
-    return [newC[0], newC[1]]
+    return [newC.x, newC.y]
 
 }
 function mirrorNodeSynth(doit=true) {
@@ -183,7 +183,6 @@ function mirrorNodeSynth(doit=true) {
 
 function pathCuspSynth(doit=true) {
     if (!cuspMode) return
-    // if (synthCycle === 4) synthCycle = 0
 
     setLinkNodes()
 
@@ -193,19 +192,54 @@ function pathCuspSynth(doit=true) {
     const nodeC = getNode("C")
     const nodeD = getNode("D")
 
-    const inputLength = linkToCoord(getLinkByType("input").len, "dist")
+    let inputLength = linkToCoord(getLinkByType("input").len, "dist")
     const outputLength = linkToCoord(getLinkByType("output").len, "dist")
 
     let angleAE = getNodesAngle(nodeA, nodeE)// - 180*(Math.floor(synthCycle/2))
-    let angleDE = getNodesAngle(nodeD, nodeE)// - 180*synthCycle
-
-    const outputAng = getNodesAngle(nodeC, nodeD)
-    if (Math.abs(angleDE-outputAng) < 90) angleDE = angleDE - 180
 
     const inputAng = getNodesAngle(nodeB, nodeA)
     if (Math.abs(angleAE-inputAng) < 90) angleAE = angleAE - 180
 
+    if (synthPointCount === 2) {
+        const nodeE2 = synthPoints[1]
+        const kFCirc = getCircle3Points(nodeA, nodeE, nodeE2)
+        const kFCenter = {x: kFCirc[0], y: kFCirc[1]}
+        const kFRad = kFCirc[2]/2
+
+        kFCircle
+            .attr("cx", kFCirc[0])
+            .attr("cy", kFCirc[1])
+            .attr("r", kFCirc[2]/2)
+
+        const e12 = getMidNode(nodeE, nodeE2)
+        const angleE1E2 = getNodesAngle(nodeE, nodeE2)
+        const angle_e12 = angleE1E2 + 90
+
+        let dist_e12 = kFRad + getDistBtwNodes(e12, kFCenter)
+
+        let D_new = placeNodePolar(nodeD, e12, angle_e12, dist_e12, false)
+
+        if (getDistBtwNodes(kFCenter,D_new) - kFRad > 0.0001) {
+            dist_e12 = kFRad - getDistBtwNodes(e12, kFCenter)
+            D_new = placeNodePolar(nodeD, e12, angle_e12, dist_e12, false)
+        }
+        nodeD.x = D_new.x
+        nodeD.y = D_new.y
+
+        setLinkNodes()
+
+        const midAD = getMidNode(nodeA,nodeD)
+        const radAD = getDistBtwNodes(nodeA,nodeD)/2
+
+        inputLength = 2*radAD * Math.cos(degToRad(coordToLink(getNodesAngle(nodeA, nodeE),"angle")))
+    }
+
     placeNodePolar(nodeB, nodeA, angleAE, inputLength, doit)
+
+    let angleDE = getNodesAngle(nodeD, nodeE)// - 180*synthCycle
+    const outputAng = getNodesAngle(nodeC, nodeD)
+    if (Math.abs(angleDE-outputAng) < 90) angleDE = angleDE - 180
+
     placeNodePolar(nodeC, nodeD, angleDE, outputLength, doit)
 
     setLinkNodes()
@@ -215,5 +249,4 @@ function pathCuspSynth(doit=true) {
 
     synthModeInputAngle = inputAngle
     synthModeOpen = linkageOpen
-
 }

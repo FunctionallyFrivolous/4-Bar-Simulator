@@ -405,9 +405,9 @@ swapInOutIcon
     .attr("font-weight", "bold")
     .attr("text-anchor", "middle")
     .attr("alignment-baseline", "middle")
-    .attr("dy", "0.1em")
+    .attr("dy", "0.05em")
     .style("pointer-events", "none")
-    .text("⭾") //♻ ⭾ ↹
+    .text("↹") //♻ ⭾ ↹
 
 invertLinkageButton
     .attr("x", buttonMargin*4 + buttonHeight*3)
@@ -447,7 +447,7 @@ invertLinkageIcon
     .attr("alignment-baseline", "middle")
     .attr("dy", "0.1em")
     .style("pointer-events", "none")
-    .text("⭿") //♻
+    .text("⇅") // ↹
 
 // InvertLinkage: 
 
@@ -468,7 +468,8 @@ nodeModeButton
         swapStatus = false
         cuspMode = false
         nodeMode = !nodeMode
-        synthCycle = 0
+        synthPointCount = nodeMode ? 1 : 0
+        // synthCycle = 0
         // synthModeCycleButton
         //     .attr("x", buttonMargin*5 + buttonHeight*4)
         //     .style("display", nodeMode ? "block" : "none")
@@ -518,13 +519,10 @@ cuspModeButton
         swapStatus = false
         nodeMode = false
         cuspMode = !cuspMode
-        synthCycle = 0
-        // synthModeCycleButton
-        //     // .attr("x", buttonMargin*6 + buttonHeight*5)
-        //     .style("display", "none")
-        // synthModeCycleIcon
-        //     // .attr("x", buttonMargin*6 + buttonHeight*5 + buttonHeight/2)
-        //     .style("display", "none")
+        synthPointCount = cuspMode ? 1 : 0
+        for (i = 0; i < synthPoints.length; i++) {
+            synthPoints[i].display = i < synthPointCount ? "block" : "none"
+        }
 
         synthPoints[0].x = getNode("BC").x
         synthPoints[0].y = getNode("BC").y
@@ -564,9 +562,57 @@ cuspModeIcon// = overlayGroup.append("path")
     )
     .style("pointer-events", "none")
 
+synthPlusButton
+    .attr("x", buttonMargin*7 + buttonHeight*6)
+    .attr("y", windowHeight-buttonMargin-buttonHeight*2)
+    .attr("width", buttonHeight)
+    .attr("height", buttonHeight)
+    .attr("rx", 5)
+    .attr("ry", 5)
+    .attr("fill", fgColor)
+    .attr("fill-opacity", 0.0)
+    .on("click", function(event, d) {
+        if (synthPointCount >= 2) synthPointCount--
+        else synthPointCount++
+        for (i = 0; i < synthPoints.length; i++) {
+            synthPoints[i].display = i < synthPointCount ? "block" : "none"
+        }
+        if (synthPointCount === 2) {
+            // const nodeE2 = synthPoints[1]
+            // const kFCirc = getCircle3Points(getNode("A"), getNode("BC"), getNode("D"))
+            // const kFCenter = {x: kFCirc[0], y: kFCirc[1] }
+
+            // const angleE1_kF = getNodesAngle(kFCenter,getNode("BC"))
+
+            // placeNodePolar(nodeE2, kFCenter, angleE1_kF+120, kFCirc[2]/2, true)
+        }
+        pathCuspSynth(cuspMode)
+        setLinkNodes()
+        updateTrace()
+        updateLinkGeometry()
+    })
+const synthPlusToolTip = synthPlusButton
+    .append("title")
+    .text("Reverse Actuation Direction")
+
+synthPlusIcon
+    .attr("x", buttonHeight/2 + buttonMargin*7 + buttonHeight*6)
+    .attr("y", windowHeight-buttonMargin-buttonHeight*1.75 + buttonHeight*0.75/2)
+    .attr("dy", "0.2em")
+    // .attr("dx", "0.02em")
+    .attr("fill", fgColor)
+    // .attr("opacity", 0.25)
+    .attr("font-size", "19px")
+    .attr("font-family", "sans-serif")
+    // .attr("font-weight", "bold")
+    .attr("text-anchor", "middle")
+    .attr("alignment-baseline", "middle")
+    .style("pointer-events", "none")
+    .text("+") //⟲
+
 // Symbols:
     // Function generation: ⦡ , ⌔
-    // Other: ⮓, ⮒ , ⌥ , ⬲ , ⬰ , ⥂ , ⥈ , ⤟ , ⤰
+    // Other: ⮓, ⮒ , ⌥ , ⬲ , ⬰ , ⥂ , ⥈ , ⤟ , ⤰, ⎇(alt solution)
     // Crossover: ↤ ↔ ⇼
 
 function startAnimationLoop() {
@@ -581,7 +627,7 @@ function stopAnimationLoop() {
         animationTimer = null;
     }
     saveNodes()
-    playIcon.text("▶")
+    playIcon.text("▶") //⏵
 }
 
 

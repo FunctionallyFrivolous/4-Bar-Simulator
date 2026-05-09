@@ -104,6 +104,8 @@ let synthModeOpen = linkageOpen
 let synthModeTempAngle = 0
 let synthModeTempOpen = linkageOpen
 let synthCycle = 0
+let synthPointCount = 0
+let activeSynthPoint = "E1"
 let nodeMode = false
 let cuspMode = false
 
@@ -112,6 +114,7 @@ const traceStepsFine = 4000
 let traceSteps = traceStepsFine;
 const traceDelta = 0.25
 const traceReduction = 20
+let showGhostTrace = true
 
 const snapAngle = 5;
 
@@ -184,7 +187,6 @@ const nodeDragGroup = zoomGroup.append("g")
 const traceDotGroup = zoomGroup.append("g")
 const traceLineGroup = zoomGroup.append("g")
 const fullTraceGroup = zoomGroup.append("g")
-const extraTraceGroup = zoomGroup.append("g")
 
 const synthDotGroup = zoomGroup.append("g")
 const synthDragGroup = zoomGroup.append("g")
@@ -218,6 +220,8 @@ const nodeModeButton = overlayGroup.append("rect")
 const nodeModeIcon = overlayGroup.append("text")
 const cuspModeButton = overlayGroup.append("rect")
 const cuspModeIcon = overlayGroup.append("path")
+const synthPlusButton = overlayGroup.append("rect")
+const synthPlusIcon = overlayGroup.append("text")
 
 // const synthModeCycleButton = overlayGroup.append("rect")
 // const synthModeCycleIcon = overlayGroup.append("text")

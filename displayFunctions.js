@@ -16,6 +16,8 @@ function toggleDarkMode(){
     reverseIcon.attr("fill", fgColor)
     crossoverIcon.attr("stroke", fgColor)
 
+    synthPlusIcon.attr("fill", fgColor)
+
     document.body.style.backgroundColor = bgColor
     document.getElementById("pageLab").style.color = fgColor
     document.getElementById("topView").style.border = `1px solid ${fgColor}`

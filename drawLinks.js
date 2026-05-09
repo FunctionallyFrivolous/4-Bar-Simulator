@@ -17,19 +17,20 @@ const linksData = [
         // Keep a simple logic here for initial nodes placement. E.g. mid-link w/ constant offset
         // Short term: manually dictate node coords
 const nodesData = [
-    {id: "A", x: originCoords.x, y: originCoords.y, color: "none", ground: true, trace: false, points: [], allPoints: [], extraPoints: []}, 
-    {id: "B", x: originCoords.x, y: originCoords.y-getLinkByID("AB").len*coordScale, color: "darkred", ground: false, trace: false, points: [], allPoints: [], extraPoints: []},  
-    {id: "C", x: originCoords.x+11.7*coordScale, y: originCoords.y-7.8*coordScale, color: "darkblue", ground: false, trace: false, points: [], allPoints: [], extraPoints: []},
-    {id: "D", x: originCoords.x+getLinkByID("AD").len*coordScale, y: originCoords.y, color: "none", ground: true, trace: false, points: [], allPoints: [], extraPoints: []},
-    {id: "AB", x: 100, y: 250, color: "darkred", ground: false, trace: false, points: [], allPoints: [], extraPoints: []},
-    {id: "BC", x: 260, y: 140, color: "darkgreen", ground: false, trace: true, points: [], allPoints: [], extraPoints: []},
-    {id: "DC", x: 400, y: 250, color: "darkblue", ground: false, trace: false, points: [], allPoints: [], extraPoints: []},
-    {id: "AD", x: 450, y: 250, color: "none", ground: false, trace: false, points: [], allPoints: [], extraPoints: []},
+    {id: "A", x: originCoords.x, y: originCoords.y, color: "none", ground: true, trace: false, points: [], allPoints: []}, 
+    {id: "B", x: originCoords.x, y: originCoords.y-getLinkByID("AB").len*coordScale, color: "darkred", ground: false, trace: false, points: [], allPoints: []},  
+    {id: "C", x: originCoords.x+11.7*coordScale, y: originCoords.y-7.8*coordScale, color: "darkblue", ground: false, trace: false, points: [], allPoints: []},
+    {id: "D", x: originCoords.x+getLinkByID("AD").len*coordScale, y: originCoords.y, color: "none", ground: true, trace: false, points: [], allPoints: []},
+    {id: "AB", x: 100, y: 250, color: "darkred", ground: false, trace: false, points: [], allPoints: []},
+    {id: "BC", x: 260, y: 140, color: "darkgreen", ground: false, trace: true, points: [], allPoints: []},
+    {id: "DC", x: 400, y: 250, color: "darkblue", ground: false, trace: false, points: [], allPoints: []},
+    {id: "AD", x: 450, y: 250, color: "none", ground: false, trace: false, points: [], allPoints: []},
 ]
 
 const synthPoints = [
     {id: "E1", x: 260, y: 140, display: "block"},
     {id: "E2", x: 250, y: 250, display: "none"},
+    {id: "E3", x: 100, y: 200, display: "none"},
 ]
 
 const defaultNodes = structuredClone(nodesData); //Used to reset to default linkage 
@@ -82,6 +83,7 @@ const linkLines = linkLineGroup.selectAll("polygon")
             if (d.type !== "input") traceSteps = traceStepsCoarse
         })
         .on("drag", function(event, d) {
+            // if (d.type === "output" && cuspMode && synthPointCount > 1) return
             if (d.type === "input") {
                 const currentAngle = getLinkAngle("AB")
                 const pivotNode = getLinkNodes(d.id)[0]
@@ -215,6 +217,7 @@ const nodeDrag = nodeDragGroup.selectAll("cirlce")
             traceSteps = traceStepsCoarse
         })
         .on("drag", function(event, d) {
+            if (d.id === "D" && cuspMode && synthPointCount > 1) return
             // if (d.id === "A") return
             // if (d.id === "D") {
             //     d.x = Math.max(event.x, getNode("A").x);
@@ -279,16 +282,6 @@ const fullTraceLines = fullTraceGroup.selectAll("polyline")
     .attr("stroke-width", 2)
     .style("stroke-linecap", "round")
     .style("pointer-events", "none")
-const extraTraceLines = extraTraceGroup.selectAll("polyline")
-    .data(nodesData)
-    .enter()
-    .append("polyline")
-    .attr("fill", "none")
-    .attr("opacity", 0.2)
-    .attr("stroke-width", 2)
-    .style("stroke-linecap", "round")
-    .style("pointer-events", "none")
-
 const altTraceLine = zoomGroup
     .append("polyline")
     .attr("fill", "none")
@@ -321,13 +314,15 @@ const synthDrag = synthDragGroup.selectAll("circle")
         // if (!nodeMode) return
         if (invertStatus) {
             invertLinkage()
+            // mirrorNodeSynth() // ?
             invertStatus = false
         }
         if (swapStatus) {
             swapInputOutput()
+            // mirrorNodeSynth() // ?
             swapStatus = false
         }
-        if (nodeMode && Math.abs(d.x - getNode("BC").x) < limitThreshold && Math.abs(d.y - getNode("BC").y) < limitThreshold) {
+        if ((nodeMode || cuspMode) && Math.abs(d.x - getNode("BC").x) < limitThreshold && Math.abs(d.y - getNode("BC").y) < limitThreshold) {
             mirrorNodeSynth(true)
             setLinkNodes()
             tNodeFollow()
@@ -352,46 +347,47 @@ const synthDrag = synthDragGroup.selectAll("circle")
         })
         .on("drag", function(event, d) {
             
-            linkageOpen = synthModeOpen
-            doActuate(getNetAngle(linkToCoord(synthModeInputAngle,"angle")))
+            if (d.id === activeSynthPoint) {
+                linkageOpen = synthModeOpen
+                doActuate(getNetAngle(linkToCoord(synthModeInputAngle,"angle")))
 
-            getNode("BC").x = event.x
-            getNode("BC").y = event.y
+                getNode("BC").x = event.x
+                getNode("BC").y = event.y
+            }
 
-            d.x = event.x
-            d.y = event.y
+                d.x = event.x
+                d.y = event.y
 
-            pathNodeSynth(nodeMode)
-            pathCuspSynth(cuspMode)
+                pathNodeSynth(nodeMode)
+                pathCuspSynth(cuspMode)
 
-            // setLinkNodes()
-            // updateTNodes()
-            // updateTrace()
+                // setLinkNodes()
+                // updateTNodes()
+                // updateTrace()
 
-            // updateInputLimits()
-            // if (inputLimits.min < 0 && synthModeTempAngle > 180) {
-            //     synthModeTempAngle = synthModeTempAngle -360
-            // } else if (inputLimits.min >= 0 && synthModeTempAngle < 0){
-            //     synthModeTempAngle = synthModeTempAngle +360
-            // }
+                // updateInputLimits()
+                // if (inputLimits.min < 0 && synthModeTempAngle > 180) {
+                //     synthModeTempAngle = synthModeTempAngle -360
+                // } else if (inputLimits.min >= 0 && synthModeTempAngle < 0){
+                //     synthModeTempAngle = synthModeTempAngle +360
+                // }
 
-            // linkageOpen = synthModeTempOpen
-            // if (synthModeTempAngle > inputLimits.max-limitThreshold || synthModeTempAngle < inputLimits.min+limitThreshold) {
-            //     mirrorNodeSynth(true)
-            //     setLinkNodes()
-            //     // updateOpenCrossed()
-            //     updateTrace()
-            //     synthModeInputAngle = inputAngle
-            //     synthModeOpen = linkageOpen
-            // }
-            // doActuate(getNetAngle(linkToCoord(synthModeTempAngle,"angle")))
+                // linkageOpen = synthModeTempOpen
+                // if (synthModeTempAngle > inputLimits.max-limitThreshold || synthModeTempAngle < inputLimits.min+limitThreshold) {
+                //     mirrorNodeSynth(true)
+                //     setLinkNodes()
+                //     // updateOpenCrossed()
+                //     updateTrace()
+                //     synthModeInputAngle = inputAngle
+                //     synthModeOpen = linkageOpen
+                // }
+                // doActuate(getNetAngle(linkToCoord(synthModeTempAngle,"angle")))
 
-            setLinkNodes()
-            updateTNodes()
-            updateTrace()
-            // updateTrace(false, synthModeOpen)
-            updateLinkGeometry()
-
+                setLinkNodes()
+                updateTNodes()
+                updateTrace()
+                // updateTrace(false, synthModeOpen)
+                updateLinkGeometry()
         })
         .on("end", function(event,d) {
             saveNodes()
@@ -444,10 +440,13 @@ function nodeDoubleTap(event, d) {
 // function synthPointDoubleTap(event, d) {
 //     const now = Date.now();
 //     if (now - lastTapTime < 300) {
-//         mirrorNodeSynth(true,false)
-//         // setLinkNodes()
-//         // updateTNodes()
-//         // updateTrace()
+//         // synthPointCount++
+//         if (synthPointCount >= 2) synthPointCount--
+//         else synthPointCount++
+//         for (i = 0; i < synthPoints.length; i++) {
+//             synthPoints[i].display = i < synthPointCount ? "block" : "none"
+//         }
+//         // document.getElementById("debugOutputs").innerHTML = `${synthPointCount}`
 //         updateLinkGeometry()
 //     }
 //     lastTapTime = now;
