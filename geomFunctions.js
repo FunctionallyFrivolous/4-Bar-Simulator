@@ -274,8 +274,9 @@ function updateLinkGeometry() {
         .attr("fill", d3.interpolateRgb("darkgreen","white")(whtnColor*2))
         .style("display", nodeMode || cuspMode ? d => d.display : "none")
     synthDrag
-        .attr("cx", d => d.x)
-        .attr("cy", d => d.y)
+        // .attr("cx", d => d.x)
+        // .attr("cy", d => d.y)
+        .attr("d", d => drawConcentricCircles(d.x, d.y, d.rings))
         .attr("fill", fgColor)
         .attr("stroke", fgColor)
         .style("display", nodeMode || cuspMode ? d => d.display : "none")
@@ -341,12 +342,13 @@ function updateLinkGeometry() {
         .style("pointer-events", nodeMode || cuspMode ? "none" : "auto")
     openCrossedIcon.attr("opacity", nodeMode || cuspMode ? 0.25 : 1)
 
+    synthPlusButton
+        .style("display", cuspMode ? "block" : "none")
+        .attr("x", buttonMargin*6 + buttonHeight*5 + (cuspMode ? buttonHeight+buttonMargin : 0))
     synthPlusIcon
-        .attr("opacity", cuspMode ? 1 : 0)
-        .attr("d", 
-            drawCrossoverIcon(buttonMargin*2 + buttonHeight+ buttonHeight/2,
-                windowHeight-buttonMargin-buttonHeight*1.75 + buttonHeight*0.75/2)
-            )
+        .style("display", cuspMode ? "block" : "none")
+        .attr("x", buttonHeight/2 + buttonMargin*6 + buttonHeight*5 + (cuspMode ? buttonHeight+buttonMargin : 0))
+
 
     crossoverIcon
         .attr("opacity", inputClass === "Crank" ? 0.25 : 1)

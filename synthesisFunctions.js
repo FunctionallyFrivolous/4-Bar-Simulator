@@ -187,10 +187,14 @@ function pathCuspSynth(doit=true) {
     setLinkNodes()
 
     const nodeE = getNode("BC")
+    const nodeE2 = synthPoints[1]
     const nodeA = getNode("A")
     const nodeB = getNode("B")
     const nodeC = getNode("C")
     const nodeD = getNode("D")
+
+    let midAD = getMidNode(nodeA,nodeD)
+    let radAD = getDistBtwNodes(nodeA,nodeD)/2
 
     let inputLength = linkToCoord(getLinkByType("input").len, "dist")
     const outputLength = linkToCoord(getLinkByType("output").len, "dist")
@@ -201,7 +205,7 @@ function pathCuspSynth(doit=true) {
     if (Math.abs(angleAE-inputAng) < 90) angleAE = angleAE - 180
 
     if (synthPointCount === 2) {
-        const nodeE2 = synthPoints[1]
+        // const nodeE2 = synthPoints[1]
         const kFCirc = getCircle3Points(nodeA, nodeE, nodeE2)
         const kFCenter = {x: kFCirc[0], y: kFCirc[1]}
         const kFRad = kFCirc[2]/2
@@ -228,10 +232,14 @@ function pathCuspSynth(doit=true) {
 
         setLinkNodes()
 
-        const midAD = getMidNode(nodeA,nodeD)
-        const radAD = getDistBtwNodes(nodeA,nodeD)/2
+        midAD = getMidNode(nodeA,nodeD)
+        radAD = getDistBtwNodes(nodeA,nodeD)/2
 
         inputLength = 2*radAD * Math.cos(degToRad(coordToLink(getNodesAngle(nodeA, nodeE),"angle")))
+        let B_new = placeNodePolar(nodeB, nodeA, angleAE, inputLength, false)
+        if (getDistBtwNodes(midAD,B_new)-radAD > 0.0001) {
+            inputLength = -inputLength
+        }
     }
 
     placeNodePolar(nodeB, nodeA, angleAE, inputLength, doit)
@@ -249,4 +257,17 @@ function pathCuspSynth(doit=true) {
 
     synthModeInputAngle = inputAngle
     synthModeOpen = linkageOpen
+
+    synthPoints[0].inAng = inputAngle
+    if (synthPointCount === 2) {
+        let angleAE2 = getNodesAngle(nodeA, nodeE2)
+
+        let B_new = placeNodePolar(nodeB, nodeA, angleAE2, inputLength, false)
+        if (getDistBtwNodes(midAD,B_new)-radAD > 0.0001) {
+            angleAE2 = angleAE2 + 180
+        }
+
+        synthPoints[1].inAng = coordToLink(angleAE2,"angle")
+    }
+
 }

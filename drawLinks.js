@@ -28,9 +28,9 @@ const nodesData = [
 ]
 
 const synthPoints = [
-    {id: "E1", x: 260, y: 140, display: "block"},
-    {id: "E2", x: 250, y: 250, display: "none"},
-    {id: "E3", x: 100, y: 200, display: "none"},
+    {id: "E1", x: 260, y: 140, inAng: 0, display: "block", rings: 1},
+    {id: "E2", x: 130, y: 250, inAng: 0, display: "none", rings: 2},
+    {id: "E3", x: 100, y: 200, inAng: 0, display: "none", rings: 3},
 ]
 
 const defaultNodes = structuredClone(nodesData); //Used to reset to default linkage 
@@ -299,14 +299,20 @@ const synthDots = synthDotGroup.selectAll("circle")
     .attr("r", 3)
     .style("pointer-events", "none")
 
+// const synthDrag = synthDragGroup.selectAll("circle")
+//     .data(synthPoints)
+//     .enter()
+//     .append("circle")
+//     // .attr("class", "synthPoint")
+//     .attr("cx", d => d.x)
+//     .attr("cy", d => d.y)
+//     .attr("r", 20)
 const synthDrag = synthDragGroup.selectAll("circle")
     .data(synthPoints)
     .enter()
-    .append("circle")
+    .append("path")
     // .attr("class", "synthPoint")
-    .attr("cx", d => d.x)
-    .attr("cy", d => d.y)
-    .attr("r", 20)
+    .attr("d", d => drawConcentricCircles(d.x, d.y, d.rings))
     .attr("fill-opacity", 0)
     .attr("stroke-width", 2)
     .attr("stroke-opacity", 0.25)
@@ -322,7 +328,7 @@ const synthDrag = synthDragGroup.selectAll("circle")
             // mirrorNodeSynth() // ?
             swapStatus = false
         }
-        if ((nodeMode || cuspMode) && Math.abs(d.x - getNode("BC").x) < limitThreshold && Math.abs(d.y - getNode("BC").y) < limitThreshold) {
+        if ((nodeMode) && Math.abs(d.x - getNode("BC").x) < limitThreshold && Math.abs(d.y - getNode("BC").y) < limitThreshold) {
             mirrorNodeSynth(true)
             setLinkNodes()
             tNodeFollow()
@@ -330,13 +336,15 @@ const synthDrag = synthDragGroup.selectAll("circle")
             updateLinkGeometry()
         } else {
             linkageOpen = synthModeOpen
-            doActuate(getNetAngle(linkToCoord(synthModeInputAngle,"angle")))
+            doActuate(getNetAngle(linkToCoord(d.inAng,"angle")))
         }
+        // activeSynthPoint = d.id
         synthModeInputAngle = inputAngle
         synthModeOpen = linkageOpen
         recentLimit = "none"
         updateTrace(false)
         updateLinkGeometry()
+        saveNodes()
     })
     .call(d3.drag()
         .on("start", function(event,d) {
@@ -349,12 +357,17 @@ const synthDrag = synthDragGroup.selectAll("circle")
             
             if (d.id === activeSynthPoint) {
                 linkageOpen = synthModeOpen
-                doActuate(getNetAngle(linkToCoord(synthModeInputAngle,"angle")))
+                doActuate(getNetAngle(linkToCoord(d.inAng,"angle")))
 
                 getNode("BC").x = event.x
                 getNode("BC").y = event.y
-            }
+            } else {
+                doActuate(getNetAngle(linkToCoord(synthPoints[0].inAng,"angle")))
 
+                getNode("BC").x = synthPoints[0].x
+                getNode("BC").y = synthPoints[0].y
+            }
+            
                 d.x = event.x
                 d.y = event.y
 
@@ -382,6 +395,8 @@ const synthDrag = synthDragGroup.selectAll("circle")
                 //     synthModeOpen = linkageOpen
                 // }
                 // doActuate(getNetAngle(linkToCoord(synthModeTempAngle,"angle")))
+
+                doActuate(getNetAngle(linkToCoord(d.inAng,"angle")))
 
                 setLinkNodes()
                 updateTNodes()

@@ -95,3 +95,19 @@ function drawCrossoverIcon(x,y) {
         xOver
     ].join(" ");
 }
+
+function drawConcentricCircles(x,y,qty){
+    let r = 20
+    let circles = ``
+    
+    for (i = 0; i < qty; i++) {
+        circles = circles + `
+            M ${x} ${y - r}
+            A ${r} ${r} 0 1 1 ${x} ${y + r}
+            A ${r} ${r} 0 1 1 ${x} ${y - r}
+        `
+        r = r - 4
+    }
+
+    return circles
+}

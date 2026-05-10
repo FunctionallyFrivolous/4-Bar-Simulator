@@ -25,14 +25,12 @@
         // Cognates - DONE!
         // Nodes - DONE!
             // Multi-nodes?
-        // Cusps
-            // One cusp - DONE!
-            // Two cusps
-                // Add 2ndary button(s) to allow add/remove cusp points
-            // Three cusps?
-            // Double click points to add/remove?
             // Show locations of joint B & C of the node solution pair
                 // Eventually: Drag these to dictate the input (or output?) angle (OR, just use angle input to drive B location... probably this, but still could be useful to have this angle visuallized)
+        // Cusps
+            // One cusp - DONE!
+            // Two cusps - DONE!
+            // Three cusps
         // Symmetric Coupler Curves
     // Scale Linkage
         // Scale all link lengths uniformly
@@ -275,3 +273,4 @@ const outputCircle = zoomGroup.append("circle")
 
 const buttonHeight = 30;
 const buttonMargin = 5
+    

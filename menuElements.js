@@ -469,6 +469,9 @@ nodeModeButton
         cuspMode = false
         nodeMode = !nodeMode
         synthPointCount = nodeMode ? 1 : 0
+        for (i = 0; i < synthPoints.length; i++) {
+            synthPoints[i].display = i < synthPointCount ? "block" : "none"
+        }
         // synthCycle = 0
         // synthModeCycleButton
         //     .attr("x", buttonMargin*5 + buttonHeight*4)
@@ -572,21 +575,15 @@ synthPlusButton
     .attr("fill", fgColor)
     .attr("fill-opacity", 0.0)
     .on("click", function(event, d) {
+        if (!nodeMode && !cuspMode) return
         if (synthPointCount >= 2) synthPointCount--
         else synthPointCount++
+        doActuate(getNetAngle(linkToCoord(synthModeInputAngle,"angle")))
         for (i = 0; i < synthPoints.length; i++) {
             synthPoints[i].display = i < synthPointCount ? "block" : "none"
         }
-        if (synthPointCount === 2) {
-            // const nodeE2 = synthPoints[1]
-            // const kFCirc = getCircle3Points(getNode("A"), getNode("BC"), getNode("D"))
-            // const kFCenter = {x: kFCirc[0], y: kFCirc[1] }
-
-            // const angleE1_kF = getNodesAngle(kFCenter,getNode("BC"))
-
-            // placeNodePolar(nodeE2, kFCenter, angleE1_kF+120, kFCirc[2]/2, true)
-        }
         pathCuspSynth(cuspMode)
+        pathNodeSynth(nodeMode)
         setLinkNodes()
         updateTrace()
         updateLinkGeometry()
