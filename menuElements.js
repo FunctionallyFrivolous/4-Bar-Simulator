@@ -518,6 +518,7 @@ cuspModeButton
         swapStatus = false
         nodeMode = false
         cuspMode = !cuspMode
+        activeSynthPoint = "E1"
         synthPointCount = cuspMode ? 1 : 0
         for (i = 0; i < synthPoints.length; i++) {
             synthPoints[i].display = i < synthPointCount ? "block" : "none"
