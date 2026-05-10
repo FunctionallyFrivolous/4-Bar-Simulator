@@ -232,7 +232,7 @@ reverseIcon
     .text("⟲") //⟲
 
 cognateButton
-    .attr("x", buttonMargin*5 + buttonHeight*4)
+    .attr("x", buttonMargin*4 + buttonHeight*3)
     .attr("y", windowHeight-buttonMargin-buttonHeight)
     .attr("width", buttonHeight)
     .attr("height", buttonHeight)
@@ -245,13 +245,12 @@ cognateButton
     .attr("stroke-opacity", 0.75)
     .on("click", function() {
         if (nodeMode || cuspMode) {
-            linkageOpen = synthModeOpen
-            doActuate(getNetAngle(linkToCoord(synthModeInputAngle,"angle")))
+            // linkageOpen = synthModeOpen
+            // doActuate(getNetAngle(linkToCoord(synthPoints[0].inAng,"angle")))
             cycleCognates()
             setLinkNodes()
             updateOpenCrossed()
-            synthModeInputAngle = inputAngle
-            synthModeOpen = linkageOpen
+            // synthModeOpen = linkageOpen
         } else {
             cycleCognates()
         }
@@ -265,7 +264,7 @@ const cognateToolTip = cognateButton
         .text("Cycle Cognates")
 
 cognateIcon
-    .attr("x", buttonMargin*5 + buttonHeight*4 + buttonHeight/2)
+    .attr("x", buttonMargin*4 + buttonHeight*3 + buttonHeight/2)
     .attr("y", windowHeight-buttonHeight/2-buttonMargin)
     .attr("font-size", "20px")
     .attr("font-family", "sans-serif")
@@ -277,7 +276,7 @@ cognateIcon
     .text("♺") //♻
 
 resetLinkageButton
-    .attr("x", buttonMargin*8 + buttonHeight*7)
+    .attr("x", buttonMargin*7 + buttonHeight*6)
     .attr("y", windowHeight-buttonMargin-buttonHeight)
     .attr("width", buttonHeight)
     .attr("height", buttonHeight)
@@ -390,8 +389,6 @@ swapInOutButton
         synthCycle = 0
         updateTrace(false)
         updateLinkGeometry()
-        // synthModeInputAngle = inputAngle
-        // synthModeOpen = linkageOpen
     })
 const swapInOutToolTip = swapInOutButton
         .append("title")
@@ -409,50 +406,49 @@ swapInOutIcon
     .style("pointer-events", "none")
     .text("↹") //♻ ⭾ ↹
 
-invertLinkageButton
-    .attr("x", buttonMargin*4 + buttonHeight*3)
-    .attr("y", windowHeight-buttonMargin-buttonHeight)
-    .attr("width", buttonHeight)
-    .attr("height", buttonHeight)
-    .attr("rx", 5)
-    .attr("ry", 5)
-    .attr("fill", "lightgray")
-    .attr("fill-opacity", 0.75)
-    .attr("stroke", "black")
-    .attr("stroke-width", 1)
-    .attr("stroke-opacity", 0.75)
-    .on("click", function() {
-        invertStatus = !invertStatus
-        invertLinkage()
-        saveNodes()
-        updateTrace()
-        updateLinkGeometry()
-        // nodeMode = false
-        // cuspMode = false
-        // synthCycle = 0
-        updateTrace(false)
-        updateLinkGeometry()
-    })
-const invertLinkageToolTip = invertLinkageButton
-        .append("title")
-        .text("Invert Linkage")
+// invertLinkageButton
+//     .attr("x", buttonMargin*4 + buttonHeight*3)
+//     .attr("y", windowHeight-buttonMargin-buttonHeight)
+//     .attr("width", buttonHeight)
+//     .attr("height", buttonHeight)
+//     .attr("rx", 5)
+//     .attr("ry", 5)
+//     .attr("fill", "lightgray")
+//     .attr("fill-opacity", 0.75)
+//     .attr("stroke", "black")
+//     .attr("stroke-width", 1)
+//     .attr("stroke-opacity", 0.75)
+//     .on("click", function() {
+//         invertStatus = !invertStatus
+//         invertLinkage()
+//         saveNodes()
+//         updateTrace()
+//         updateLinkGeometry()
+//         // nodeMode = false
+//         // cuspMode = false
+//         // synthCycle = 0
+//         updateTrace(false)
+//         updateLinkGeometry()
+//     })
+// const invertLinkageToolTip = invertLinkageButton
+//         .append("title")
+//         .text("Invert Linkage")
 
-invertLinkageIcon
-    .attr("x", buttonMargin*4 + buttonHeight*3 + buttonHeight/2)
-    .attr("y", windowHeight-buttonHeight/2-buttonMargin)
-    .attr("font-size", "21px")
-    .attr("font-family", "sans-serif")
-    .attr("font-weight", "bold")
-    .attr("text-anchor", "middle")
-    .attr("alignment-baseline", "middle")
-    .attr("dy", "0.1em")
-    .style("pointer-events", "none")
-    .text("⇅") // ↹
+// invertLinkageIcon
+//     .attr("x", buttonMargin*4 + buttonHeight*3 + buttonHeight/2)
+//     .attr("y", windowHeight-buttonHeight/2-buttonMargin)
+//     .attr("font-size", "21px")
+//     .attr("font-family", "sans-serif")
+//     .attr("font-weight", "bold")
+//     .attr("text-anchor", "middle")
+//     .attr("alignment-baseline", "middle")
+//     .attr("dy", "0.1em")
+//     .style("pointer-events", "none")
+//     .text("⇅") // ↹
 
-// InvertLinkage: 
 
 nodeModeButton
-    .attr("x", buttonMargin*6 + buttonHeight*5)
+    .attr("x", buttonMargin*5 + buttonHeight*4)
     .attr("y", windowHeight-buttonMargin-buttonHeight)
     .attr("width", buttonHeight)
     .attr("height", buttonHeight)
@@ -494,7 +490,7 @@ const nodeModeToolTip = nodeModeButton
     .text("Node Mode")
 
 nodeModeIcon
-    .attr("x", buttonMargin*6 + buttonHeight*5 + buttonHeight/2)
+    .attr("x", buttonMargin*5 + buttonHeight*4 + buttonHeight/2)
     .attr("y", windowHeight-buttonHeight/2-buttonMargin)
     .attr("dy", "0.12em")
     .attr("font-size", "15pt")
@@ -506,7 +502,7 @@ nodeModeIcon
     .text("⌘") // ⌘ , ↫ , ⅏
 
 cuspModeButton
-    .attr("x", buttonMargin*7 + buttonHeight*6)
+    .attr("x", buttonMargin*6 + buttonHeight*5)
     .attr("y", windowHeight-buttonMargin-buttonHeight)
     .attr("width", buttonHeight)
     .attr("height", buttonHeight)
@@ -558,7 +554,7 @@ cuspModeIcon// = overlayGroup.append("path")
     .attr("fill", "none")
     .attr("d", 
         drawCuspIcon(
-            buttonMargin*7 + buttonHeight*6+ buttonHeight/2,
+            buttonMargin*6 + buttonHeight*5+ buttonHeight/2,
             windowHeight-buttonHeight/2-buttonMargin
         )
         // drawCrossoverIcon()
@@ -566,7 +562,7 @@ cuspModeIcon// = overlayGroup.append("path")
     .style("pointer-events", "none")
 
 synthPlusButton
-    .attr("x", buttonMargin*7 + buttonHeight*6)
+    .attr("x", buttonMargin*6 + buttonHeight*5)
     .attr("y", windowHeight-buttonMargin-buttonHeight*2)
     .attr("width", buttonHeight)
     .attr("height", buttonHeight)
@@ -578,7 +574,7 @@ synthPlusButton
         if (!nodeMode && !cuspMode) return
         if (synthPointCount >= 2) synthPointCount--
         else synthPointCount++
-        doActuate(getNetAngle(linkToCoord(synthModeInputAngle,"angle")))
+        doActuate(getNetAngle(linkToCoord(synthPoints[0].inAng,"angle")))
         for (i = 0; i < synthPoints.length; i++) {
             synthPoints[i].display = i < synthPointCount ? "block" : "none"
         }
@@ -593,7 +589,7 @@ const synthPlusToolTip = synthPlusButton
     .text("Reverse Actuation Direction")
 
 synthPlusIcon
-    .attr("x", buttonHeight/2 + buttonMargin*7 + buttonHeight*6)
+    .attr("x", buttonHeight/2 + buttonMargin*6 + buttonHeight*5)
     .attr("y", windowHeight-buttonMargin-buttonHeight*1.75 + buttonHeight*0.75/2)
     .attr("dy", "0.2em")
     // .attr("dx", "0.02em")

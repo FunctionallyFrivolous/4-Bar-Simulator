@@ -344,10 +344,10 @@ function updateLinkGeometry() {
 
     synthPlusButton
         .style("display", cuspMode ? "block" : "none")
-        .attr("x", buttonMargin*6 + buttonHeight*5 + (cuspMode ? buttonHeight+buttonMargin : 0))
+        .attr("x", buttonMargin*5 + buttonHeight*4 + (cuspMode ? buttonHeight+buttonMargin : 0))
     synthPlusIcon
         .style("display", cuspMode ? "block" : "none")
-        .attr("x", buttonHeight/2 + buttonMargin*6 + buttonHeight*5 + (cuspMode ? buttonHeight+buttonMargin : 0))
+        .attr("x", buttonHeight/2 + buttonMargin*5 + buttonHeight*4 + (cuspMode ? buttonHeight+buttonMargin : 0))
 
 
     crossoverIcon
@@ -398,7 +398,7 @@ function updateLinkGeometry() {
     //     .attr("x2", getNode("B").x)
     //     .attr("y2", getNode("B").y)
 
-    // document.getElementById("debugOutputs").innerHTML = `${synthModeInputAngle} \n<br>`
+    // document.getElementById("debugOutputs").innerHTML = `${activeSynthPoint} \n<br>`
 }
 
 function updateTrace(alt=true, oc=linkageOpen) {

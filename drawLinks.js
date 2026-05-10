@@ -28,9 +28,9 @@ const nodesData = [
 ]
 
 const synthPoints = [
-    {id: "E1", x: 260, y: 140, inAng: 0, display: "block", rings: 1},
-    {id: "E2", x: 130, y: 250, inAng: 0, display: "none", rings: 2},
-    {id: "E3", x: 100, y: 200, inAng: 0, display: "none", rings: 3},
+    {id: "E1", x: 260, y: 140, inAng: 0, isOpen: true, display: "block", rings: 1},
+    {id: "E2", x: 130, y: 250, inAng: 0, isOpen: true, display: "none", rings: 2},
+    {id: "E3", x: 100, y: 200, inAng: 0, isOpen: true, display: "none", rings: 3},
 ]
 
 const defaultNodes = structuredClone(nodesData); //Used to reset to default linkage 
@@ -84,6 +84,7 @@ const linkLines = linkLineGroup.selectAll("polygon")
         })
         .on("drag", function(event, d) {
             // if (d.type === "output" && cuspMode && synthPointCount > 1) return
+            if (activeSynthPoint !== "E1" && d.type !== "input") return
             if (d.type === "input") {
                 const currentAngle = getLinkAngle("AB")
                 const pivotNode = getLinkNodes(d.id)[0]
@@ -151,14 +152,13 @@ const linkLines = linkLineGroup.selectAll("polygon")
                 updateTrace()
                 updateLinkGeometry();
             }
-            
         })
         .on("end", function(event,d) {
             traceSteps = traceStepsFine
             saveNodes()
             if (d.type !== "input") {
                 updateTrace()
-                synthModeInputAngle = inputAngle
+                // synthModeInputAngle = inputAngle
                 synthModeOpen = linkageOpen
             }
             updateLinkGeometry();
@@ -218,6 +218,7 @@ const nodeDrag = nodeDragGroup.selectAll("cirlce")
         })
         .on("drag", function(event, d) {
             if (d.id === "D" && cuspMode && synthPointCount > 1) return
+            if (activeSynthPoint !== "E1") return
             // if (d.id === "A") return
             // if (d.id === "D") {
             //     d.x = Math.max(event.x, getNode("A").x);
@@ -246,7 +247,7 @@ const nodeDrag = nodeDragGroup.selectAll("cirlce")
             traceSteps = traceStepsFine
             saveNodes()
             updateTrace()
-            synthModeInputAngle = inputAngle
+            // synthModeInputAngle = inputAngle
             synthModeOpen = linkageOpen
             updateLinkGeometry()
         })
@@ -338,8 +339,8 @@ const synthDrag = synthDragGroup.selectAll("circle")
             linkageOpen = synthModeOpen
             doActuate(getNetAngle(linkToCoord(d.inAng,"angle")))
         }
-        // activeSynthPoint = d.id
-        synthModeInputAngle = inputAngle
+        activeSynthPoint = d.id
+        // synthModeInputAngle = inputAngle
         synthModeOpen = linkageOpen
         recentLimit = "none"
         updateTrace(false)
@@ -355,54 +356,25 @@ const synthDrag = synthDragGroup.selectAll("circle")
         })
         .on("drag", function(event, d) {
             
-            if (d.id === activeSynthPoint) {
-                linkageOpen = synthModeOpen
-                doActuate(getNetAngle(linkToCoord(d.inAng,"angle")))
+            linkageOpen = synthModeOpen
+            doActuate(getNetAngle(linkToCoord(synthPoints[0].inAng,"angle")))
 
-                getNode("BC").x = event.x
-                getNode("BC").y = event.y
-            } else {
-                doActuate(getNetAngle(linkToCoord(synthPoints[0].inAng,"angle")))
-
-                getNode("BC").x = synthPoints[0].x
-                getNode("BC").y = synthPoints[0].y
-            }
+            d.x = event.x
+            d.y = event.y
+            getNode("BC").x = synthPoints[0].x
+            getNode("BC").y = synthPoints[0].y
             
-                d.x = event.x
-                d.y = event.y
+            pathNodeSynth(nodeMode)
+            pathCuspSynth(cuspMode)
 
-                pathNodeSynth(nodeMode)
-                pathCuspSynth(cuspMode)
+            const activeAngle = synthPoints.find(p => p.id === activeSynthPoint).inAng
+            doActuate(getNetAngle(linkToCoord(activeAngle,"angle")))
 
-                // setLinkNodes()
-                // updateTNodes()
-                // updateTrace()
-
-                // updateInputLimits()
-                // if (inputLimits.min < 0 && synthModeTempAngle > 180) {
-                //     synthModeTempAngle = synthModeTempAngle -360
-                // } else if (inputLimits.min >= 0 && synthModeTempAngle < 0){
-                //     synthModeTempAngle = synthModeTempAngle +360
-                // }
-
-                // linkageOpen = synthModeTempOpen
-                // if (synthModeTempAngle > inputLimits.max-limitThreshold || synthModeTempAngle < inputLimits.min+limitThreshold) {
-                //     mirrorNodeSynth(true)
-                //     setLinkNodes()
-                //     // updateOpenCrossed()
-                //     updateTrace()
-                //     synthModeInputAngle = inputAngle
-                //     synthModeOpen = linkageOpen
-                // }
-                // doActuate(getNetAngle(linkToCoord(synthModeTempAngle,"angle")))
-
-                doActuate(getNetAngle(linkToCoord(d.inAng,"angle")))
-
-                setLinkNodes()
-                updateTNodes()
-                updateTrace()
-                // updateTrace(false, synthModeOpen)
-                updateLinkGeometry()
+            setLinkNodes()
+            updateTNodes()
+            updateTrace()
+            // updateTrace(false, synthModeOpen)
+            updateLinkGeometry()
         })
         .on("end", function(event,d) {
             saveNodes()
@@ -426,8 +398,13 @@ function linkDoubleTap(event, d) {
             d.ternary = !d.ternary
             localStorage.setItem(`${d.id}_t`, `${d.ternary}`)
         } else {
-            d.visible = !d.visible
-            localStorage.setItem("fixedStatus", `${d.visible}`)
+            // d.visible = !d.visible
+            // localStorage.setItem("fixedStatus", `${d.visible}`)
+            invertStatus = !invertStatus
+            invertLinkage()
+            saveNodes()
+            updateTrace()
+            updateLinkGeometry()
         }
         setLinkNodes()
         updateTrace(false)

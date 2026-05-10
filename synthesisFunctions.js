@@ -186,7 +186,7 @@ function pathCuspSynth(doit=true) {
 
     setLinkNodes()
 
-    const nodeE = getNode("BC")
+    const nodeE = synthPoints[0]
     const nodeE2 = synthPoints[1]
     const nodeA = getNode("A")
     const nodeB = getNode("B")
@@ -207,6 +207,9 @@ function pathCuspSynth(doit=true) {
     if (synthPointCount === 2) {
         // const nodeE2 = synthPoints[1]
         const kFCirc = getCircle3Points(nodeA, nodeE, nodeE2)
+        // document.getElementById("debugOutputs").innerHTML = `
+        //     ${nodeA.id}, ${nodeE.id}, ${nodeE2.id}
+        // `
         const kFCenter = {x: kFCirc[0], y: kFCirc[1]}
         const kFRad = kFCirc[2]/2
 
@@ -259,6 +262,8 @@ function pathCuspSynth(doit=true) {
     synthModeOpen = linkageOpen
 
     synthPoints[0].inAng = inputAngle
+    synthPoints[0].isOpen = linkageOpen
+    
     if (synthPointCount === 2) {
         let angleAE2 = getNodesAngle(nodeA, nodeE2)
 
@@ -268,6 +273,7 @@ function pathCuspSynth(doit=true) {
         }
 
         synthPoints[1].inAng = coordToLink(angleAE2,"angle")
+        // synthPoints[1].isOpen = linkageOpen
     }
 
 }

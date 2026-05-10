@@ -31,6 +31,20 @@
             // One cusp - DONE!
             // Two cusps - DONE!
             // Three cusps
+            // Improve:
+                // Needs to be smarter to reach E2 when not on accessible path
+                    // Check: is desired input angle within input range && desired output angle within output range?
+                        // If not, invert linkage, go to desired angle
+                        // Somewhere in here need to record relevant open/crossed state
+                // Should be able to drag main joints when E2 active
+                    // Snap to E1 angle...
+                    // For fixed joints, drag joint as normal
+                    // For mobile joints, adjust relevant link lengths based on drag distance
+                // Should be able to modify E points after cognate cycle
+                    // Maybe requires cycling back to original cognate, making adjustment, then returning to final cognate?
+                    // Or somehow change the logic/behavior of cuspmode to account for cognate variants...
+                // Also should be able to modify E points after in/out swap
+                    // Swap back, then make mods, then swap fwd
         // Symmetric Coupler Curves
     // Scale Linkage
         // Scale all link lengths uniformly
@@ -41,7 +55,6 @@
             // E.g. moving the animation reverse and crossover buttons as 2ndary buttons above related primaries (play/pause, open/crossed)
             // Bonus if hidden when not useful/usable
         // Interactive actions >>> buttons
-            // E.g. Adding the interactive synth mode points eliminates an entire panel of buttons/inputs that would have been needed
         // Replace fit view button with double click on background?
     // Quirks & Bugs:
         // Ternary node snapping is based on angle rather than distance. Results in snap "strength" that varies based on distance from the reference node
@@ -212,8 +225,8 @@ const fitViewButton = overlayGroup.append("rect")
 const fitViewIcon = overlayGroup.append("path")
 const swapInOutButton = overlayGroup.append("rect")
 const swapInOutIcon = overlayGroup.append("text")
-const invertLinkageButton = overlayGroup.append("rect")
-const invertLinkageIcon = overlayGroup.append("text")
+// const invertLinkageButton = overlayGroup.append("rect")
+// const invertLinkageIcon = overlayGroup.append("text")
 const nodeModeButton = overlayGroup.append("rect")
 const nodeModeIcon = overlayGroup.append("text")
 const cuspModeButton = overlayGroup.append("rect")
