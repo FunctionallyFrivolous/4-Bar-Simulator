@@ -143,6 +143,8 @@ function pathNodeSynth(doit=false, cDrag=false) {
     updateOutputLimits()
 
     synthModeOpen = linkageOpen
+    synthPoints[0].inAng = inputAngle
+    synthPoints[0].isOpen = linkageOpen
     // synthPoints[0].x = nodeE.x
     // synthPoints[0].y = nodeE.y
 

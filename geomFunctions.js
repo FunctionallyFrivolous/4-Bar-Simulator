@@ -305,11 +305,11 @@ function updateLinkGeometry() {
     //     // .attr("r", getCircle3Points(
     //     //     getNode("A"), getNode("D"), synthPoints[0])[2]/2)
     //     .attr("stroke", fgColor)
-    ADCircle
-        .attr("cx", getCircle2Points(getNode("A"), getNode("D"))[0])
-        .attr("cy", getCircle2Points(getNode("A"), getNode("D"))[1])
-        .attr("r", getCircle2Points(getNode("A"), getNode("D"))[2]/2)
-        .attr("stroke", fgColor)
+    // ADCircle
+    //     .attr("cx", getCircle2Points(getNode("A"), getNode("D"))[0])
+    //     .attr("cy", getCircle2Points(getNode("A"), getNode("D"))[1])
+    //     .attr("r", getCircle2Points(getNode("A"), getNode("D"))[2]/2)
+    //     .attr("stroke", fgColor)
     // inputCircle
     //     .attr("cx", getNode("A").x)
     //     .attr("cy", getNode("A").y)
