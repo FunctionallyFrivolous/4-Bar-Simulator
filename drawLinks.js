@@ -6,7 +6,7 @@ const linksData = [
     {id: "AB", points: [], len: 5, color: "darkred", type: "input", ternary: false, tAng: 10, tLen: 10, tSnap: false, visible: true},
 ];
 
-// To do (here):
+// To do (here)?:
     // Calc angle of output link (given link lengths above)
         // Calc node C coords from this. Apply this to the nodesData
     // Calc initial ternary node points
@@ -134,7 +134,7 @@ const linkLines = linkLineGroup.selectAll("polygon")
                 const dx = event.x - tempX
                 const dy = event.y - tempY
                 for (i = 0; i < nodesData.length; i++) {
-                    if (d.id.includes(nodesData[i].id)){//d.id[0] || nodesData[i].id === d.id[1]) {
+                    if (d.id.includes(nodesData[i].id)) {//d.id[0] || nodesData[i].id === d.id[1]) {
                         nodesData[i].x = nodesData[i].x + dx
                         nodesData[i].y = nodesData[i].y + dy
                     } 
@@ -158,7 +158,6 @@ const linkLines = linkLineGroup.selectAll("polygon")
             saveNodes()
             if (d.type !== "input") {
                 updateTrace()
-                // synthModeInputAngle = inputAngle
                 synthModeOpen = linkageOpen
             }
             updateLinkGeometry();
@@ -247,7 +246,6 @@ const nodeDrag = nodeDragGroup.selectAll("cirlce")
             traceSteps = traceStepsFine
             saveNodes()
             updateTrace()
-            // synthModeInputAngle = inputAngle
             synthModeOpen = linkageOpen
             updateLinkGeometry()
         })
@@ -319,29 +317,30 @@ const synthDrag = synthDragGroup.selectAll("circle")
     .attr("stroke-opacity", 0.25)
     .on("click", function(event, d) {
         // if (!nodeMode) return
-        if (invertStatus) {
-            invertLinkage()
-            // mirrorNodeSynth() // ?
-            invertStatus = false
-        }
+        // if (invertStatus) {
+        //     invertLinkage()
+        //     // mirrorNodeSynth() // ?
+        //     invertStatus = false
+        // }
         if (swapStatus) {
             swapInputOutput()
             // mirrorNodeSynth() // ?
             swapStatus = false
         }
-        if ((nodeMode) && Math.abs(d.x - getNode("BC").x) < limitThreshold && Math.abs(d.y - getNode("BC").y) < limitThreshold) {
+        // If BC is at this synth point (and in node mode), mirror the input and output links to the alt solution
+        if (nodeMode && Math.abs(d.x - getNode("BC").x) < limitThreshold && Math.abs(d.y - getNode("BC").y) < limitThreshold) {
             mirrorNodeSynth(true)
             setLinkNodes()
             tNodeFollow()
             updateTrace()
             updateLinkGeometry()
-        } else {
-            linkageOpen = synthModeOpen
-            doActuate(getNetAngle(linkToCoord(d.inAng,"angle")))
+            d.isOpen = linkageOpen
         }
+        // Otherwise, snap to the active point input angle 
+        else snapToSynthPoint(d.id)
+
         activeSynthPoint = d.id
-        // synthModeInputAngle = inputAngle
-        synthModeOpen = linkageOpen
+        // d.isOpen = linkageOpen
         recentLimit = "none"
         updateTrace(false)
         updateLinkGeometry()
@@ -350,26 +349,62 @@ const synthDrag = synthDragGroup.selectAll("circle")
     .call(d3.drag()
         .on("start", function(event,d) {
             saveUndoNodes()
+
             synthModeTempAngle = inputAngle
             synthModeTempOpen = linkageOpen
+
+            const activePoint = synthPoints.find(p => p.id === activeSynthPoint)
+            if (Math.abs(activePoint.x-getNode("BC").x) < limitThreshold && Math.abs(activePoint.y-getNode("BC").y) < limitThreshold) {
+                synthPointSnap = true
+            } else synthPointSnap = false
+
             synthDrag.attr("fill-opacity", n => n.id === d.id ? 0.1 : 0)
         })
         .on("drag", function(event, d) {
-            
-            linkageOpen = synthModeOpen
-            doActuate(getNetAngle(linkToCoord(synthPoints[0].inAng,"angle")))
+            const activePoint = synthPoints.find(p => p.id === activeSynthPoint)
 
+            // First, snap back to E1 position. Keep track of whether the linkage was inverted to get there
+            const inverted = snapToSynthPoint("E1")
+
+            // Drag the selected point
             d.x = event.x
             d.y = event.y
+            // Snap the coupler point to E1
             getNode("BC").x = synthPoints[0].x
             getNode("BC").y = synthPoints[0].y
             
+            // Perform the relevant node mode stuff
             pathNodeSynth(nodeMode)
             pathCuspSynth(cuspMode)
 
-            const activeAngle = synthPoints.find(p => p.id === activeSynthPoint).inAng
-            doActuate(getNetAngle(linkToCoord(activeAngle,"angle")))
+            // Snap to the input angle of the active point
+            let revertAngle = activePoint.inAng
 
+            // Snap back to the input angle from before the drag event
+            if (synthPointSnap) {
+                if (inverted || revertAngle > inputLimits.max || revertAngle < inputLimits.min) { // If the linkage was previously inverted, revert it
+                    invertLinkage()
+                    updateOpenCrossed()
+                    updateInputLimits()
+                    updateOutputLimits()
+                }
+                linkageOpen = activePoint.isOpen
+                doActuate(getNetAngle(linkToCoord(revertAngle,"angle")))
+            } else {
+                if (inverted){//  || synthModeTempOpen > inputLimits.max || synthModeTempOpen < inputLimits.min) {
+                    // If we include limits ^, the coupler point can jump to other loop when dragging casuses it to reach a limit...
+                    // If we exclude limits ^, the coupler point will jump to other loop if it gets pinched off from active point...
+                    invertLinkage()
+                    updateOpenCrossed()
+                    updateInputLimits()
+                    updateOutputLimits()
+                }
+                linkageOpen = synthModeTempOpen
+                doActuate(getNetAngle(linkToCoord(synthModeTempAngle,"angle")))
+            }
+            // doActuate(getNetAngle(linkToCoord(revertAngle,"angle")))
+
+            // Update all the things
             setLinkNodes()
             updateTNodes()
             updateTrace()
@@ -379,6 +414,7 @@ const synthDrag = synthDragGroup.selectAll("circle")
         .on("end", function(event,d) {
             saveNodes()
             synthDrag.attr("fill-opacity", 0)
+            synthModeTempAngle = inputAngle
         })
     )
 

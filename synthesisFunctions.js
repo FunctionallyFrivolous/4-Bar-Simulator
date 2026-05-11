@@ -142,7 +142,6 @@ function pathNodeSynth(doit=false, cDrag=false) {
     updateInputLimits()
     updateOutputLimits()
 
-    synthModeInputAngle = inputAngle
     synthModeOpen = linkageOpen
     // synthPoints[0].x = nodeE.x
     // synthPoints[0].y = nodeE.y
@@ -207,9 +206,6 @@ function pathCuspSynth(doit=true) {
     if (synthPointCount === 2) {
         // const nodeE2 = synthPoints[1]
         const kFCirc = getCircle3Points(nodeA, nodeE, nodeE2)
-        // document.getElementById("debugOutputs").innerHTML = `
-        //     ${nodeA.id}, ${nodeE.id}, ${nodeE2.id}
-        // `
         const kFCenter = {x: kFCirc[0], y: kFCirc[1]}
         const kFRad = kFCirc[2]/2
 
@@ -258,7 +254,6 @@ function pathCuspSynth(doit=true) {
     updateInputLimits()
     updateOutputLimits()
 
-    synthModeInputAngle = inputAngle
     synthModeOpen = linkageOpen
 
     synthPoints[0].inAng = inputAngle
@@ -273,7 +268,31 @@ function pathCuspSynth(doit=true) {
         }
 
         synthPoints[1].inAng = coordToLink(angleAE2,"angle")
-        // synthPoints[1].isOpen = linkageOpen
+        synthPoints[1].isOpen = linkageOpen
     }
 
+}
+
+function snapToSynthPoint(point="E1") {
+    const synthPoint = synthPoints.find(p=>p.id === point)
+    const couplerPoint = getNode("BC")
+
+    let inverted = false
+
+    if (synthPoint.inAng > inputLimits.max || synthPoint.inAng < inputLimits.min) {
+        invertLinkage()
+        document.getElementById("debugOutputs").innerHTML = `inverted`
+        inverted = true
+        updateOpenCrossed()
+        updateInputLimits()
+        updateOutputLimits()
+    }
+    linkageOpen = synthPoint.isOpen
+    doActuate(getNetAngle(linkToCoord(synthPoint.inAng,"angle")))
+
+    if (Math.abs(couplerPoint.x-synthPoint.x) > limitThreshold || Math.abs(couplerPoint.y-synthPoint.y) > limitThreshold) {
+        toggleOpenCrossed()
+    }
+
+    return inverted
 }

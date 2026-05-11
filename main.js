@@ -32,10 +32,6 @@
             // Two cusps - DONE!
             // Three cusps
             // Improve:
-                // Needs to be smarter to reach E2 when not on accessible path
-                    // Check: is desired input angle within input range && desired output angle within output range?
-                        // If not, invert linkage, go to desired angle
-                        // Somewhere in here need to record relevant open/crossed state
                 // Should be able to drag main joints when E2 active
                     // Snap to E1 angle...
                     // For fixed joints, drag joint as normal
@@ -59,9 +55,6 @@
     // Quirks & Bugs:
         // Ternary node snapping is based on angle rather than distance. Results in snap "strength" that varies based on distance from the reference node
             // This was just the easy/lazy way to get it done. Will fix later
-        // Fit view result is kind of awkward in some cases
-            // Should not be impacted by hidden ternary nodes, etc.
-            // Also potentially an issue with calc of center location in some cases?
 
 
 // localStorage.clear()
@@ -117,6 +110,7 @@ let synthModeTempOpen = linkageOpen
 let synthCycle = 0
 let synthPointCount = 0
 let activeSynthPoint = "E1"
+let synthPointSnap = true
 let nodeMode = false
 let cuspMode = false
 

@@ -305,11 +305,11 @@ function updateLinkGeometry() {
     //     // .attr("r", getCircle3Points(
     //     //     getNode("A"), getNode("D"), synthPoints[0])[2]/2)
     //     .attr("stroke", fgColor)
-    // ADCircle
-    //     .attr("cx", getCircle2Points(getNode("A"), getNode("D"))[0])
-    //     .attr("cy", getCircle2Points(getNode("A"), getNode("D"))[1])
-    //     .attr("r", getCircle2Points(getNode("A"), getNode("D"))[2]/2)
-    //     .attr("stroke", fgColor)
+    ADCircle
+        .attr("cx", getCircle2Points(getNode("A"), getNode("D"))[0])
+        .attr("cy", getCircle2Points(getNode("A"), getNode("D"))[1])
+        .attr("r", getCircle2Points(getNode("A"), getNode("D"))[2]/2)
+        .attr("stroke", fgColor)
     // inputCircle
     //     .attr("cx", getNode("A").x)
     //     .attr("cy", getNode("A").y)
@@ -398,7 +398,19 @@ function updateLinkGeometry() {
     //     .attr("x2", getNode("B").x)
     //     .attr("y2", getNode("B").y)
 
-    // document.getElementById("debugOutputs").innerHTML = `${activeSynthPoint} \n<br>`
+    // const synthAng = synthPoints.find(p=>p.id === activeSynthPoint).inAng
+
+    // let msg = ``
+    // if (synthAng > inputLimits.max || synthAng < inputLimits.min) {
+    //     msg = msg + "out of bounds"
+    // }
+
+    // document.getElementById("debugOutputs").innerHTML = `
+    //     ${synthAng.toFixed(1)} \n<br>
+    //     ${msg}
+    // `
+    //     ${synthAng.toFixed(1)} \n<br>
+    // `
 }
 
 function updateTrace(alt=true, oc=linkageOpen) {
@@ -564,10 +576,11 @@ function updateTrace(alt=true, oc=linkageOpen) {
             const thisLink = linksData.find(l => l.id === thisNode.id)
             ternaryShown = thisLink.ternary
         }
-        minCoord_x = minCoord_x === null ? thisNode.x : Math.min(minCoord_x, thisNode.x)
-        maxCoord_x = maxCoord_x === null ? thisNode.x : Math.max(maxCoord_x, thisNode.x)
-        minCoord_y = minCoord_y === null ? thisNode.y : Math.min(minCoord_y, thisNode.y)
-        maxCoord_y = maxCoord_y === null ? thisNode.y : Math.max(maxCoord_y, thisNode.y)
+
+        // minCoord_x = minCoord_x === null ? thisNode.x : Math.min(minCoord_x, thisNode.x)
+        // maxCoord_x = maxCoord_x === null ? thisNode.x : Math.max(maxCoord_x, thisNode.x)
+        // minCoord_y = minCoord_y === null ? thisNode.y : Math.min(minCoord_y, thisNode.y)
+        // maxCoord_y = maxCoord_y === null ? thisNode.y : Math.max(maxCoord_y, thisNode.y)
 
         if (!(thisNode.id.length === 2 && !ternaryShown)) {
             for (p = 0; p < thisNode.allPoints.length; p++) {
