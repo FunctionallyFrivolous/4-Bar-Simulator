@@ -483,7 +483,7 @@ nodeModeButton
         nodeModeTable[0].active = nodeMode
         nodeModeMenu.attr("stroke-opacity", n => n.id === "E1_crunode" && n.active ? 0.5 : 0.1)
         
-        // pathNodeSynth(true)
+        // pathCrunodeSynth(true)
         pathNodeModeSynth(true)
         updateLinkGeometry()
         updateTrace()
@@ -585,7 +585,7 @@ nodeModeIcon
 //             synthPoints[i].display = i < synthPointCount ? "block" : "none"
 //         }
 //         // pathCuspSynth(cuspMode)
-//         // pathNodeSynth(nodeMode)
+//         // pathCrunodeSynth(nodeMode)
 //         pathNodeModeSynth(nodeMode||cuspMode)
 //         setLinkPoints()
 //         updateTrace()
@@ -706,7 +706,7 @@ function drawFitIcon(x, y) {
 //     .on("click", function() {
 //         synthCycle++
 //         if (nodeMode) {
-//             pathNodeSynth(true)
+//             pathCrunodeSynth(true)
 //             updateLinkGeometry()
 //             updateTrace()
 //             updateLinkGeometry()
@@ -767,13 +767,13 @@ const nodeModeMenu = nodeModeMenuGroup.selectAll("path")
     .attr("stroke", fgColor)
     .style("display", "none")
     .on("click", function (event, d) {
+        snapToSynthPoint(activeSynthPoint)
         const thisNode = synthPoints.find(p=>p.id === d.id.slice(0,2))
         const nodeNum = thisNode.id[1]
         const nodeType = d.id.substring(d.id.indexOf("_")+1)
 
         const oppType = nodeModeTable.find(n => 
-            n.id.includes(thisNode.id)
-            && !n.id.includes(nodeType)
+            n.id.includes(thisNode.id) && !n.id.includes(nodeType)
         )
 
         if (thisNode.id === "E3") return // Only two nodes for now

@@ -105,7 +105,7 @@ function cycleCognates() {
     tPointFollow()
 }
 
-function pathNodeSynth(doit=false, cDrag=false) {
+function pathCrunodeSynth(doit=false, cDrag=false) {
     if (!nodeMode) {
         altTraceData.points = []
         return
@@ -166,7 +166,7 @@ function pathNodeModeSynth(doit=true) {
     //     ${nodeConfig} \n<br>
     // `
     const nodeE1 = synthPoints.find(n => n.id === "E1")
-    if (nodeE1.type === "crunode") pathNodeSynth(true)
+    if (nodeE1.type === "crunode") pathCrunodeSynth(true)
     else if (nodeE1.type === "cusp") pathCuspSynth(true)
 }
 

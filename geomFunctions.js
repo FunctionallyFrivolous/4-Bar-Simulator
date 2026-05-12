@@ -219,7 +219,7 @@ function toggleOpenCrossed(retrace=true) {
 }
 
 function updateLinkGeometry() {
-    // pathNodeSynth(false)
+    // pathCrunodeSynth(false)
     nodeDrag
         .attr("cx", d => d.x)
         .attr("cy", d => d.y)
