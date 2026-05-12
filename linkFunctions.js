@@ -1,25 +1,25 @@
 
-function getLinkNodes(link) {
-    const getNodes = []
-    getNodes[0] = getNode(link[0])
-    getNodes[1] = getNode(link[1])
-    getNodes[2] = getNode(link)
+function getLinkPoints(link) {
+    const getJoints = []
+    getJoints[0] = getJoint(link[0])
+    getJoints[1] = getJoint(link[1])
+    getJoints[2] = getJoint(link)
 
-    return getNodes
+    return getJoints
 }
 
-function setLinkNodes() {
+function setLinkPoints() {
 
     for (i=0; i<linksData.length; i++) {
         const link_id = linksData[i].id
-        const [sNode, eNode, cNode] = getLinkNodes(link_id)
+        const [sPoint, ePoint, tPoint] = getLinkPoints(link_id)
 
         linksData[i].points = []
 
-        linksData[i].points[0] = {x: sNode.x, y: sNode.y}
-        linksData[i].points[1] = {x: eNode.x, y: eNode.y}
-        if (linksData[i].ternary) linksData[i].points[2] = {x: cNode.x, y: cNode.y};
-        if (sNode.ground && eNode.ground) linksData[i].type = "fixed"
+        linksData[i].points[0] = {x: sPoint.x, y: sPoint.y}
+        linksData[i].points[1] = {x: ePoint.x, y: ePoint.y}
+        if (linksData[i].ternary) linksData[i].points[2] = {x: tPoint.x, y: tPoint.y};
+        if (sPoint.ground && ePoint.ground) linksData[i].type = "fixed"
         linksData[i].len = getLinkLength(linksData[i].id)
     }
 
@@ -34,30 +34,30 @@ function setLinkNodes() {
 }
 
 function getLinkAngle(link) {
-    const linkAngle = getNodesAngle(getNode(link[0]), getNode(link[1]), true)
+    const linkAngle = getJointsAngle(getJoint(link[0]), getJoint(link[1]), true)
     return linkAngle;
 }
 function setLinkAngle(link, deg) {
     const thisLink = getLinkByID(link)
-    const linkNodes = getLinkNodes(link)
-    const pivotNode = getNode(link[0])
+    const linkPoints = getLinkPoints(link)
+    const pivotPoint = getJoint(link[0])
 
-    for (i = 0; i < linkNodes.length; i++) {
-        const mobileNode = linkNodes[i]
-        if (mobileNode.id.length === 1) {
-            rotateNode(mobileNode, deg, pivotNode)
+    for (i = 0; i < linkPoints.length; i++) {
+        const mobilePoint = linkPoints[i]
+        if (mobilePoint.id.length === 1) {
+            rotatePoint(mobilePoint, deg, pivotPoint)
         }
     }
 }
 
 function getLinkLength(link) {
     const thisLink = getLinkByID(link)
-    const node0_x = thisLink.points[0].x;
-    const node0_y = thisLink.points[0].y*1;
-    const node1_x = thisLink.points[1].x*1;
-    const node1_y = thisLink.points[1].y*1;
+    const joint0_x = thisLink.points[0].x;
+    const joint0_y = thisLink.points[0].y*1;
+    const joint1_x = thisLink.points[1].x*1;
+    const joint1_y = thisLink.points[1].y*1;
 
-    const link_len = Math.sqrt((node0_x-node1_x)*((node0_x-node1_x))+(node0_y-node1_y)*(node0_y-node1_y))/coordScale
+    const link_len = Math.sqrt((joint0_x-joint1_x)*((joint0_x-joint1_x))+(joint0_y-joint1_y)*(joint0_y-joint1_y))/coordScale
 
     return link_len;
 }

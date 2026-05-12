@@ -8,7 +8,7 @@ const linksData = [
 
 // To do (here)?:
     // Calc angle of output link (given link lengths above)
-        // Calc node C coords from this. Apply this to the nodesData
+        // Calc node C coords from this. Apply this to the jointsData
     // Calc initial ternary node points
         // This is a one-off action
             // But relies on function that will be frequently repeated: transform node coord relative to angle of base link
@@ -16,7 +16,7 @@ const linksData = [
             // Maybe do this after developing the general transform functions?
         // Keep a simple logic here for initial nodes placement. E.g. mid-link w/ constant offset
         // Short term: manually dictate node coords
-const nodesData = [
+const jointsData = [
     {id: "A", x: originCoords.x, y: originCoords.y, color: "none", ground: true, trace: false, points: [], allPoints: []}, 
     {id: "B", x: originCoords.x, y: originCoords.y-getLinkByID("AB").len*coordScale, color: "darkred", ground: false, trace: false, points: [], allPoints: []},  
     {id: "C", x: originCoords.x+11.7*coordScale, y: originCoords.y-7.8*coordScale, color: "darkblue", ground: false, trace: false, points: [], allPoints: []},
@@ -28,12 +28,12 @@ const nodesData = [
 ]
 
 const synthPoints = [
-    {id: "E1", x: 260, y: 140, inAng: 0, isOpen: true, display: "block", rings: 1},
-    {id: "E2", x: 130, y: 250, inAng: 0, isOpen: true, display: "none", rings: 2},
-    {id: "E3", x: 100, y: 200, inAng: 0, isOpen: true, display: "none", rings: 3},
+    {id: "E1", x: 260, y: 140, type: "none", inAng: 0, isOpen: true, display: "block", rings: 1, tableCoords: {x1: 50, y1: 50, x2: 100, y2: 50}},
+    {id: "E2", x: 130, y: 250, type: "none", inAng: 0, isOpen: true, display: "none", rings: 2, tableCoords: {x1: 50, y1: 100, x2: 100, y2: 100}},
+    {id: "E3", x: 100, y: 200, type: "none", inAng: 0, isOpen: true, display: "none", rings: 3, tableCoords: {x1: 50, y1: 150, x2: 100, y2: 150}},
 ]
 
-const defaultNodes = structuredClone(nodesData); //Used to reset to default linkage 
+const defaultJoints = structuredClone(jointsData); //Used to reset to default linkage 
 const defaultLinks = structuredClone(linksData)
 
 const altTraceData = {points: []}
@@ -55,11 +55,11 @@ for (i = 0; i < linksData.length; i++) {
     }
 }
 
-for (i = 0; i < nodesData.length; i++) {
-    const nodeName = nodesData[i].id
+for (i = 0; i < jointsData.length; i++) {
+    const nodeName = jointsData[i].id
     const nodeTrace = localStorage.getItem(`${nodeName}_trace`)
     if (nodeTrace !== null && nodeTrace !== "") {
-        nodesData[i].trace = nodeTrace === "true" ? true : false
+        jointsData[i].trace = nodeTrace === "true" ? true : false
     }
 }
 
@@ -74,12 +74,12 @@ const linkLines = linkLineGroup.selectAll("polygon")
     .attr("stroke-width", 25)
     .call(d3.drag()
         .on("start", function(event, d) {
-            saveUndoNodes()
+            saveUndoPoints()
             tempX = event.x
             tempY = event.y
-            const pivotNode = getLinkNodes(d.id)[0]
+            const pivotNode = getLinkPoints(d.id)[0]
             const tempNode = {id: "tempNode", x: tempX, y: tempY}
-            tempAngle = getNodesAngle(pivotNode, tempNode)
+            tempAngle = getJointsAngle(pivotNode, tempNode)
             if (d.type !== "input") traceSteps = traceStepsCoarse
         })
         .on("drag", function(event, d) {
@@ -87,7 +87,7 @@ const linkLines = linkLineGroup.selectAll("polygon")
             if (activeSynthPoint !== "E1" && d.type !== "input") return
             if (d.type === "input") {
                 const currentAngle = getLinkAngle("AB")
-                const pivotNode = getLinkNodes(d.id)[0]
+                const pivotNode = getLinkPoints(d.id)[0]
                 let eventAngle = Math.atan2((pivotNode.y-event.y),(event.x-pivotNode.x))
                 eventAngle = getNetAngle(radToDeg(eventAngle))
                 const deltaAngle = eventAngle - tempAngle
@@ -116,15 +116,15 @@ const linkLines = linkLineGroup.selectAll("polygon")
                 tempX = event.x
                 tempY = event.y
                 const tempNode = {id: "tempNode", x: tempX, y: tempY}
-                tempAngle = getNodesAngle(pivotNode, tempNode)
+                tempAngle = getJointsAngle(pivotNode, tempNode)
             }
             // else if (d.type === "output") {
             //     const dx = event.x - tempX
             //     // const dy = event.y - tempY
-            //     for (i = 0; i < nodesData.length; i++) {
-            //         if (d.id.includes(nodesData[i].id)){//d.id[0] || nodesData[i].id === d.id[1]) {
-            //             nodesData[i].x = nodesData[i].x + dx
-            //             // nodesData[i].y = nodesData[i].y + dy
+            //     for (i = 0; i < jointsData.length; i++) {
+            //         if (d.id.includes(jointsData[i].id)){//d.id[0] || jointsData[i].id === d.id[1]) {
+            //             jointsData[i].x = jointsData[i].x + dx
+            //             // jointsData[i].y = jointsData[i].y + dy
             //         } 
             //     }
             //     tempX = event.x
@@ -133,29 +133,31 @@ const linkLines = linkLineGroup.selectAll("polygon")
             else {
                 const dx = event.x - tempX
                 const dy = event.y - tempY
-                for (i = 0; i < nodesData.length; i++) {
-                    if (d.id.includes(nodesData[i].id)) {//d.id[0] || nodesData[i].id === d.id[1]) {
-                        nodesData[i].x = nodesData[i].x + dx
-                        nodesData[i].y = nodesData[i].y + dy
+                for (i = 0; i < jointsData.length; i++) {
+                    if (d.id.includes(jointsData[i].id)) {//d.id[0] || jointsData[i].id === d.id[1]) {
+                        jointsData[i].x = jointsData[i].x + dx
+                        jointsData[i].y = jointsData[i].y + dy
                     } 
                 }
                 tempX = event.x
                 tempY = event.y
                 if (d.type === "coupler") {
-                    synthPoints[0].x = getNode(d.id).x
-                    synthPoints[0].y = getNode(d.id).y
+                    synthPoints[0].x = getJoint(d.id).x
+                    synthPoints[0].y = getJoint(d.id).y
                 }
-                updateTNodes(false, d.id)
-                pathNodeSynth(nodeMode, d.type === "output")
-                pathCuspSynth(cuspMode)
-                setLinkNodes()
+                updateTPoints(false, d.id)
+                pathNodeModeSynth(nodeMode, d.type === "output")
+                // pathNodeSynth(nodeMode, d.type === "output")
+                pathNodeModeSynth(cuspMode)
+                // pathCuspSynth(cuspMode)
+                setLinkPoints()
                 updateTrace()
                 updateLinkGeometry();
             }
         })
         .on("end", function(event,d) {
             traceSteps = traceStepsFine
-            saveNodes()
+            savePoints()
             if (d.type !== "input") {
                 updateTrace()
                 synthModeOpen = linkageOpen
@@ -181,7 +183,7 @@ const groundLine = groundLineGroup.selectAll("polyline")
     .style("pointer-events", "none")
 
 const fixedNodes = fixedNodeGroup.selectAll("circle")
-    .data(nodesData)
+    .data(jointsData)
     .enter()
     .append("circle")
     .attr("cx", d => d.x)
@@ -191,7 +193,7 @@ const fixedNodes = fixedNodeGroup.selectAll("circle")
     // .attr("opacity", 0.75)
 
 const nodeDots = nodeDotGroup.selectAll("cirlce")
-    .data(nodesData)
+    .data(jointsData)
     .enter()
     .append("circle")
     .attr("cx", d => d.x)
@@ -200,7 +202,7 @@ const nodeDots = nodeDotGroup.selectAll("cirlce")
     .style("pointer-events", "none")
 
 const nodeDrag = nodeDragGroup.selectAll("cirlce")
-    .data(nodesData)
+    .data(jointsData)
     .enter()
     .append("circle")
     .attr("class", "node")
@@ -211,7 +213,7 @@ const nodeDrag = nodeDragGroup.selectAll("cirlce")
     .attr("opacity", 0)
     .call(d3.drag()
         .on("start", function(event, d) {
-            saveUndoNodes()
+            saveUndoPoints()
             nodeDrag.attr("opacity", n => n.id === d.id ? 0.1 : 0)
             traceSteps = traceStepsCoarse
         })
@@ -220,7 +222,7 @@ const nodeDrag = nodeDragGroup.selectAll("cirlce")
             if (activeSynthPoint !== "E1") return
             // if (d.id === "A") return
             // if (d.id === "D") {
-            //     d.x = Math.max(event.x, getNode("A").x);
+            //     d.x = Math.max(event.x, getJoint("A").x);
             // }
             // if (d.id !== "D") {
                 d.x = event.x
@@ -230,21 +232,23 @@ const nodeDrag = nodeDragGroup.selectAll("cirlce")
                 synthPoints[0].x = d.x
                 synthPoints[0].y = d.y
             } else {
-                synthPoints[0].x = getNode("BC").x
-                synthPoints[0].y = getNode("BC").y
+                synthPoints[0].x = getJoint("BC").x
+                synthPoints[0].y = getJoint("BC").y
             }
-            if (d.id.length === 2) updateTNodes(true, d.id)
-            else updateTNodes()
-            pathNodeSynth(nodeMode, d.id === "C")
-            pathCuspSynth(cuspMode)
-            setLinkNodes()
+            if (d.id.length === 2) updateTPoints(true, d.id)
+            else updateTPoints()
+            pathNodeModeSynth(nodeMode, d.type === "output")
+            // pathNodeSynth(nodeMode, d.type === "output")
+            pathNodeModeSynth(cuspMode)
+            // pathCuspSynth(cuspMode)
+            setLinkPoints()
             updateTrace()
             updateLinkGeometry();
         })
         .on("end", function() {
             nodeDrag.attr("opacity", 0)
             traceSteps = traceStepsFine
-            saveNodes()
+            savePoints()
             updateTrace()
             synthModeOpen = linkageOpen
             updateLinkGeometry()
@@ -255,7 +259,7 @@ const nodeDragToolTip = nodeDrag
     .text(d => `(${d.x.toFixed(1)}, ${d.y.toFixed(1)})`)
 
 const traceDots = traceDotGroup.selectAll("circle")
-    .data(nodesData)
+    .data(jointsData)
     .enter()
     .append("circle")
     .attr("cx", d => d.x)
@@ -263,7 +267,7 @@ const traceDots = traceDotGroup.selectAll("circle")
     .attr("r", 3)
     .style("pointer-events", "none")
 const traceLines = traceLineGroup.selectAll("polyline")
-    .data(nodesData)
+    .data(jointsData)
     .enter()
     .append("polyline")
     .attr("fill", "none")
@@ -273,7 +277,7 @@ const traceLines = traceLineGroup.selectAll("polyline")
     .style("pointer-events", "none")
     .style("display", "none")
 const fullTraceLines = fullTraceGroup.selectAll("polyline")
-    .data(nodesData)
+    .data(jointsData)
     .enter()
     .append("polyline")
     .attr("fill", "none")
@@ -328,10 +332,10 @@ const synthDrag = synthDragGroup.selectAll("circle")
             swapStatus = false
         }
         // If BC is at this synth point (and in node mode), mirror the input and output links to the alt solution
-        if (nodeMode && Math.abs(d.x - getNode("BC").x) < limitThreshold && Math.abs(d.y - getNode("BC").y) < limitThreshold) {
+        if (nodeMode && Math.abs(d.x - getJoint("BC").x) < limitThreshold && Math.abs(d.y - getJoint("BC").y) < limitThreshold) {
             mirrorNodeSynth(true)
-            setLinkNodes()
-            tNodeFollow()
+            setLinkPoints()
+            tPointFollow()
             updateTrace()
             updateLinkGeometry()
             d.isOpen = linkageOpen
@@ -344,17 +348,17 @@ const synthDrag = synthDragGroup.selectAll("circle")
         recentLimit = "none"
         updateTrace(false)
         updateLinkGeometry()
-        saveNodes()
+        savePoints()
     })
     .call(d3.drag()
         .on("start", function(event,d) {
-            saveUndoNodes()
+            saveUndoPoints()
 
             synthModeTempAngle = inputAngle
             synthModeTempOpen = linkageOpen
 
             const activePoint = synthPoints.find(p => p.id === activeSynthPoint)
-            if (Math.abs(activePoint.x-getNode("BC").x) < limitThreshold && Math.abs(activePoint.y-getNode("BC").y) < limitThreshold) {
+            if (Math.abs(activePoint.x-getJoint("BC").x) < limitThreshold && Math.abs(activePoint.y-getJoint("BC").y) < limitThreshold) {
                 synthPointSnap = true
             } else synthPointSnap = false
 
@@ -370,12 +374,13 @@ const synthDrag = synthDragGroup.selectAll("circle")
             d.x = event.x
             d.y = event.y
             // Snap the coupler point to E1
-            getNode("BC").x = synthPoints[0].x
-            getNode("BC").y = synthPoints[0].y
+            getJoint("BC").x = synthPoints[0].x
+            getJoint("BC").y = synthPoints[0].y
             
             // Perform the relevant node mode stuff
-            pathNodeSynth(nodeMode)
-            pathCuspSynth(cuspMode)
+            pathNodeModeSynth(nodeMode||cuspMode)
+            // pathNodeSynth(nodeMode)
+            // pathCuspSynth(cuspMode)
 
             // Snap to the input angle of the active point
             let revertAngle = activePoint.inAng
@@ -405,14 +410,14 @@ const synthDrag = synthDragGroup.selectAll("circle")
             // doActuate(getNetAngle(linkToCoord(revertAngle,"angle")))
 
             // Update all the things
-            setLinkNodes()
-            updateTNodes()
+            setLinkPoints()
+            updateTPoints()
             updateTrace()
             // updateTrace(false, synthModeOpen)
             updateLinkGeometry()
         })
         .on("end", function(event,d) {
-            saveNodes()
+            savePoints()
             synthDrag.attr("fill-opacity", 0)
             synthModeTempAngle = inputAngle
         })
@@ -438,11 +443,11 @@ function linkDoubleTap(event, d) {
             // localStorage.setItem("fixedStatus", `${d.visible}`)
             invertStatus = !invertStatus
             invertLinkage()
-            saveNodes()
+            savePoints()
             updateTrace()
             updateLinkGeometry()
         }
-        setLinkNodes()
+        setLinkPoints()
         updateTrace(false)
         updateLinkGeometry()
     }
@@ -480,10 +485,10 @@ function nodeDoubleTap(event, d) {
 //     lastTapTime = now;
 // }
 
-loadNodes()
+loadPoints()
 calcOutputAngle()
-updateTNodes()
-setLinkNodes()
+updateTPoints()
+setLinkPoints()
 // updateInputLimits()
 // updateOutputLimits()
 updateOpenCrossed()

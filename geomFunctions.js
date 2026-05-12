@@ -37,7 +37,7 @@ function doActuate(deg) {
 
     setLinkAngle(getLinkByType("input").id, inAngle)
     setLinkAngle(getLinkByType("output").id, outputAngle)
-    tNodeFollow()
+    tPointFollow()
     
     updateLinkGeometry();
 }
@@ -159,7 +159,7 @@ function updateOutputLimits() {
         B_max = 360-B_max;
     }
     
-    const crossAngle = coordToLink(getNodesAngle(getNode("D"), getNode("B")),"angle")
+    const crossAngle = coordToLink(getJointsAngle(getJoint("D"), getJoint("B")),"angle")
 
     if (!linkageOpen & outputClass === "Rocker" && inputClass === "Rocker" && crossAngle < 180) {
         B_min = 360-B_min;
@@ -188,13 +188,13 @@ function updateOutputLimits() {
 // }
 
 function updateOpenCrossed() {
-    const AB_th = coordToLink(getNodesAngle(getNode("A"), getNode("B")), "angle")
+    const AB_th = coordToLink(getJointsAngle(getJoint("A"), getJoint("B")), "angle")
 
-    let DB_th = coordToLink(getNodesAngle(getNode("D"), getNode("B"), true), "angle")
-    const BD_th = coordToLink(getNodesAngle(getNode("B"), getNode("D"), true), "angle")
+    let DB_th = coordToLink(getJointsAngle(getJoint("D"), getJoint("B"), true), "angle")
+    const BD_th = coordToLink(getJointsAngle(getJoint("B"), getJoint("D"), true), "angle")
 
-    let DC_th = coordToLink(getNodesAngle(getNode("D"), getNode("C"), true), "angle")
-    const BC_th = coordToLink(getNodesAngle(getNode("B"), getNode("C"), true), "angle")
+    let DC_th = coordToLink(getJointsAngle(getJoint("D"), getJoint("C"), true), "angle")
+    const BC_th = coordToLink(getJointsAngle(getJoint("B"), getJoint("C"), true), "angle")
     
     if (AB_th < DB_th && DC_th < DB_th) {
         linkageOpen = true
@@ -208,12 +208,12 @@ function updateOpenCrossed() {
 } 
 
 function toggleOpenCrossed(retrace=true) {
-    const DB_th = getNodesAngle(getNode("D"), getNode("B"))
-    const DC_th = getNodesAngle(getNode("D"), getNode("C"))
+    const DB_th = getJointsAngle(getJoint("D"), getJoint("B"))
+    const DC_th = getJointsAngle(getJoint("D"), getJoint("C"))
     const newDC_th = 2*DB_th - DC_th
-    rotateNode(getNode("C"),newDC_th,getNode("D"))
+    rotatePoint(getJoint("C"),newDC_th,getJoint("D"))
     updateOpenCrossed()
-    tNodeFollow()
+    tPointFollow()
     if (retrace) updateTrace()
     updateLinkGeometry()
 }
@@ -236,7 +236,7 @@ function updateLinkGeometry() {
         .attr("fill", bgColor)
         .style("display", d => d.id.length === 1 ? "block" : getLinkByID(d.id).ternary ? "block" : "none")
 
-    setLinkNodes()
+    setLinkPoints()
 
     linkLines
         .attr("points", d => d.points.map(j => `${j.x},${j.y}`).join(" "))
@@ -266,7 +266,7 @@ function updateLinkGeometry() {
     altTraceLine
         .attr("stroke", d3.interpolateRgb("darkgreen","white")(whtnColor*2))
         .attr("points", altTraceData.points.map(j => `${j.x},${j.y}`).join(" "))
-        .style("display", !nodesData.find(n => n.id === "BC").trace || !linksData.find(l => l.id === "BC").ternary ? "none" : "block")
+        .style("display", !jointsData.find(n => n.id === "BC").trace || !linksData.find(l => l.id === "BC").ternary ? "none" : "block")
 
     synthDots
         .attr("cx", d => d.x)
@@ -282,47 +282,47 @@ function updateLinkGeometry() {
         .style("display", nodeMode || cuspMode ? d => d.display : "none")
 
     // intersectionDot
-    //     .attr("cx", getLinesIntersection(getNode("B"),getNode("A"),getNode("C"),getNode("D"))[0])
-    //     .attr("cy", getLinesIntersection(getNode("B"),getNode("A"),getNode("C"),getNode("D"))[1])
+    //     .attr("cx", getLinesIntersection(getJoint("B"),getJoint("A"),getJoint("C"),getJoint("D"))[0])
+    //     .attr("cy", getLinesIntersection(getJoint("B"),getJoint("A"),getJoint("C"),getJoint("D"))[1])
     //     .attr("fill", fgColor)
     // lineAE
-    //     .attr("x1", getNode("A").x)
-    //     .attr("y1", getNode("A").y)
+    //     .attr("x1", getJoint("A").x)
+    //     .attr("y1", getJoint("A").y)
     //     .attr("x2", synthPoints[0].x)
     //     .attr("y2", synthPoints[0].y)
     //     .attr("stroke", fgColor)
     // lineDE
-    //     .attr("x1", getNode("D").x)
-    //     .attr("y1", getNode("D").y)
+    //     .attr("x1", getJoint("D").x)
+    //     .attr("y1", getJoint("D").y)
     //     .attr("x2", synthPoints[0].x)
     //     .attr("y2", synthPoints[0].y)
     //     .attr("stroke", fgColor)
     // kFCircle
     //     // .attr("cx", getCircle3Points(
-    //     //     getNode("A"), getNode("D"), synthPoints[0])[0])
+    //     //     getJoint("A"), getJoint("D"), synthPoints[0])[0])
     //     // .attr("cy", getCircle3Points(
-    //     //     getNode("A"), getNode("D"), synthPoints[0])[1])
+    //     //     getJoint("A"), getJoint("D"), synthPoints[0])[1])
     //     // .attr("r", getCircle3Points(
-    //     //     getNode("A"), getNode("D"), synthPoints[0])[2]/2)
+    //     //     getJoint("A"), getJoint("D"), synthPoints[0])[2]/2)
     //     .attr("stroke", fgColor)
     // ADCircle
-    //     .attr("cx", getCircle2Points(getNode("A"), getNode("D"))[0])
-    //     .attr("cy", getCircle2Points(getNode("A"), getNode("D"))[1])
-    //     .attr("r", getCircle2Points(getNode("A"), getNode("D"))[2]/2)
+    //     .attr("cx", getCircle2Points(getJoint("A"), getJoint("D"))[0])
+    //     .attr("cy", getCircle2Points(getJoint("A"), getJoint("D"))[1])
+    //     .attr("r", getCircle2Points(getJoint("A"), getJoint("D"))[2]/2)
     //     .attr("stroke", fgColor)
     // inputCircle
-    //     .attr("cx", getNode("A").x)
-    //     .attr("cy", getNode("A").y)
+    //     .attr("cx", getJoint("A").x)
+    //     .attr("cy", getJoint("A").y)
     //     .attr("r", 6*20)
     //     .attr("stroke", fgColor)
     // outputCircle
-    //     .attr("cx", getNode("D").x)
-    //     .attr("cy", getNode("D").y)
+    //     .attr("cx", getJoint("D").x)
+    //     .attr("cy", getJoint("D").y)
     //     .attr("r", 4.5*20)
     //     .attr("stroke", fgColor)
 
-    // const angAEB = getAngleBtwNodes(getNode("B"), getNode("A"), getNode("BC"))
-    // const angDEC = getAngleBtwNodes(getNode("C"), getNode("D"), getNode("BC"))
+    // const angAEB = getAngleBtwPoints(getJoint("B"), getJoint("A"), getJoint("BC"))
+    // const angDEC = getAngleBtwPoints(getJoint("C"), getJoint("D"), getJoint("BC"))
 
     // document.getElementById("debugOutputs").innerHTML = `
     //         ${angAEB.toFixed(1)} \n<br>
@@ -372,8 +372,14 @@ function updateLinkGeometry() {
 
     nodeModeIcon
         .attr("opacity", nodeMode ? 1 : 0.5)
-    cuspModeIcon
-        .attr("opacity", cuspMode ? 1 : 0.5)
+    // cuspModeIcon
+    //     .attr("opacity", cuspMode ? 1 : 0.5)
+
+    nodeModeMenu.style("display", nodeMode ? "block" : "none")
+    nodeModeCrunodeLabel.style("display", nodeMode ? "block" : "none")
+    nodeModeCuspLabel.style("display", nodeMode ? "block" : "none")
+
+    
 
 
     inputLinkVal
@@ -393,10 +399,10 @@ function updateLinkGeometry() {
     updateToolTips()
 
     // DBLink
-    //     .attr("x1", getNode("D").x)
-    //     .attr("y1", getNode("D").y)
-    //     .attr("x2", getNode("B").x)
-    //     .attr("y2", getNode("B").y)
+    //     .attr("x1", getJoint("D").x)
+    //     .attr("y1", getJoint("D").y)
+    //     .attr("x2", getJoint("B").x)
+    //     .attr("y2", getJoint("B").y)
 
     // const synthAng = synthPoints.find(p=>p.id === activeSynthPoint).inAng
 
@@ -427,18 +433,18 @@ function updateTrace(alt=true, oc=linkageOpen) {
     const couplerLink = getLinkByType("coupler")
     const fixedLink = getLinkByType("fixed")
 
-    const nodeA = getNode(inputLink.id[0])
-    const nodeB = getNode(inputLink.id[1])
-    const nodeC = getNode(outputLink.id[1])
-    const nodeD = getNode(outputLink.id[0])
-    const nodeAB = getNode(inputLink.id)
-    const nodeBC = getNode(couplerLink.id)
-    const nodeDC = getNode(outputLink.id)
-    const nodeAD = getNode(fixedLink.id)
+    const nodeA = getJoint(inputLink.id[0])
+    const nodeB = getJoint(inputLink.id[1])
+    const nodeC = getJoint(outputLink.id[1])
+    const nodeD = getJoint(outputLink.id[0])
+    const nodeAB = getJoint(inputLink.id)
+    const nodeBC = getJoint(couplerLink.id)
+    const nodeDC = getJoint(outputLink.id)
+    const nodeAD = getJoint(fixedLink.id)
     
-    for (i = 0; i < nodesData.length; i++) {
-        nodesData[i].points = []
-        nodesData[i].allPoints = []
+    for (i = 0; i < jointsData.length; i++) {
+        jointsData[i].points = []
+        jointsData[i].allPoints = []
     }
     altTraceData.points = []
 
@@ -462,15 +468,15 @@ function updateTrace(alt=true, oc=linkageOpen) {
             out_endAngle = Math.max(out_endAngle, out_temp)
         }
 
-        const newB = {x: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false).x, y: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false).y}
+        const newB = {x: placePointPolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false).x, y: placePointPolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false).y}
         const outAngle_temp = getNetAngle(calcOutputAngle(inAngle, true))
-        const newC = {x: placeNodePolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false).x, y: placeNodePolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false).y}
-        const couplerAngle = getNodesAngle(newB,newC)
+        const newC = {x: placePointPolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false).x, y: placePointPolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false).y}
+        const couplerAngle = getJointsAngle(newB,newC)
         const couplerTAngle = couplerAngle + couplerLink.tAng
         const couplerTDist = couplerLink.tLen
-        const newBC = {x: placeNodePolar(nodeBC, newB, couplerTAngle, couplerTDist, false).x, y: placeNodePolar(nodeBC, newB, couplerTAngle, couplerTDist, false).y}
-        // const newAB = {x: placeNodePolar(nodeAB, nodeA, linkToCoord(inAngle, "angle")+inputLink.tAng, inputLink.tLen, false).x, y: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle")+inputLink.tAng, inputLink.tLen, false).y}
-        const newDC = {x: placeNodePolar(nodeDC, nodeD, outAngle+outputLink.tAng, outputLink.tLen, false).x, y: placeNodePolar(nodeDC, nodeD, outAngle+outputLink.tAng, outputLink.tLen, false).y}
+        const newBC = {x: placePointPolar(nodeBC, newB, couplerTAngle, couplerTDist, false).x, y: placePointPolar(nodeBC, newB, couplerTAngle, couplerTDist, false).y}
+        // const newAB = {x: placePointPolar(nodeAB, nodeA, linkToCoord(inAngle, "angle")+inputLink.tAng, inputLink.tLen, false).x, y: placePointPolar(nodeB, nodeA, linkToCoord(inAngle, "angle")+inputLink.tAng, inputLink.tLen, false).y}
+        const newDC = {x: placePointPolar(nodeDC, nodeD, outAngle+outputLink.tAng, outputLink.tLen, false).x, y: placePointPolar(nodeDC, nodeD, outAngle+outputLink.tAng, outputLink.tLen, false).y}
 
         let deltaBC = 0;
         if (nodeBC.allPoints.length > 0) {
@@ -502,15 +508,15 @@ function updateTrace(alt=true, oc=linkageOpen) {
             out_endAngle = Math.max(out_endAngle, out_temp)
         }
 
-        const newB = {x: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false).x, y: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false).y}
+        const newB = {x: placePointPolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false).x, y: placePointPolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false).y}
         const outAngle_temp = getNetAngle(calcOutputAngle(inAngle, false))
-        const newC = {x: placeNodePolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false).x, y: placeNodePolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false).y}
-        const couplerAngle = getNodesAngle(newB,newC)
+        const newC = {x: placePointPolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false).x, y: placePointPolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false).y}
+        const couplerAngle = getJointsAngle(newB,newC)
         const couplerTAngle = getNetAngle(couplerAngle + couplerLink.tAng)
         const couplerTDist = couplerLink.tLen
-        const newBC = {x: placeNodePolar(nodeBC, newB, couplerTAngle, couplerTDist, false).x, y: placeNodePolar(nodeBC, newB, couplerTAngle, couplerTDist, false).y}
-        // const newAB = {x: placeNodePolar(nodeAB, nodeA, linkToCoord(inAngle, "angle")+inputLink.tAng, inputLink.tLen, false).x, y: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle")+inputLink.tAng, inputLink.tLen, false).y}
-        const newDC = {x: placeNodePolar(nodeDC, nodeD, outAngle+outputLink.tAng, outputLink.tLen, false).x, y: placeNodePolar(nodeDC, nodeD, outAngle+outputLink.tAng, outputLink.tLen, false).y}
+        const newBC = {x: placePointPolar(nodeBC, newB, couplerTAngle, couplerTDist, false).x, y: placePointPolar(nodeBC, newB, couplerTAngle, couplerTDist, false).y}
+        // const newAB = {x: placePointPolar(nodeAB, nodeA, linkToCoord(inAngle, "angle")+inputLink.tAng, inputLink.tLen, false).x, y: placePointPolar(nodeB, nodeA, linkToCoord(inAngle, "angle")+inputLink.tAng, inputLink.tLen, false).y}
+        const newDC = {x: placePointPolar(nodeDC, nodeD, outAngle+outputLink.tAng, outputLink.tLen, false).x, y: placePointPolar(nodeDC, nodeD, outAngle+outputLink.tAng, outputLink.tLen, false).y}
 
         let deltaBC = 0;
         if (nodeBC.allPoints.length > 0) {
@@ -543,8 +549,8 @@ function updateTrace(alt=true, oc=linkageOpen) {
 
     for (i = 0; i < traceSteps/traceReduction+1; i++) {
         outAngle_C = out_startAngle + out_angleStep * i
-        const newC = {x: placeNodePolar(nodeC, nodeD, linkToCoord(outAngle_C,"angle"), linkToCoord(outputLink.len), false).x, y: placeNodePolar(nodeC, nodeD, linkToCoord(outAngle_C,"angle"), linkToCoord(outputLink.len), false).y}
-        const newDC = {x: placeNodePolar(nodeDC, nodeD, linkToCoord(outAngle_C+outputLink.tAng,"angle"), outputLink.tLen, false).x, y: placeNodePolar(nodeDC, nodeD, linkToCoord(outAngle_C+outputLink.tAng,"angle"), outputLink.tLen, false).y}
+        const newC = {x: placePointPolar(nodeC, nodeD, linkToCoord(outAngle_C,"angle"), linkToCoord(outputLink.len), false).x, y: placePointPolar(nodeC, nodeD, linkToCoord(outAngle_C,"angle"), linkToCoord(outputLink.len), false).y}
+        const newDC = {x: placePointPolar(nodeDC, nodeD, linkToCoord(outAngle_C+outputLink.tAng,"angle"), outputLink.tLen, false).x, y: placePointPolar(nodeDC, nodeD, linkToCoord(outAngle_C+outputLink.tAng,"angle"), outputLink.tLen, false).y}
 
         nodeC.points.push(newC)
         nodeDC.points.push(newDC)
@@ -554,8 +560,8 @@ function updateTrace(alt=true, oc=linkageOpen) {
 
     for (i = 0; i < traceSteps/traceReduction+1; i++) {
         inAngle = in_startAngle + in_angleStep * i
-        const newB = {x: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false).x, y: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false).y}
-        const newAB = {x: placeNodePolar(nodeAB, nodeA, linkToCoord(inAngle, "angle")+inputLink.tAng, inputLink.tLen, false).x, y: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle")+inputLink.tAng, inputLink.tLen, false).y}
+        const newB = {x: placePointPolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false).x, y: placePointPolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false).y}
+        const newAB = {x: placePointPolar(nodeAB, nodeA, linkToCoord(inAngle, "angle")+inputLink.tAng, inputLink.tLen, false).x, y: placePointPolar(nodeB, nodeA, linkToCoord(inAngle, "angle")+inputLink.tAng, inputLink.tLen, false).y}
 
         nodeB.points.push(newB)
         nodeAB.points.push(newAB)
@@ -569,8 +575,8 @@ function updateTrace(alt=true, oc=linkageOpen) {
     minCoord_y = null
     maxCoord_y = null
 
-    for (i = 0; i < nodesData.length; i++) {
-        const thisNode = nodesData[i]
+    for (i = 0; i < jointsData.length; i++) {
+        const thisNode = jointsData[i]
         let ternaryShown = false
         if (thisNode.id.length === 2) {
             const thisLink = linksData.find(l => l.id === thisNode.id)
@@ -609,13 +615,13 @@ function updateTrace(alt=true, oc=linkageOpen) {
         for (i = 0; i < traceSteps+1; i++) {
             inAngle = in_startAngle + alt_angleStep * i
 
-            const newB = {x: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false).x, y: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false).y}
+            const newB = {x: placePointPolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false).x, y: placePointPolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false).y}
             const outAngle_temp = getNetAngle(calcOutputAngle(inAngle, !linkageOpen))
-            const newC = {x: placeNodePolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false).x, y: placeNodePolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false).y}
-            const couplerAngle = getNodesAngle(newB,newC)
+            const newC = {x: placePointPolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false).x, y: placePointPolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false).y}
+            const couplerAngle = getJointsAngle(newB,newC)
             const couplerTAngle = getNetAngle(couplerAngle + couplerLink.tAng)
             const couplerTDist = couplerLink.tLen
-            const newBC = {x: placeNodePolar(nodeBC, newB, couplerTAngle, couplerTDist, false).x, y: placeNodePolar(nodeBC, newB, couplerTAngle, couplerTDist, false).y}
+            const newBC = {x: placePointPolar(nodeBC, newB, couplerTAngle, couplerTDist, false).x, y: placePointPolar(nodeBC, newB, couplerTAngle, couplerTDist, false).y}
 
             altTraceData.points.push(newBC)
         }
@@ -640,26 +646,26 @@ function updateTrace(alt=true, oc=linkageOpen) {
         for (i = 0; i < traceSteps+1; i++) {
             inAngle = in_startAngle + in_angleStep * i
 
-            const newB = {x: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false).x, y: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false).y}
+            const newB = {x: placePointPolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false).x, y: placePointPolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false).y}
             const outAngle_temp = getNetAngle(calcOutputAngle(inAngle, linkageOpen))
-            const newC = {x: placeNodePolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false).x, y: placeNodePolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false).y}
-            const couplerAngle = getNodesAngle(newB,newC)
+            const newC = {x: placePointPolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false).x, y: placePointPolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false).y}
+            const couplerAngle = getJointsAngle(newB,newC)
             const couplerTAngle = getNetAngle(couplerAngle + couplerLink.tAng)
             const couplerTDist = couplerLink.tLen
-            const newBC = {x: placeNodePolar(nodeBC, newB, couplerTAngle, couplerTDist, false).x, y: placeNodePolar(nodeBC, newB, couplerTAngle, couplerTDist, false).y}
+            const newBC = {x: placePointPolar(nodeBC, newB, couplerTAngle, couplerTDist, false).x, y: placePointPolar(nodeBC, newB, couplerTAngle, couplerTDist, false).y}
 
             altTraceData.points.push(newBC)
         }
         for (i = 0; i < traceSteps+1; i++) {
             inAngle = in_endAngle - in_angleStep * i
 
-            const newB = {x: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false).x, y: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false).y}
+            const newB = {x: placePointPolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false).x, y: placePointPolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false).y}
             const outAngle_temp = getNetAngle(calcOutputAngle(inAngle, !linkageOpen))
-            const newC = {x: placeNodePolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false).x, y: placeNodePolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false).y}
-            const couplerAngle = getNodesAngle(newB,newC)
+            const newC = {x: placePointPolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false).x, y: placePointPolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false).y}
+            const couplerAngle = getJointsAngle(newB,newC)
             const couplerTAngle = getNetAngle(couplerAngle + couplerLink.tAng)
             const couplerTDist = couplerLink.tLen
-            const newBC = {x: placeNodePolar(nodeBC, newB, couplerTAngle, couplerTDist, false).x, y: placeNodePolar(nodeBC, newB, couplerTAngle, couplerTDist, false).y}
+            const newBC = {x: placePointPolar(nodeBC, newB, couplerTAngle, couplerTDist, false).x, y: placePointPolar(nodeBC, newB, couplerTAngle, couplerTDist, false).y}
 
             altTraceData.points.push(newBC)
         }
@@ -679,8 +685,8 @@ function updateTrace(alt=true, oc=linkageOpen) {
     // if (alt && nodeMode && ((inputClass === "Rocker" && outputClass === "Crank") || (outputClass === "Rocker" && inputClass === "Crank"))) {
     //     altTraceData.points = []
     //     mirrorNodeSynth()
-    //     setLinkNodes()
-    //     updateTNodes()
+    //     setLinkPoints()
+    //     updateTPoints()
     //     updateOpenCrossed()
     //     updateInputLimits()
     //     in_startAngle = inputLimits.min
@@ -692,26 +698,26 @@ function updateTrace(alt=true, oc=linkageOpen) {
     //     for (i = 0; i < traceSteps+1; i++) {
     //         inAngle = in_startAngle + in_angleStep * i
 
-    //         const newB = {x: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false).x, y: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false)[1]}
+    //         const newB = {x: placePointPolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false).x, y: placePointPolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false)[1]}
     //         const outAngle_temp = getNetAngle(calcOutputAngle(inAngle, linkageOpen))
-    //         const newC = {x: placeNodePolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false).x, y: placeNodePolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false)[1]}
-    //         const couplerAngle = getNodesAngle(newB,newC)
+    //         const newC = {x: placePointPolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false).x, y: placePointPolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false)[1]}
+    //         const couplerAngle = getJointsAngle(newB,newC)
     //         const couplerTAngle = getNetAngle(couplerAngle + couplerLink.tAng)
     //         const couplerTDist = couplerLink.tLen
-    //         const newBC = {x: placeNodePolar(nodeBC, newB, couplerTAngle, couplerTDist, false).x, y: placeNodePolar(nodeBC, newB, couplerTAngle, couplerTDist, false)[1]}
+    //         const newBC = {x: placePointPolar(nodeBC, newB, couplerTAngle, couplerTDist, false).x, y: placePointPolar(nodeBC, newB, couplerTAngle, couplerTDist, false)[1]}
 
     //         // altTraceData.points.push(newBC) //
     //     }
     //     for (i = 0; i < traceSteps+1; i++) {
     //         inAngle = in_endAngle - in_angleStep * i
 
-    //         const newB = {x: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false).x, y: placeNodePolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false).y}
+    //         const newB = {x: placePointPolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false).x, y: placePointPolar(nodeB, nodeA, linkToCoord(inAngle, "angle"), linkToCoord(inputLink.len), false).y}
     //         const outAngle_temp = getNetAngle(calcOutputAngle(inAngle, !linkageOpen))
-    //         const newC = {x: placeNodePolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false).x, y: placeNodePolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false).y}
-    //         const couplerAngle = getNodesAngle(newB,newC)
+    //         const newC = {x: placePointPolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false).x, y: placePointPolar(nodeC, nodeD, outAngle_temp, linkToCoord(outputLink.len), false).y}
+    //         const couplerAngle = getJointsAngle(newB,newC)
     //         const couplerTAngle = getNetAngle(couplerAngle + couplerLink.tAng)
     //         const couplerTDist = couplerLink.tLen
-    //         const newBC = {x: placeNodePolar(nodeBC, newB, couplerTAngle, couplerTDist, false).x, y: placeNodePolar(nodeBC, newB, couplerTAngle, couplerTDist, false).y}
+    //         const newBC = {x: placePointPolar(nodeBC, newB, couplerTAngle, couplerTDist, false).x, y: placePointPolar(nodeBC, newB, couplerTAngle, couplerTDist, false).y}
 
     //         if (inputClass === "Rocker") {
     //             // altTraceData.points.push(newBC)
@@ -719,8 +725,8 @@ function updateTrace(alt=true, oc=linkageOpen) {
     //     }
     //     if (swapped_n) {
     //         mirrorNodeSynth()
-    //         setLinkNodes()
-    //         updateTNodes()
+    //         setLinkPoints()
+    //         updateTPoints()
     //         updateOpenCrossed()
     //     }
     // }
@@ -768,27 +774,27 @@ function playAnimation() {
 }
 
 function defaultLinkage() {
-    saveUndoNodes()
+    saveUndoPoints()
     getLinkByType("fixed").visible = true
     localStorage.setItem("fixedStatus", "")
-    for (i = 0; i < nodesData.length; i++) {
-        nodesData[i].x = defaultNodes[i].x
-        nodesData[i].y = defaultNodes[i].y
-        nodesData[i].trace = defaultNodes[i].trace
+    for (i = 0; i < jointsData.length; i++) {
+        jointsData[i].x = defaultJoints[i].x
+        jointsData[i].y = defaultJoints[i].y
+        jointsData[i].trace = defaultJoints[i].trace
 
-        localStorage.setItem(`${nodesData[i].id}_trace`, "")
+        localStorage.setItem(`${jointsData[i].id}_trace`, "")
     }
     for (i = 0; i < linksData.length; i++) {
         linksData[i].ternary = defaultLinks[i].ternary
 
         localStorage.setItem(`${linksData[i].id}_t`, "")
     }
-    synthPoints[0].x = getNode("BC").x
-    synthPoints[0].y = getNode("BC").y
+    synthPoints[0].x = getJoint("BC").x
+    synthPoints[0].y = getJoint("BC").y
 
-    saveNodes()
-    updateTNodes()
-    setLinkNodes()
+    savePoints()
+    updateTPoints()
+    setLinkPoints()
     updateOpenCrossed()
     updateTrace()
     updateLinkGeometry();

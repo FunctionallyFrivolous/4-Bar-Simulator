@@ -18,6 +18,10 @@ function toggleDarkMode(){
 
     synthPlusIcon.attr("fill", fgColor)
 
+    nodeModeMenu.attr("stroke", fgColor)
+    nodeModeCrunodeLabel.attr("fill", fgColor)
+    nodeModeCuspLabel.attr("stroke", fgColor)
+
     document.body.style.backgroundColor = bgColor
     document.getElementById("pageLab").style.color = fgColor
     document.getElementById("topView").style.border = `1px solid ${fgColor}`
@@ -96,17 +100,18 @@ function drawCrossoverIcon(x,y) {
     ].join(" ");
 }
 
-function drawConcentricCircles(x,y,qty){
-    let r = 20
+function drawConcentricCircles(x,y,qty,r=20){
+    // let r = 20
+    const init_r = r
     let circles = ``
-    
+
     for (i = 0; i < qty; i++) {
         circles = circles + `
             M ${x} ${y - r}
             A ${r} ${r} 0 1 1 ${x} ${y + r}
             A ${r} ${r} 0 1 1 ${x} ${y - r}
         `
-        r = r - 4
+        r = r - (init_r/5)
     }
 
     return circles

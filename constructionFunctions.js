@@ -7,9 +7,9 @@ function getCircle3Points(point1, point2, point3) {
     const x3 = point3.x
     const y3 = point3.y
 
-    const a = getDistBtwNodes(point1, point2)
-    const b = getDistBtwNodes(point2, point3)
-    const c = getDistBtwNodes(point3, point1)
+    const a = getDistBtwPoints(point1, point2)
+    const b = getDistBtwPoints(point2, point3)
+    const c = getDistBtwPoints(point3, point1)
 
     const s = (a+b+c)/2
     const K = Math.sqrt(s*(s-a)*(s-b)*(s-c))

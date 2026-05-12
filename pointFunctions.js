@@ -1,11 +1,16 @@
 
-function rotateNode(node, deg, pivot, doit=true) {
-    const dx = node.x - pivot.x
-    const dy = node.y - pivot.y
+function getJoint(id) {
+    const joint = jointsData.find(j => j.id == id)
+    return joint
+}
+
+function rotatePoint(joint, deg, pivot, doit=true) {
+    const dx = joint.x - pivot.x
+    const dy = joint.y - pivot.y
     let dist = Math.sqrt(dx*dx + dy*dy)
 
-    // if (node.id.length === 2) {
-    //     const thisLink = getLinkByID(node.id)
+    // if (joint.id.length === 2) {
+    //     const thisLink = getLinkByID(joint.id)
     //     dist = thisLink.tLen
     // }
 
@@ -13,51 +18,52 @@ function rotateNode(node, deg, pivot, doit=true) {
     const newY = pivot.y - Math.sin(degToRad(deg)) * dist
 
     if (doit) {
-        node.x = newX;
-        node.y = newY;
+        joint.x = newX;
+        joint.y = newY;
     }
 
     return [newX, newY]
 }
-function placeNodePolar(node, origin, deg, dist, doit=false) {
+
+function placePointPolar(joint, origin, deg, dist, doit=false) {
     const newX = origin.x + Math.cos(degToRad(deg)) * dist
     const newY = origin.y - Math.sin(degToRad(deg)) * dist
 
     if (doit) {
-        node.x = newX
-        node.y = newY
+        joint.x = newX
+        joint.y = newY
     }
 
-    const newNode = {x: newX, y: newY}
-    return newNode
+    const newjoint = {x: newX, y: newY}
+    return newjoint
 }
 
-function tNodeFollow() {
+function tPointFollow() {
     for (i = 0; i < linksData.length; i++) {
         const thisLink = linksData[i]
         const linkDeg = getLinkAngle(thisLink.id)
-        const pivotNode = getNode(thisLink.id[0])
-        const tNode = getNode(thisLink.id)
+        const pivotJoint = getJoint(thisLink.id[0])
+        const tPoint = getJoint(thisLink.id)
         const newDeg = linkDeg + thisLink.tAng
-        // rotateNode(tNode, linkDeg + thisLink.tAng, pivotNode)
+        // rotatePoint(tPoint, linkDeg + thisLink.tAng, pivotJoint)
 
-        tNode.x = pivotNode.x + Math.cos(degToRad(newDeg)) * thisLink.tLen
-        tNode.y = pivotNode.y - Math.sin(degToRad(newDeg)) * thisLink.tLen
+        tPoint.x = pivotJoint.x + Math.cos(degToRad(newDeg)) * thisLink.tLen
+        tPoint.y = pivotJoint.y - Math.sin(degToRad(newDeg)) * thisLink.tLen
     }
 }
 
-function updateTNodes(snap=false, node="") {
+function updateTPoints(snap=false, point="") {
     for (i = 0; i < linksData.length; i++) {
         const linkID = linksData[i].id
-        const tNode = getNode(linkID)
-        const linkAngle = getNodesAngle(getNode("B"),getNode("C"))//getLinkAngle(linkID)
-        const pNode = getNode(linkID[0])
+        const tPoint = getJoint(linkID)
+        const linkAngle = getJointsAngle(getJoint("B"),getJoint("C"))//getLinkAngle(linkID)
+        const pJoint = getJoint(linkID[0])
 
-        let tDeg = getAngleBtwNodes(tNode, getNode(linkID[1]), pNode)
+        let tDeg = getAngleBtwPoints(tPoint, getJoint(linkID[1]), pJoint)
         
-        if (linksData[i].tSnap && node !== linkID) tDeg = linksData[i].tAng
+        if (linksData[i].tSnap && point !== linkID) tDeg = linksData[i].tAng
         if (snap) {
-            if (node === linkID) {
+            if (point === linkID) {
                 if (Math.abs(tDeg) < snapAngle) {
                     tDeg = 0
                     linksData[i].tSnap = true
@@ -70,30 +76,26 @@ function updateTNodes(snap=false, node="") {
 
         linksData[i].tAng = tDeg
 
-        const tDist = getDistBtwNodes(getNode(linkID), pNode)
+        const tDist = getDistBtwPoints(getJoint(linkID), pJoint)
         linksData[i].tLen = tDist  
     }
-    // setLinkNodes()
-    tNodeFollow()
+    // setLinkPoints()
+    tPointFollow()
     // updateLinkGeometry() 
 }
 
-function getNodesAngle(startNode, endNode, neg=false) {
-    let nodesAngle = Math.atan2((startNode.y-endNode.y),(endNode.x-startNode.x))
-    nodesAngle = getNetAngle(radToDeg(nodesAngle),neg);
+function getJointsAngle(startJoint, endPoint, neg=false) {
+    let jointsAngle = Math.atan2((startJoint.y-endPoint.y),(endPoint.x-startJoint.x))
+    jointsAngle = getNetAngle(radToDeg(jointsAngle),neg);
 
-    return nodesAngle;
-}
-function getNode(id) {
-    const node = nodesData.find(j => j.id == id)
-    return node
+    return jointsAngle;
 }
 
 function getAngleBtwnLines(line1_start, line1_end, line2_start, line2_end) {
-    const line1 = getNodesAngle(line1_start, line1_end, false)
-    const line2 = getNodesAngle(line2_start, line2_end, false)
-    const line1_alt = getNodesAngle(line1_end, line1_start, false)
-    const line2_alt = getNodesAngle(line2_end, line2_start, false)
+    const line1 = getJointsAngle(line1_start, line1_end, false)
+    const line2 = getJointsAngle(line2_start, line2_end, false)
+    const line1_alt = getJointsAngle(line1_end, line1_start, false)
+    const line2_alt = getJointsAngle(line2_end, line2_start, false)
 
     const tempAng1 = Math.abs(line2 - line1)
     const tempAng2 = Math.abs(line1 - line2)
@@ -116,28 +118,16 @@ function getAngleBtwnLines(line1_start, line1_end, line2_start, line2_end) {
     //     btwnAngle = 360 - btwnAngle
     // }
 
-    // document.getElementById("debugOutputs").innerHTML = `
-    //     ${endAng.toFixed(1)} \n<br>
-    //     ${startAng.toFixed(1)} \n<br>
-    //     ${btwnAngle.toFixed(1)} \n<br>
-    //     `
-
     return btwnAngle
 }
 
-function getAngleBtwNodes(node, from, origin) {
-    // const fromAngle = getNodesAngle(origin, from)
-    // const nodeAngle = getNodesAngle(origin, node)
-    // const totAngle = getNetAngle(nodeAngle - fromAngle)
-
-    const totAngle = getAngleBtwnLines(origin, from, origin, node)
-
+function getAngleBtwPoints(point, from, origin) {
+    const totAngle = getAngleBtwnLines(origin, from, origin, point)
     return totAngle
 }
 
-function getDistBtwNodes(startNode, endNode) {
-    const nDist = Math.sqrt((endNode.x-startNode.x)*(endNode.x-startNode.x) + (startNode.y-endNode.y)*(startNode.y-endNode.y))
-
+function getDistBtwPoints(startPoint, endPoint) {
+    const nDist = Math.sqrt((endPoint.x-startPoint.x)*(endPoint.x-startPoint.x) + (startPoint.y-endPoint.y)*(startPoint.y-endPoint.y))
     return nDist
 }
 
@@ -162,21 +152,21 @@ function getLinesIntersection(line1_start, line1_end, line2_start, line2_end) {
     return [point_x, point_y]
 }
 
-function getMidNode(startNode, endNode) {
-    const midNode_x = (startNode.x + endNode.x)/2
-    const midNode_y = (startNode.y + endNode.y)/2
+function getMidPoint(startPoint, endPoint) {
+    const midPoint_x = (startPoint.x + endPoint.x)/2
+    const midPoint_y = (startPoint.y + endPoint.y)/2
 
-    const midNode = {x: midNode_x, y: midNode_y}
+    const midPoint = {x: midPoint_x, y: midPoint_y}
 
-    return midNode
+    return midPoint
 }
 
-function saveNodes() {
-    for (i = 0; i < nodesData.length; i++) {
-        const nodeName = `node${nodesData[i].id}`
+function savePoints() {
+    for (i = 0; i < jointsData.length; i++) {
+        const jointName = `joint${jointsData[i].id}`
 
-        localStorage.setItem(`${nodeName}_x`, `${nodesData[i].x.toFixed(3)}`)
-        localStorage.setItem(`${nodeName}_y`, `${nodesData[i].y.toFixed(3)}`)
+        localStorage.setItem(`${jointName}_x`, `${jointsData[i].x.toFixed(3)}`)
+        localStorage.setItem(`${jointName}_y`, `${jointsData[i].y.toFixed(3)}`)
     }
     for (i = 0; i < synthPoints.length; i++) {
         const pointName = `point${synthPoints[i].id}`
@@ -186,13 +176,13 @@ function saveNodes() {
     }
 }
 
-function loadNodes() {
-    for (i = 0; i < nodesData.length; i++) {
-        const nodeName = `node${nodesData[i].id}`
+function loadPoints() {
+    for (i = 0; i < jointsData.length; i++) {
+        const jointName = `joint${jointsData[i].id}`
 
-        if (localStorage.getItem(`${nodeName}_x`) !== null) {
-            nodesData[i].x = Number(localStorage.getItem(`${nodeName}_x`))
-            nodesData[i].y = Number(localStorage.getItem(`${nodeName}_y`))
+        if (localStorage.getItem(`${jointName}_x`) !== null) {
+            jointsData[i].x = Number(localStorage.getItem(`${jointName}_x`))
+            jointsData[i].y = Number(localStorage.getItem(`${jointName}_y`))
         }
     }
     for (i = 0; i < synthPoints.length; i++) {
@@ -205,12 +195,12 @@ function loadNodes() {
     }
 }
 
-function saveUndoNodes() {
-    for (i = 0; i < nodesData.length; i++) {
-        const nodeName = `undoNode${nodesData[i].id}`
+function saveUndoPoints() {
+    for (i = 0; i < jointsData.length; i++) {
+        const jointName = `undoJoint${jointsData[i].id}`
 
-        localStorage.setItem(`${nodeName}_x`, `${nodesData[i].x.toFixed(3)}`)
-        localStorage.setItem(`${nodeName}_y`, `${nodesData[i].y.toFixed(3)}`)
+        localStorage.setItem(`${jointName}_x`, `${jointsData[i].x.toFixed(3)}`)
+        localStorage.setItem(`${jointName}_y`, `${jointsData[i].y.toFixed(3)}`)
     }
     for (i = 0; i < synthPoints.length; i++) {
         const pointName = `undoPoint${synthPoints[i].id}`
@@ -227,11 +217,11 @@ function saveUndoNodes() {
 function undoRedo() {
     
     if (undoStatus) {
-        for (i = 0; i < nodesData.length; i++) {
-            const nodeName = `tempNode${nodesData[i].id}`
+        for (i = 0; i < jointsData.length; i++) {
+            const jointName = `tempJoint${jointsData[i].id}`
 
-            localStorage.setItem(`${nodeName}_x`, `${nodesData[i].x.toFixed(3)}`)
-            localStorage.setItem(`${nodeName}_y`, `${nodesData[i].y.toFixed(3)}`)
+            localStorage.setItem(`${jointName}_x`, `${jointsData[i].x.toFixed(3)}`)
+            localStorage.setItem(`${jointName}_y`, `${jointsData[i].y.toFixed(3)}`)
         }
         for (i = 0; i < synthPoints.length; i++) {
             const pointName = `tempPoint${synthPoints[i].id}`
@@ -240,12 +230,12 @@ function undoRedo() {
             localStorage.setItem(`${pointName}_y`, `${synthPoints[i].y.toFixed(3)}`)
         }
 
-        for (i = 0; i < nodesData.length; i++) {
-            const nodeName = `undoNode${nodesData[i].id}`
+        for (i = 0; i < jointsData.length; i++) {
+            const jointName = `undoJoint${jointsData[i].id}`
 
-            if (localStorage.getItem(`${nodeName}_x`) !== null) {
-                nodesData[i].x = Number(localStorage.getItem(`${nodeName}_x`))
-                nodesData[i].y = Number(localStorage.getItem(`${nodeName}_y`))
+            if (localStorage.getItem(`${jointName}_x`) !== null) {
+                jointsData[i].x = Number(localStorage.getItem(`${jointName}_x`))
+                jointsData[i].y = Number(localStorage.getItem(`${jointName}_y`))
             }
         }
         for (i = 0; i < synthPoints.length; i++) {
@@ -258,12 +248,12 @@ function undoRedo() {
         }
 
     } else {
-        for (i = 0; i < nodesData.length; i++) {
-            const nodeName = `tempNode${nodesData[i].id}`
+        for (i = 0; i < jointsData.length; i++) {
+            const jointName = `tempJoint${jointsData[i].id}`
 
-            if (localStorage.getItem(`${nodeName}_x`) !== null) {
-                nodesData[i].x = Number(localStorage.getItem(`${nodeName}_x`))
-                nodesData[i].y = Number(localStorage.getItem(`${nodeName}_y`))
+            if (localStorage.getItem(`${jointName}_x`) !== null) {
+                jointsData[i].x = Number(localStorage.getItem(`${jointName}_x`))
+                jointsData[i].y = Number(localStorage.getItem(`${jointName}_y`))
             }
         }
         for (i = 0; i < synthPoints.length; i++) {
@@ -276,12 +266,12 @@ function undoRedo() {
         }
     }
 
-    // synthPoints[0].x = getNode("BC").x
-    // synthPoints[0].y = getNode("BC").y
+    // synthPoints[0].x = getJoint("BC").x
+    // synthPoints[0].y = getJoint("BC").y
 
-    saveNodes()
-    updateTNodes()
-    setLinkNodes()
+    savePoints()
+    updateTPoints()
+    setLinkPoints()
     updateOpenCrossed()
     updateTrace()
     updateLinkGeometry();
