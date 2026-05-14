@@ -272,15 +272,28 @@ function updateLinkGeometry() {
         .attr("cx", d => d.x)
         .attr("cy", d => d.y)
         .attr("fill", d3.interpolateRgb("darkgreen","white")(whtnColor*2))
-        .style("display", nodeMode || cuspMode ? d => d.display : "none")
+        // .style("display", nodeMode ? d => d.display : "none")
+        .style("display", nodeMode ? "block" : "none")
+        .attr("opacity", d => d.display === "block" ? 1 : 0.25)
     synthDrag
         // .attr("cx", d => d.x)
         // .attr("cy", d => d.y)
         .attr("d", d => drawConcentricCircles(d.x, d.y, d.rings))
         .attr("fill", fgColor)
         .attr("stroke", fgColor)
-        .style("display", nodeMode || cuspMode ? d => d.display : "none")
+        // .style("display", nodeMode ? d => d.display : "none")
+        .style("display", nodeMode ? "block" : "none")
+        .attr("stroke-opacity", d => d.display === "block" ? 0.25 : 0.05)
+        .attr("stroke-width", d => d.display === "block" ? 2 : 1)
+        // .attr("stroke-dasharray", d => d.display === "block" ? "none" : "2,3")
+        // .style("pointer-events", d => d.display === "block" ? "auto" : "none")
 
+    // getFocusPoint(true)
+    // focusDot
+    //     .attr("cx", focusPoint.x)
+    //     .attr("cy", focusPoint.y)
+    // getE2(synthPointCount < 2)
+        
     // intersectionDot
     //     .attr("cx", getLinesIntersection(getJoint("B"),getJoint("A"),getJoint("C"),getJoint("D"))[0])
     //     .attr("cy", getLinesIntersection(getJoint("B"),getJoint("A"),getJoint("C"),getJoint("D"))[1])
@@ -298,12 +311,12 @@ function updateLinkGeometry() {
     //     .attr("y2", synthPoints[0].y)
     //     .attr("stroke", fgColor)
     // kFCircle
-    //     // .attr("cx", getCircle3Points(
-    //     //     getJoint("A"), getJoint("D"), synthPoints[0])[0])
-    //     // .attr("cy", getCircle3Points(
-    //     //     getJoint("A"), getJoint("D"), synthPoints[0])[1])
-    //     // .attr("r", getCircle3Points(
-    //     //     getJoint("A"), getJoint("D"), synthPoints[0])[2]/2)
+    //     .attr("cx", getCircle3Points(
+    //         getJoint("A"), getJoint("D"), focusPoint)[0])
+    //     .attr("cy", getCircle3Points(
+    //         getJoint("A"), getJoint("D"), focusPoint)[1])
+    //     .attr("r", getCircle3Points(
+    //         getJoint("A"), getJoint("D"), focusPoint)[2]/2)
     //     .attr("stroke", fgColor)
     // ADCircle
     //     .attr("cx", getCircle2Points(getJoint("A"), getJoint("D"))[0])
@@ -329,25 +342,23 @@ function updateLinkGeometry() {
     //         ${angDEC.toFixed(1)} \n<br>
     // `
 
-
-
     // updateLinkageConfig()
     updateOpenCrossed()
     updateInputLimits()
     updateOutputLimits()
 
     openCrossedButton
-        .attr("fill-opacity", nodeMode || cuspMode ? 0.25 : 0.75)
-        .attr("stroke-opacity", nodeMode || cuspMode ? 0.25 : 0.75)
-        .style("pointer-events", nodeMode || cuspMode ? "none" : "auto")
-    openCrossedIcon.attr("opacity", nodeMode || cuspMode ? 0.25 : 1)
+        .attr("fill-opacity", nodeMode ? 0.25 : 0.75)
+        .attr("stroke-opacity", nodeMode ? 0.25 : 0.75)
+        .style("pointer-events", nodeMode ? "none" : "auto")
+    openCrossedIcon.attr("opacity", nodeMode ? 0.25 : 1)
 
-    synthPlusButton
-        .style("display", cuspMode ? "block" : "none")
-        .attr("x", buttonMargin*5 + buttonHeight*4 + (cuspMode ? buttonHeight+buttonMargin : 0))
-    synthPlusIcon
-        .style("display", cuspMode ? "block" : "none")
-        .attr("x", buttonHeight/2 + buttonMargin*5 + buttonHeight*4 + (cuspMode ? buttonHeight+buttonMargin : 0))
+    synthCycleButton
+        .style("display", nodeMode ? "block" : "none")
+        // .attr("x", buttonMargin*5 + buttonHeight*4 + (nodeMode ? buttonHeight+buttonMargin : 0))
+    synthCycleIcon
+        .style("display", nodeMode ? "block" : "none")
+        // .attr("x", buttonHeight/2 + buttonMargin*5 + buttonHeight*4 + (nodeMode ? buttonHeight+buttonMargin : 0))
 
 
     crossoverIcon
@@ -372,8 +383,6 @@ function updateLinkGeometry() {
 
     nodeModeIcon
         .attr("opacity", nodeMode ? 1 : 0.5)
-    // cuspModeIcon
-    //     .attr("opacity", cuspMode ? 1 : 0.5)
 
     nodeModeMenu.style("display", nodeMode ? "block" : "none")
     nodeModeCrunodeLabel.style("display", nodeMode ? "block" : "none")
@@ -404,19 +413,7 @@ function updateLinkGeometry() {
     //     .attr("x2", getJoint("B").x)
     //     .attr("y2", getJoint("B").y)
 
-    // const synthAng = synthPoints.find(p=>p.id === activeSynthPoint).inAng
-
-    // let msg = ``
-    // if (synthAng > inputLimits.max || synthAng < inputLimits.min) {
-    //     msg = msg + "out of bounds"
-    // }
-
-    // document.getElementById("debugOutputs").innerHTML = `
-    //     ${synthAng.toFixed(1)} \n<br>
-    //     ${msg}
-    // `
-    //     ${synthAng.toFixed(1)} \n<br>
-    // `
+    // document.getElementById("debugOutputs").innerHTML = `${synthSolution}`
 }
 
 function updateTrace(alt=true, oc=linkageOpen) {
@@ -493,7 +490,7 @@ function updateTrace(alt=true, oc=linkageOpen) {
                 nodeBC.allPoints.push(newBC)
             }
         }
-        if ((nodeMode || cuspMode || showGhostTrace) && !linkageOpen && inputClass === "Crank") altTraceData.points.push(newBC)
+        if ((nodeMode || showGhostTrace) && !linkageOpen && inputClass === "Crank") altTraceData.points.push(newBC)
     }
     // document.getElementById("debugOutputs").innerHTML = dbgtxt
 
@@ -534,7 +531,7 @@ function updateTrace(alt=true, oc=linkageOpen) {
                 nodeDC.allPoints.push(newDC)
             }
         }
-        if ((nodeMode || cuspMode || showGhostTrace) && linkageOpen && inputClass === "Crank") {
+        if ((nodeMode || showGhostTrace) && linkageOpen && inputClass === "Crank") {
             altTraceData.points.push(newBC)
         }
     }
@@ -599,7 +596,7 @@ function updateTrace(alt=true, oc=linkageOpen) {
     }
 
     // Show unreachable coupler curve regions - Rocker-Crank
-    if ((nodeMode || cuspMode  || showGhostTrace) && inputClass === "Rocker" && outputClass === "Crank"){//(inputClass === "Crank" || outputClass === "Crank") && outputClass !== "Rocker") {
+    if ((nodeMode || showGhostTrace) && inputClass === "Rocker" && outputClass === "Crank"){//(inputClass === "Crank" || outputClass === "Crank") && outputClass !== "Rocker") {
         let swapped = false
         let alt_angleStep = 0
         if (inputClass === "Rocker" && outputClass === "Crank") {
@@ -632,11 +629,9 @@ function updateTrace(alt=true, oc=linkageOpen) {
     }
 
     // Show unreachable coupler curve regions - Double Rocker
-    if ((nodeMode || cuspMode  || showGhostTrace) && (inputClass === "Rocker" && outputClass === "Rocker")) {
+    if ((nodeMode || showGhostTrace) && (inputClass === "Rocker" && outputClass === "Rocker")) {
         let swapped = false
         invertLinkage()
-        updateOpenCrossed()
-        updateInputLimits()
         in_startAngle = inputLimits.min
         in_endAngle = inputLimits.max
         in_angleStep = (in_endAngle-in_startAngle)/traceSteps
@@ -672,8 +667,6 @@ function updateTrace(alt=true, oc=linkageOpen) {
 
         if (swapped) {
             invertLinkage()
-            updateOpenCrossed()
-            updateInputLimits()
         }
     }
 

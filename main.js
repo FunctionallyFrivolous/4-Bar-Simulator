@@ -23,24 +23,22 @@
         // Animation direction? Meh
     // Synthesis Methods
         // Cognates - DONE!
-        // Nodes - DONE!
-            // Multi-nodes?
-            // Show locations of joint B & C of the node solution pair
-                // Eventually: Drag these to dictate the input (or output?) angle (OR, just use angle input to drive B location... probably this, but still could be useful to have this angle visuallized)
+        // Cruodes - DONE!
+            // Multi-crunodes
         // Cusps
             // One cusp - DONE!
             // Two cusps - DONE!
             // Three cusps
-            // Improve:
-                // Should be able to drag main joints when E2 active
-                    // Snap to E1 angle...
-                    // For fixed joints, drag joint as normal
-                    // For mobile joints, adjust relevant link lengths based on drag distance
-                // Should be able to modify E points after cognate cycle
-                    // Maybe requires cycling back to original cognate, making adjustment, then returning to final cognate?
-                    // Or somehow change the logic/behavior of cuspmode to account for cognate variants...
-                // Also should be able to modify E points after in/out swap
-                    // Swap back, then make mods, then swap fwd
+        // Show ghost nodes?
+            // For un-used nodes, automatically move them to indicate the three nodes of the current config
+            // Then when activated, these can be dragged to select desired node positions
+        // Alt Solutions - Nodes
+            // A given nodes config has multiple solutions (namely A & D locations)
+            // Need/want a way to explore each solution
+            // Also want to automatically find the "nearest" solution (i.e. the solution config that look most like the current config)
+                // Minimize error of... link lengths or A & D positions?
+                    // A & D positions is probably most relevant / higher priority
+        // For both of above, need to calc the C0 point (singular focus)
         // Symmetric Coupler Curves
     // Scale Linkage
         // Scale all link lengths uniformly
@@ -107,12 +105,11 @@ let synthModeInputAngle = 0
 let synthModeOpen = linkageOpen
 let synthModeTempAngle = 0
 let synthModeTempOpen = linkageOpen
-let synthCycle = 0
+let synthSolution = 1
 let synthPointCount = 0
-let activeSynthPoint = "E1"
+let activeSynthPoint = null
 let synthPointSnap = true
 let nodeMode = false
-let cuspMode = false
 
 const traceStepsCoarse = 1000
 const traceStepsFine = 4000
@@ -150,9 +147,6 @@ function viewTransform() {
         scale(${currentZoomTransform.k})
     `;
     zoomGroup.attr("transform", `${zoom}`);
-    // fitViewButton
-    //     .attr("fill-opacity", 0)
-    //     .attr("stroke-opacity", 0.25)
     localStorage.setItem("trans_x", `${currentZoomTransform.x}`)
     localStorage.setItem("trans_y", `${currentZoomTransform.y}`)
     localStorage.setItem("scale", `${currentZoomTransform.k}`)
@@ -223,18 +217,13 @@ const swapInOutIcon = overlayGroup.append("text")
 // const invertLinkageIcon = overlayGroup.append("text")
 const nodeModeButton = overlayGroup.append("rect")
 const nodeModeIcon = overlayGroup.append("text")
-// const cuspModeButton = overlayGroup.append("rect")
-// const cuspModeIcon = overlayGroup.append("path")
-const synthPlusButton = overlayGroup.append("rect")
-const synthPlusIcon = overlayGroup.append("text")
+const synthCycleButton = overlayGroup.append("rect")
+const synthCycleIcon = overlayGroup.append("text")
 
 const nodeModeMenuGroup = overlayGroup.append("g")
 // const nodeModeMenu = nodeModeMenuGroup.selectAll("path")
 const nodeModeCuspLabel = overlayGroup.append("path")
 const nodeModeCrunodeLabel = overlayGroup.append("text")
-
-// const synthModeCycleButton = overlayGroup.append("rect")
-// const synthModeCycleIcon = overlayGroup.append("text")
 
 const inputLinkVal = overlayGroup.append("text")
 const inputLinkProps = overlayGroup.append("text")
@@ -282,6 +271,14 @@ const outputCircle = zoomGroup.append("circle")
     .attr("fill", "none")
     .attr("stroke-width", 0.5)
     .style("pointer-events", "none")
+
+// const focusPoint = {id: "F", x: 0, y: 0}
+// const focusDot = zoomGroup.append("circle")
+//     .attr("cx", focusPoint.x)
+//     .attr("cy", focusPoint.y)
+//     .attr("r", 5)
+//     .attr("fill", "white")
+
 
 const buttonHeight = 30;
 const buttonMargin = 5

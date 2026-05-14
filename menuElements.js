@@ -14,12 +14,11 @@ openCrossedButton
     .on("click", function() {
         saveUndoPoints()
         nodeMode = false
-        cuspMode = false
-        // synthModeCycleButton
+        // synthCycleButton
         //     .style("display", "none")
-        // synthModeCycleIcon
+        // synthCycleIcon
         //     .style("display", "none")
-        synthCycle = 0
+        // synthSolution = 1
         toggleOpenCrossed()
         savePoints()
     })
@@ -244,7 +243,7 @@ cognateButton
     .attr("stroke-width", 1)
     .attr("stroke-opacity", 0.75)
     .on("click", function() {
-        if (nodeMode || cuspMode) {
+        if (nodeMode) {
             // linkageOpen = synthModeOpen
             // doActuate(getNetAngle(linkToCoord(synthPoints[0].inAng,"angle")))
             cycleCognates()
@@ -289,14 +288,14 @@ resetLinkageButton
     .attr("stroke-opacity", 0.75)
     .on("click", function() {
         nodeMode = false
-        cuspMode = false
+        synthSolution = 1
+        synthPointCount = 0
         for (i = 0; i < synthPoints.length; i++) {
             synthPoints[i].display = "none"
         }
         for (i = 0; i < nodeModeTable.length; i++){
             nodeModeTable[i].active = false
         }
-        synthCycle = 0
         defaultLinkage()
         fitView(500)
     })
@@ -383,12 +382,11 @@ swapInOutButton
         savePoints()
         updateLinkGeometry()
         // nodeMode = false
-        // cuspMode = false
-        // synthModeCycleButton
+        // synthCycleButton
         //     .style("display", "none")
-        // synthModeCycleIcon
+        // synthCycleIcon
         //     .style("display", "none")
-        synthCycle = 0
+        // synthSolution = 1
         updateTrace(false)
         updateLinkGeometry()
     })
@@ -427,8 +425,7 @@ swapInOutIcon
 //         updateTrace()
 //         updateLinkGeometry()
 //         // nodeMode = false
-//         // cuspMode = false
-//         // synthCycle = 0
+//         // synthSolution = 1
 //         updateTrace(false)
 //         updateLinkGeometry()
 //     })
@@ -462,9 +459,9 @@ nodeModeButton
     .attr("stroke-width", 1)
     .attr("stroke-opacity", 0.75)
     .on("click", function() {
+        activeSynthPoint = synthPoints[0]
         invertStatus = false
         swapStatus = false
-        cuspMode = false
         nodeMode = !nodeMode
         synthPointCount = nodeMode ? 1 : 0
         for (i = 0; i < synthPoints.length; i++) {
@@ -506,109 +503,50 @@ nodeModeIcon
     .style("pointer-events", "none")
     .text("⌘") // ⌘ , ↫ , ⅏
 
-// cuspModeButton
-//     .attr("x", buttonMargin*6 + buttonHeight*5)
-//     .attr("y", windowHeight-buttonMargin-buttonHeight)
-//     .attr("width", buttonHeight)
-//     .attr("height", buttonHeight)
-//     .attr("rx", 5)
-//     .attr("ry", 5)
-//     .attr("fill", "lightgray")
-//     .attr("fill-opacity", 0.75)
-//     .attr("stroke", "black")
-//     .attr("stroke-width", 1)
-//     .attr("stroke-opacity", 0.75)
-//     .on("click", function() {
-//         invertStatus = false
-//         swapStatus = false
-//         nodeMode = false
-//         cuspMode = !cuspMode
-//         activeSynthPoint = "E1"
-//         synthPointCount = cuspMode ? 1 : 0
-//         for (i = 0; i < synthPoints.length; i++) {
-//             synthPoints[i].display = i < synthPointCount ? "block" : "none"
-//         }
+synthCycleButton
+    .attr("x", buttonMargin*5 + buttonHeight*4)
+    .attr("y", windowHeight-buttonMargin-buttonHeight*2)
+    .attr("width", buttonHeight)
+    .attr("height", buttonHeight)
+    .attr("rx", 5)
+    .attr("ry", 5)
+    .attr("fill", fgColor)
+    .attr("fill-opacity", 0.0)
+    .on("click", function(event, d) {
+        if (!nodeMode) return
+        if (synthSolution < 12) synthSolution++
+        else synthSolution = 1
 
-//         synthPoints[0].x = getJoint("BC").x
-//         synthPoints[0].y = getJoint("BC").y
+        // if (synthPointCount >= 2) synthPointCount--
+        // else synthPointCount++
+        // doActuate(getNetAngle(linkToCoord(synthPoints[0].inAng,"angle")))
+        // for (i = 0; i < synthPoints.length; i++) {
+        //     synthPoints[i].display = i < synthPointCount ? "block" : "none"
+        // }
 
-//         pathCuspSynth()
-//         updateLinkGeometry()
-//         updateTrace()
-//         updateLinkGeometry()
-//         savePoints()
-//     })
-// const cuspModeToolTip = cuspModeButton
-//     .append("title")
-//     .text("Cusp Mode")
+        pathNodeModeSynth(nodeMode)
+        setLinkPoints()
+        updateTrace()
+        updateLinkGeometry()
+    })
+const synthCycleToolTip = synthCycleButton
+    .append("title")
+    .text("Reverse Actuation Direction")
 
-// // cuspModeIcon
-// //     .attr("x", buttonMargin*8 + buttonHeight*7 + buttonHeight/2)
-// //     .attr("y", windowHeight-buttonHeight/2-buttonMargin)
-// //     .attr("font-size", "20pt")
-// //     .attr("font-family", "sans-serif")
-// //     .attr("font-weight", "bold")
-// //     .attr("text-anchor", "middle")
-// //     .attr("alignment-baseline", "middle")
-// //     .attr("dy", "0.1em")
-// //     .style("pointer-events", "none")
-// //     .text("⯏") //⎎ , ⥿ , ⯏ , ⯎
-
-// cuspModeIcon// = overlayGroup.append("path")
-//     .attr("stroke", "black")
-//     .attr("stroke-width", 2)
-//     .attr("fill", "none")
-//     .attr("d", 
-//         drawCuspIcon(
-//             buttonMargin*6 + buttonHeight*5+ buttonHeight/2,
-//             windowHeight-buttonHeight/2-buttonMargin
-//         )
-//         // drawCrossoverIcon()
-//     )
-//     .style("pointer-events", "none")
-
-// synthPlusButton
-//     .attr("x", buttonMargin*6 + buttonHeight*5)
-//     .attr("y", windowHeight-buttonMargin-buttonHeight*2)
-//     .attr("width", buttonHeight)
-//     .attr("height", buttonHeight)
-//     .attr("rx", 5)
-//     .attr("ry", 5)
-//     .attr("fill", fgColor)
-//     .attr("fill-opacity", 0.0)
-//     .on("click", function(event, d) {
-//         if (!nodeMode && !cuspMode) return
-//         if (synthPointCount >= 2) synthPointCount--
-//         else synthPointCount++
-//         doActuate(getNetAngle(linkToCoord(synthPoints[0].inAng,"angle")))
-//         for (i = 0; i < synthPoints.length; i++) {
-//             synthPoints[i].display = i < synthPointCount ? "block" : "none"
-//         }
-//         // pathCuspSynth(cuspMode)
-//         // pathCrunodeSynth(nodeMode)
-//         pathNodeModeSynth(nodeMode||cuspMode)
-//         setLinkPoints()
-//         updateTrace()
-//         updateLinkGeometry()
-//     })
-// const synthPlusToolTip = synthPlusButton
-//     .append("title")
-//     .text("Reverse Actuation Direction")
-
-// synthPlusIcon
-//     .attr("x", buttonHeight/2 + buttonMargin*6 + buttonHeight*5)
-//     .attr("y", windowHeight-buttonMargin-buttonHeight*1.75 + buttonHeight*0.75/2)
-//     .attr("dy", "0.2em")
-//     // .attr("dx", "0.02em")
-//     .attr("fill", fgColor)
-//     // .attr("opacity", 0.25)
-//     .attr("font-size", "19px")
-//     .attr("font-family", "sans-serif")
-//     // .attr("font-weight", "bold")
-//     .attr("text-anchor", "middle")
-//     .attr("alignment-baseline", "middle")
-//     .style("pointer-events", "none")
-//     .text("+") //⟲
+synthCycleIcon
+    .attr("x", buttonHeight/2 + buttonMargin*5 + buttonHeight*4)
+    .attr("y", windowHeight-buttonMargin-buttonHeight*1.75 + buttonHeight*0.75/2)
+    .attr("dy", "0.075em")
+    // .attr("dx", "0.02em")
+    .attr("fill", fgColor)
+    // .attr("opacity", 0.25)
+    .attr("font-size", "19px")
+    .attr("font-family", "sans-serif")
+    // .attr("font-weight", "bold")
+    .attr("text-anchor", "middle")
+    .attr("alignment-baseline", "middle")
+    .style("pointer-events", "none")
+    .text("⟲") //⟲, ⥁ , ↻ , ⟳
 
 // Symbols:
     // Function generation: ⦡ , ⌔
@@ -693,53 +631,6 @@ function drawFitIcon(x, y) {
     return snapPath
 }
 
-// synthModeCycleButton
-//     .attr("x", buttonMargin*6 + buttonHeight*5)
-//     .attr("y", windowHeight-buttonMargin-buttonHeight*2)
-//     .attr("width", buttonHeight)
-//     .attr("height", buttonHeight)
-//     .attr("rx", 5)
-//     .attr("ry", 5)
-//     .attr("fill", fgColor)
-//     .attr("fill-opacity", 0.0)
-//     .style("display", "none")
-//     .on("click", function() {
-//         synthCycle++
-//         if (nodeMode) {
-//             pathCrunodeSynth(true)
-//             updateLinkGeometry()
-//             updateTrace()
-//             updateLinkGeometry()
-//             savePoints()
-//         }
-//         // if (cuspMode) {
-//         //     pathCuspSynth()
-//         //     updateLinkGeometry()
-//         //     updateTrace()
-//         //     updateLinkGeometry()
-//         //     savePoints()
-//         // }
-//     })
-// const synthModeCycleToolTip = synthModeCycleButton
-//     .append("title")
-//     .text("Cycle Alt Configs")
-
-// synthModeCycleIcon
-//     .attr("x", buttonMargin*6 + buttonHeight*5 + buttonHeight/2)
-//     .attr("y", windowHeight-buttonMargin-buttonHeight*1.75 + buttonHeight*0.75/2)
-//     .attr("dy", "0.075em")
-//     .attr("dx", "0.02em")
-//     .attr("font-size", "14pt")
-//     .attr("font-family", "sans-serif")
-//     .attr("font-weight", "bold")
-//     .attr("text-anchor", "middle")
-//     .attr("fill", fgColor)
-//     .attr("alignment-baseline", "middle")
-//     .style("pointer-events", "none")
-//     .style("display", "none")
-//     .text("↻") // ⥁ , ↻ , ⟳
-
-
 // NODE MODE MENU
 const nodeMenuCol1 = 23
 const nodeMenuColPitch = 38
@@ -763,11 +654,11 @@ const nodeModeMenu = nodeModeMenuGroup.selectAll("path")
     .attr("d", d => drawConcentricCircles(d.x, d.y, d.rings, 14))
     .attr("fill-opacity", 0)
     .attr("stroke-width", 1.25)
-    .attr("stroke-opacity", 0.1)
+    // .attr("stroke-opacity", 0.1)
     .attr("stroke", fgColor)
     .style("display", "none")
     .on("click", function (event, d) {
-        snapToSynthPoint(activeSynthPoint)
+        snapToSynthPoint("E1")
         const thisNode = synthPoints.find(p=>p.id === d.id.slice(0,2))
         const nodeNum = thisNode.id[1]
         const nodeType = d.id.substring(d.id.indexOf("_")+1)

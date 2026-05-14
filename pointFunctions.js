@@ -161,6 +161,47 @@ function getMidPoint(startPoint, endPoint) {
     return midPoint
 }
 
+function getFocusPoint(place=false){
+    const pointA = getJoint("A")
+    const pointD = getJoint("D")
+    const pointB = getJoint("B")
+    const pointC = getJoint("C")
+    const pointE = getJoint("BC")
+
+    const angleBCE = getJointsAngle(pointD,pointA) - getAngleBtwPoints(pointB, pointE, pointC)
+    const distDF = getDistBtwPoints(pointC,pointE)/getDistBtwPoints(pointB,pointC) * getDistBtwPoints(pointA,pointD)
+
+    const pointF = placePointPolar(focusPoint, pointD, angleBCE, distDF,place)
+
+    return pointF
+}
+
+function getE2(place=false) {
+    const pointE1 = getJoint("B")//synthPoints[0]
+    const pointE2 = synthPoints[1]
+    const pointA = getJoint("A")
+    const pointD = getJoint("D")
+    const pointF = getFocusPoint()
+
+    const distDE1 = getDistBtwPoints(pointD,pointE1)
+
+    const circADF = getCircle3Points(pointA,pointD,pointF)
+    const circCenter = {x: circADF[0], y: circADF[1]}
+
+    const angleDE1 = getJointsAngle(pointD,pointE1)
+    const angleDcirc = getJointsAngle(pointD,circCenter)
+    const angle_centerDE1 = getAngleBtwPoints(pointE1,circCenter,pointD)
+
+    const newE2 = placePointPolar(pointE2,pointD,angleDcirc,circADF[2],place)
+
+    document.getElementById("debugOutputs").innerHTML = `
+            ${angle_centerDE1.toFixed(1)} \n<br>
+            ${angleDcirc.toFixed(1)} \n<br>
+    `
+
+    return newE2
+}
+
 function savePoints() {
     for (i = 0; i < jointsData.length; i++) {
         const jointName = `joint${jointsData[i].id}`
@@ -276,4 +317,9 @@ function undoRedo() {
     updateTrace()
     updateLinkGeometry();
     undoStatus = !undoStatus
+}
+
+function checkPointsCoincident(point1, point2){
+    const coincident = Math.abs(point1.x - point2.x) < limitThreshold && Math.abs(point1.y - point2.y) < limitThreshold
+    return coincident
 }

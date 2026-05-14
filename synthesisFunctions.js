@@ -1,5 +1,5 @@
 
-function swapInputOutput(updateNodes=true) {
+function swapInputOutput() {
     const nodeA = getJoint("A")
     const nodeB = getJoint("B")
     const nodeAB = getJoint("AB")
@@ -48,6 +48,9 @@ function invertLinkage() {
 
     setLinkPoints()
     tPointFollow()
+    updateOpenCrossed()
+    updateInputLimits()
+    updateOutputLimits()
 }
 
 function cycleCognates() {
@@ -110,7 +113,7 @@ function pathCrunodeSynth(doit=false, cDrag=false) {
         altTraceData.points = []
         return
     }
-    if (synthCycle === 4) synthCycle = 0
+    if (synthSolution === 13) synthSolution = 1
 
     getLinkByType("coupler").tSnap = false
 
@@ -153,18 +156,8 @@ function pathCrunodeSynth(doit=false, cDrag=false) {
 }
 
 function pathNodeModeSynth(doit=true) {
-    if (!nodeMode && !cuspMode) return
-    // let nodeConfig = []
-    // let indx = 0
-    // for (i = 0; i < synthPoints.length; i++) {
-    //     // if (synthPoints[i].type !== "none") {
-    //         nodeConfig[indx] = synthPoints[i].type
-    //         indx++
-    //     // }
-    // }
-    // document.getElementById("debugOutputs").innerHTML = `
-    //     ${nodeConfig} \n<br>
-    // `
+    if (!nodeMode) return
+
     const nodeE1 = synthPoints.find(n => n.id === "E1")
     if (nodeE1.type === "crunode") pathCrunodeSynth(true)
     else if (nodeE1.type === "cusp") pathCuspSynth(true)
@@ -195,14 +188,14 @@ function mirrorNodeSynth(doit=true) {
 
     placePointPolar(nodeC, nodeE, new_angleEC, EC, doit)
 
-    // setLinkPoints()
+    setLinkPoints()
     // updateTPoints()
     // updateTrace()
     // updateLinkGeometry()
 }
 
 function pathCuspSynth(doit=true) {
-    // if (!cuspMode) return
+    // if (!nodeMode) return
 
     setLinkPoints()
 
@@ -219,10 +212,11 @@ function pathCuspSynth(doit=true) {
     let inputLength = linkToCoord(getLinkByType("input").len, "dist")
     const outputLength = linkToCoord(getLinkByType("output").len, "dist")
 
-    let angleAE = getJointsAngle(nodeA, nodeE)// - 180*(Math.floor(synthCycle/2))
+    let angleAE = getJointsAngle(nodeA, nodeE)// - 180*(Math.floor(synthSolution/2))
 
     const inputAng = getJointsAngle(nodeB, nodeA)
     if (Math.abs(angleAE-inputAng) < 90) angleAE = angleAE - 180
+
 
     if (synthPointCount === 2) {
         // const nodeE2 = synthPoints[1]
@@ -264,7 +258,7 @@ function pathCuspSynth(doit=true) {
 
     placePointPolar(nodeB, nodeA, angleAE, inputLength, doit)
 
-    let angleDE = getJointsAngle(nodeD, nodeE)// - 180*synthCycle
+    let angleDE = getJointsAngle(nodeD, nodeE)// - 180*synthSolution
     const outputAng = getJointsAngle(nodeC, nodeD)
     if (Math.abs(angleDE-outputAng) < 90) angleDE = angleDE - 180
 
@@ -301,11 +295,7 @@ function snapToSynthPoint(point="E1") {
 
     if (synthPoint.inAng > inputLimits.max || synthPoint.inAng < inputLimits.min) {
         invertLinkage()
-        // document.getElementById("debugOutputs").innerHTML = `inverted`
         inverted = true
-        updateOpenCrossed()
-        updateInputLimits()
-        updateOutputLimits()
     }
     linkageOpen = synthPoint.isOpen
     doActuate(getNetAngle(linkToCoord(synthPoint.inAng,"angle")))

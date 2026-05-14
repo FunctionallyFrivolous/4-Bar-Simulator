@@ -85,17 +85,16 @@ const linkLines = linkLineGroup.selectAll("polygon")
             synthModeTempAngle = inputAngle
             synthModeTempOpen = linkageOpen
 
-            const activePoint = synthPoints.find(p => p.id === activeSynthPoint)
-            if (Math.abs(activePoint.x-getJoint("BC").x) < limitThreshold && Math.abs(activePoint.y-getJoint("BC").y) < limitThreshold) {
+            if (checkPointsCoincident(activeSynthPoint,getJoint("BC"))) {
                 synthPointSnap = true
             } else synthPointSnap = false
         })
         .on("drag", function(event, d) {
-            const activePoint = synthPoints.find(p => p.id === activeSynthPoint)
             let inverted = null
 
             if (nodeMode && d.type !== "input"){
                 if(Math.abs(getJoint("BC").x-synthPoints[0].x) > limitThreshold && Math.abs(getJoint("BC").y-synthPoints[0].y) > limitThreshold) {
+                    if (d.id === "BC") return
                     inverted = snapToSynthPoint("E1")
                 }
             }
@@ -163,31 +162,25 @@ const linkLines = linkLineGroup.selectAll("polygon")
                 pathNodeModeSynth(nodeMode)
 
                 if (nodeMode && synthPoints[0].type !== "crunode") {
-                let revertAngle = activePoint.inAng
+                    let revertAngle = activeSynthPoint.inAng
 
-                // Snap back to the input angle from before the drag event
-                if (synthPointSnap) {
-                    if (inverted || revertAngle > inputLimits.max || revertAngle < inputLimits.min) { // If the linkage was previously inverted, revert it
-                        invertLinkage()
-                        updateOpenCrossed()
-                        updateInputLimits()
-                        updateOutputLimits()
+                    // Snap back to the input angle from before the drag event
+                    if (synthPointSnap) {
+                        if (inverted || revertAngle > inputLimits.max || revertAngle < inputLimits.min) { // If the linkage was previously inverted, revert it
+                            invertLinkage()
+                        }
+                        linkageOpen = activeSynthPoint.isOpen
+                        doActuate(getNetAngle(linkToCoord(revertAngle,"angle")))
+                    } else {
+                        if (inverted){//  || synthModeTempOpen > inputLimits.max || synthModeTempOpen < inputLimits.min) {
+                            // If we include limits ^, the coupler point can jump to other loop when dragging casuses it to reach a limit...
+                            // If we exclude limits ^, the coupler point will jump to other loop if it gets pinched off from active point...
+                            invertLinkage()
+                        }
+                        linkageOpen = synthModeTempOpen
+                        doActuate(getNetAngle(linkToCoord(synthModeTempAngle,"angle")))
                     }
-                    linkageOpen = activePoint.isOpen
-                    doActuate(getNetAngle(linkToCoord(revertAngle,"angle")))
-                } else {
-                    if (inverted){//  || synthModeTempOpen > inputLimits.max || synthModeTempOpen < inputLimits.min) {
-                        // If we include limits ^, the coupler point can jump to other loop when dragging casuses it to reach a limit...
-                        // If we exclude limits ^, the coupler point will jump to other loop if it gets pinched off from active point...
-                        invertLinkage()
-                        updateOpenCrossed()
-                        updateInputLimits()
-                        updateOutputLimits()
-                    }
-                    linkageOpen = synthModeTempOpen
-                    doActuate(getNetAngle(linkToCoord(synthModeTempAngle,"angle")))
                 }
-            }
                 
                 setLinkPoints()
                 updateTrace()
@@ -260,13 +253,12 @@ const nodeDrag = nodeDragGroup.selectAll("cirlce")
             synthModeTempAngle = inputAngle
             synthModeTempOpen = linkageOpen
 
-            const activePoint = synthPoints.find(p => p.id === activeSynthPoint)
-            if (Math.abs(activePoint.x-getJoint("BC").x) < limitThreshold && Math.abs(activePoint.y-getJoint("BC").y) < limitThreshold) {
+            if (checkPointsCoincident(activeSynthPoint,getJoint("BC"))) {
                 synthPointSnap = true
             } else synthPointSnap = false
         })
         .on("drag", function(event, d) {
-            const activePoint = synthPoints.find(p => p.id === activeSynthPoint)
+            
             let inverted = null
             if (nodeMode){
                 if (d.id === "BC") return
@@ -293,26 +285,20 @@ const nodeDrag = nodeDragGroup.selectAll("cirlce")
             pathNodeModeSynth(nodeMode)
 
             if (nodeMode && synthPoints[0].type !== "crunode") {
-                let revertAngle = activePoint.inAng
+                let revertAngle = activeSynthPoint.inAng
 
                 // Snap back to the input angle from before the drag event
                 if (synthPointSnap) {
                     if (inverted || revertAngle > inputLimits.max || revertAngle < inputLimits.min) { // If the linkage was previously inverted, revert it
                         invertLinkage()
-                        updateOpenCrossed()
-                        updateInputLimits()
-                        updateOutputLimits()
                     }
-                    linkageOpen = activePoint.isOpen
+                    linkageOpen = activeSynthPoint.isOpen
                     doActuate(getNetAngle(linkToCoord(revertAngle,"angle")))
                 } else {
                     if (inverted){//  || synthModeTempOpen > inputLimits.max || synthModeTempOpen < inputLimits.min) {
                         // If we include limits ^, the coupler point can jump to other loop when dragging casuses it to reach a limit...
                         // If we exclude limits ^, the coupler point will jump to other loop if it gets pinched off from active point...
                         invertLinkage()
-                        updateOpenCrossed()
-                        updateInputLimits()
-                        updateOutputLimits()
                     }
                     linkageOpen = synthModeTempOpen
                     doActuate(getNetAngle(linkToCoord(synthModeTempAngle,"angle")))
@@ -397,23 +383,18 @@ const synthDrag = synthDragGroup.selectAll("circle")
     .attr("d", d => drawConcentricCircles(d.x, d.y, d.rings))
     .attr("fill-opacity", 0)
     .attr("stroke-width", 2)
+    .style("stroke-linecap", "round")
     .attr("stroke-opacity", 0.25)
     .on("click", function(event, d) {
         // if (!nodeMode) return
-        // if (invertStatus) {
-        //     invertLinkage()
-        //     // mirrorNodeSynth() // ?
-        //     invertStatus = false
-        // }
+        if (d.display === "none") return
         if (swapStatus) {
             swapInputOutput()
-            // mirrorNodeSynth() // ?
-            swapStatus = false
+            // swapStatus = false
         }
         // If BC is at this synth point (and in node mode), mirror the input and output links to the alt solution
-        if (nodeMode && Math.abs(d.x - getJoint("BC").x) < limitThreshold && Math.abs(d.y - getJoint("BC").y) < limitThreshold) {
+        if (nodeMode && checkPointsCoincident(d,getJoint("BC"))) {
             mirrorNodeSynth(true)
-            setLinkPoints()
             tPointFollow()
             updateTrace()
             updateLinkGeometry()
@@ -422,7 +403,12 @@ const synthDrag = synthDragGroup.selectAll("circle")
         // Otherwise, snap to the active point input angle 
         else snapToSynthPoint(d.id)
 
-        activeSynthPoint = d.id
+        if (swapStatus) {
+            swapInputOutput()
+            swapStatus = false
+        }
+
+        activeSynthPoint = synthPoints.find(p => p.id === d.id)
         // d.isOpen = linkageOpen
         recentLimit = "none"
         updateTrace(false)
@@ -436,16 +422,15 @@ const synthDrag = synthDragGroup.selectAll("circle")
             synthModeTempAngle = inputAngle
             synthModeTempOpen = linkageOpen
 
-            const activePoint = synthPoints.find(p => p.id === activeSynthPoint)
-            if (Math.abs(activePoint.x-getJoint("BC").x) < limitThreshold && Math.abs(activePoint.y-getJoint("BC").y) < limitThreshold) {
+            if (checkPointsCoincident(activeSynthPoint,getJoint("BC"))) {
                 synthPointSnap = true
             } else synthPointSnap = false
 
-            synthDrag.attr("fill-opacity", n => n.id === d.id ? 0.1 : 0)
+            // synthDrag.attr("fill-opacity", n => n.id === d.id ? 0.1 : 0)
+            if (d.display === "block") synthDrag.attr("fill-opacity", n => n.id === d.id ? 0.1 : 0)
+            // else synthDots.attr("opacity", n => n.id === d.id ? 1 : 0.05)
         })
         .on("drag", function(event, d) {
-            const activePoint = synthPoints.find(p => p.id === activeSynthPoint)
-
             // First, snap back to E1 position. Keep track of whether the linkage was inverted to get there
             const inverted = snapToSynthPoint("E1")
 
@@ -457,36 +442,27 @@ const synthDrag = synthDragGroup.selectAll("circle")
             getJoint("BC").y = synthPoints[0].y
             
             // Perform the relevant node mode stuff
-            pathNodeModeSynth(nodeMode||cuspMode)
-            // pathCrunodeSynth(nodeMode)
-            // pathCuspSynth(cuspMode)
+            pathNodeModeSynth(nodeMode)
 
             // Snap to the input angle of the active point
-            let revertAngle = activePoint.inAng
+            let revertAngle = activeSynthPoint.inAng
 
             // Snap back to the input angle from before the drag event
             if (synthPointSnap) {
                 if (inverted || revertAngle > inputLimits.max || revertAngle < inputLimits.min) { // If the linkage was previously inverted, revert it
                     invertLinkage()
-                    updateOpenCrossed()
-                    updateInputLimits()
-                    updateOutputLimits()
                 }
-                linkageOpen = activePoint.isOpen
+                linkageOpen = activeSynthPoint.isOpen
                 doActuate(getNetAngle(linkToCoord(revertAngle,"angle")))
             } else {
                 if (inverted){//  || synthModeTempOpen > inputLimits.max || synthModeTempOpen < inputLimits.min) {
                     // If we include limits ^, the coupler point can jump to other loop when dragging casuses it to reach a limit...
                     // If we exclude limits ^, the coupler point will jump to other loop if it gets pinched off from active point...
                     invertLinkage()
-                    updateOpenCrossed()
-                    updateInputLimits()
-                    updateOutputLimits()
                 }
                 linkageOpen = synthModeTempOpen
                 doActuate(getNetAngle(linkToCoord(synthModeTempAngle,"angle")))
             }
-            // doActuate(getNetAngle(linkToCoord(revertAngle,"angle")))
 
             // Update all the things
             setLinkPoints()
@@ -498,6 +474,8 @@ const synthDrag = synthDragGroup.selectAll("circle")
         .on("end", function(event,d) {
             savePoints()
             synthDrag.attr("fill-opacity", 0)
+            // if (d.display === "block") synthDrag.attr("fill-opacity", 0)
+            // else synthDots.attr("opacity", 0.05)
             synthModeTempAngle = inputAngle
         })
     )
