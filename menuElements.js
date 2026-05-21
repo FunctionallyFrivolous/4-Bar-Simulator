@@ -247,6 +247,7 @@ cognateButton
             // linkageOpen = synthModeOpen
             // doActuate(getNetAngle(linkToCoord(synthPoints[0].inAng,"angle")))
             cycleCognates()
+            pathNodeModeSynth()
             setLinkPoints()
             updateOpenCrossed()
             // synthModeOpen = linkageOpen

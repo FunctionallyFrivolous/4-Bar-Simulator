@@ -34,6 +34,9 @@
                         // Potentially work around by not allowing these cases (check calc'd BE or CE)
                             // Revert to previous values if this (or just not placePoint, i.e. doit=false)
                             // Then when drag yields a valid solution, do it
+            // General:
+                // Need to calc input angle for E2 positions...
+                    //
             // Then: Three nodes!
             // Imaginary Nodes?
                 // Constrain/enforce configs to not allow imaginary node cases?

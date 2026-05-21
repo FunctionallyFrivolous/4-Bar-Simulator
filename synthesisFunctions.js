@@ -312,6 +312,7 @@ function pathNodeModeSynth(doit=true,drag="E1") {
             adjPoint = AE2 > DE2 ? pointD : pointA
         }
 
+
         switch (synthPointCount) {
             case 1:
                 update_kFCircle(pointE1, pointA, pointD)
@@ -327,12 +328,11 @@ function pathNodeModeSynth(doit=true,drag="E1") {
         const kF_rad = kFCirc[2]/2
         let angle_kF = getJointsAngle(kF_center, adjPoint)
 
-        // This (below) is actually only valid with two cusps...
-        // if (pointE2.type === "cusp"){
-        //     const point_e12 = getMidPoint(pointE1,pointE2)
-        //     const angle_e12 = getJointsAngle(point_e12,kF_center)
-        //     angle_kF = angle_e12
-        // }
+        const point_e12 = getMidPoint(pointE1,pointE2)
+        const angle_e12 = getJointsAngle(point_e12,kF_center)
+        const angleFixed = angle_e12
+        const moveFixed = AE2 > DE2 ? pointA : pointD
+        placePointPolar(moveFixed, kF_center, angleFixed, kF_rad, (pointE1.type === "cusp" && pointE2.type === "cusp"))
 
         placePointPolar(adjPoint, kF_center, angle_kF, kF_rad, synthPointCount > 1)
         setLinkPoints()
@@ -364,10 +364,14 @@ function pathNodeModeSynth(doit=true,drag="E1") {
     //     overAD: ${overAD} \n<br>
     // `
     // Determine whether to place B & C to new locations
-    const placeC = drag !== "C" && (drag === "B" || (AE2 > DE2 && pointE2.type !== "cusp") || (AE2 < DE2 && pointE2.type === "cusp"))// || (pointE2.type === "cusp"))
+    let placeC = drag !== "C" && (drag === "B" || (AE2 > DE2 && pointE2.type !== "cusp") || (AE2 < DE2 && pointE2.type === "cusp"))// || (pointE2.type === "cusp"))
+    if (pointE1.type === "cusp" && pointE2.type === "cusp"){
+        placeC = AE2 > DE2 ? true : false
+    } 
     // const placeB = !placeC || pointE2.type === "cusp"
 
-
+    document.getElementById("debugOutputs").innerHTML = `${placeC}`
+    
     if (placeC){
         const dragAngle = getAngleBtwPoints(pointA, pointB, pointE1)
 
@@ -380,7 +384,10 @@ function pathNodeModeSynth(doit=true,drag="E1") {
                 if (dragAngle > 90) new_angleE1B = new_angleE1B + 180
             }
             if (pointE2.type === "cusp"){
-                if (overAD) {
+                if (pointE1.type === "cusp" && pointE2.type === "cusp") {
+                    newBE = BE
+                }
+                else if (overAD) {
                     newBE = Math.abs((AE2*AE2 - AE1*AE1)/(2*AE1*Math.cos(degToRad(getAngleBtwPoints(pointA, pointB, pointE1))) + 2*AE2))
                 } else {
                     newBE = (AE1*AE1 - AE2*AE2)/(2*AE1*Math.cos(degToRad(getAngleBtwPoints(pointA, pointB, pointE1))) - 2*AE2)
@@ -444,7 +451,10 @@ function pathNodeModeSynth(doit=true,drag="E1") {
                 if (dragAngle > 90) new_angleE1C = new_angleE1C + 180
             }
             if (pointE2.type === "cusp"){
-                if (overAD) {
+                if (pointE1.type === "cusp" && pointE2.type === "cusp") {
+                    newCE = CE
+                }
+                else if (overAD) {
                     newCE = Math.abs((DE2*DE2 - DE1*DE1)/(2*DE1*Math.cos(degToRad(getAngleBtwPoints(pointD, pointC, pointE1))) + 2*DE2))
                 } else {
                     newCE = (DE1*DE1 - DE2*DE2)/(2*DE1*Math.cos(degToRad(getAngleBtwPoints(pointD, pointC, pointE1))) - 2*DE2)
@@ -492,10 +502,6 @@ function pathNodeModeSynth(doit=true,drag="E1") {
         
 
     }
-
-    // Current task (E2 cusp) requires (or is simplfied by) a restructure of the above logic
-        // Instead of conditionally calcing and placeing new C or new B points, calc all relevant stuff for both and have place functions for each which are conditionally executed
-        // This accomodates cases like E2 cusp where both B and C must be placed
 
     setLinkPoints()
     updateTPoints()
