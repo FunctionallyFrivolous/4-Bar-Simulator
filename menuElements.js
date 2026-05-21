@@ -471,10 +471,11 @@ nodeModeButton
             for (i = 0; i < nodeModeTable.length; i++){
                 nodeModeTable[i].active = false
             }
+            synthPointCount = 0
         }
 
-        synthPoints[0].x = getJoint("BC").x
-        synthPoints[0].y = getJoint("BC").y
+        synthPoints[0].x = getPoint("BC").x
+        synthPoints[0].y = getPoint("BC").y
         synthPoints[0].type = "crunode"
 
         nodeModeTable[0].active = nodeMode
@@ -667,24 +668,15 @@ const nodeModeMenu = nodeModeMenuGroup.selectAll("path")
             n.id.includes(thisNode.id) && !n.id.includes(nodeType)
         )
 
-        if (thisNode.id === "E3") return // Only two nodes for now
+        // if (thisNode.id === "E3") return // Only two nodes for now
         if (thisNode.id === "E1" && d.active) return // Don't allow disabling E1 (exit node-mode instead)
         if (d.active && nodeNum < synthPointCount) return // Can only disable the newest node
-        if (nodeModeTable.find(b => b.id === "E1_crunode").active && thisNode.id !== "E1") return // if E1 is currently crunode, only allow changing of E1 to cusp
-        if (nodeModeTable.find(b => b.id === "E1_cusp").active && thisNode.id !== "E1" && nodeType !== "cusp") return // if E1 is currently cusp, do not allow changing E2 to crunode
+        // if (nodeModeTable.find(b => b.id === "E1_crunode").active && thisNode.id !== "E1") return // if E1 is currently crunode, only allow changing of E1 to cusp
+        // if (nodeModeTable.find(b => b.id === "E1_cusp").active && thisNode.id !== "E1" && nodeType !== "cusp") return // if E1 is currently cusp, do not allow changing E2 to crunode
 
         // Toggle active status of the clicked button
         d.active = !d.active
         if (d.active) oppType.active = false
-
-        // If E1 is crunode, no additional nodes are allowed (current limitation)
-        if (thisNode.id === "E1" && d.active && nodeType === "crunode") {
-            for (i = 0; i < nodeModeTable.length; i++) {
-                if (nodeModeTable[i].id !== d.id) {
-                    nodeModeTable[i].active = false
-                }
-            }
-        }
 
         // When deactivating a button, update the relevant synthPoint type to "none"
         if (thisNode.type === nodeType) {
@@ -710,11 +702,6 @@ const nodeModeMenu = nodeModeMenuGroup.selectAll("path")
         
         nodeModeMenu.attr("stroke-opacity", d => d.active && d.id !== oppType.id ? 0.5 : 0.1)
 
-        // document.getElementById("debugOutputs").innerHTML = `
-        //     ${synthPoints[0].type}, ${nodeModeTable[0].active}, ${nodeModeTable[3].active} \n<br>
-        //     ${synthPoints[1].type}, ${nodeModeTable[1].active}, ${nodeModeTable[4].active} \n<br>
-        //     ${synthPoints[2].type}, ${nodeModeTable[2].active}, ${nodeModeTable[5].active} \n<br>
-        // `
         pathNodeModeSynth(true)
         updateLinkGeometry()
         updateTrace()

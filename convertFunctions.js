@@ -12,7 +12,7 @@ function radToDeg(rad) {
 // Functions to convert between values (distances, angles, etc) within the global reference frame and the linkage reference frame
 function coordToLink(val, type, neg=false) {
     let dist = 0;
-    const originPoint = getJoint("A")
+    const originPoint = getPoint("A")
     if (type === "x") dist = (val-originPoint.x)/coordScale
     else if (type === "y") dist = (originPoint.y-val)/coordScale
     else if (type === "angle") {
@@ -24,7 +24,7 @@ function coordToLink(val, type, neg=false) {
 }
 function linkToCoord(val, type, neg=false) {
     let coord = 0;
-    const originPoint = getJoint("A")
+    const originPoint = getPoint("A")
     if (type === "x") coord = val*coordScale + originPoint.x
     else if (type === "y") coord =  originPoint.y - val*coordScale
     else if (type === "angle") {

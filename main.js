@@ -23,27 +23,35 @@
         // Animation direction? Meh
     // Synthesis Methods
         // Cognates - DONE!
-        // Cruodes - DONE!
-            // Multi-crunodes
-        // Cusps
-            // One cusp - DONE!
-            // Two cusps - DONE!
-            // Three cusps
-        // Show ghost nodes?
-            // For un-used nodes, automatically move them to indicate the three nodes of the current config
-            // Then when activated, these can be dragged to select desired node positions
-        // Alt Solutions - Nodes
-            // A given nodes config has multiple solutions (namely A & D locations)
-            // Need/want a way to explore each solution
-            // Also want to automatically find the "nearest" solution (i.e. the solution config that look most like the current config)
-                // Minimize error of... link lengths or A & D positions?
-                    // A & D positions is probably most relevant / higher priority
-        // For both of above, need to calc the C0 point (singular focus)
+        // Nodes
+            // DONE: Crunode, Cusp, Crunode-Crunode, Cusp-Crunode, Crunode-Cusp
+            // WIP: 
+                // Cusp-Cusp: 
+                    // Add step to set new A or D position
+                // Edge cases:
+                    // Sometimes B or C goes off into space....
+                        // Ideally avoid these scenarios
+                        // Potentially work around by not allowing these cases (check calc'd BE or CE)
+                            // Revert to previous values if this (or just not placePoint, i.e. doit=false)
+                            // Then when drag yields a valid solution, do it
+            // Then: Three nodes!
+            // Imaginary Nodes?
+                // Constrain/enforce configs to not allow imaginary node cases?
+                    // Drive this via AD dist?
+                    // Determine the cusp condition and limit on that
+            // Alt Solutions
+                // A given nodes config has multiple solutions (namely alt A & D locations)
+                    // Need a way to explore each solution
+                // Also want to automatically find the "nearest" solution (i.e. the solution config that look most like the current config)
+                    // Minimize error of... link lengths or A & D positions?
+                        // A & D positions is probably most relevant / higher priority
+                        // Minimizing link length error will also be nice for finding nearest solution within a specific A/D config
         // Symmetric Coupler Curves
     // Scale Linkage
         // Scale all link lengths uniformly
         // Scale outward from joint A
         // Option to lock link length ratios and scale by updating a single link length?
+    // Rotate Linkage?
     // Organized menu system
         // Consolidate buttons/actions whenever possible
             // E.g. moving the animation reverse and crossover buttons as 2ndary buttons above related primaries (play/pause, open/crossed)
@@ -126,6 +134,20 @@ let animateSpeed = 10 // rpm
 // let animateSteps = 100
 let animateDir = 1
 
+// Linkage Geometry
+let AB = 0
+let BE = 0
+let DC = 0
+let CE = 0
+let BC = 0
+let AD = 0
+let AE1 = 0
+let DE1 = 0
+let AE2 = 0
+let DE2 = 0
+let AE3 = 0
+let DE3 = 0
+
 
 const svg = d3.select("#topView"); // Defining the svg window (references element from index.html)
 const background = svg.append("rect")
@@ -182,7 +204,7 @@ const linkLineGroup = zoomGroup.append("g")
 const fixedNodeGroup = zoomGroup.append("g")
 const groundLineGroup = zoomGroup.append("g")
 const nodeDotGroup = zoomGroup.append("g")
-const nodeDragGroup = zoomGroup.append("g")
+const jointDragGroup = zoomGroup.append("g")
 const traceDotGroup = zoomGroup.append("g")
 const traceLineGroup = zoomGroup.append("g")
 const fullTraceGroup = zoomGroup.append("g")
@@ -255,6 +277,22 @@ const lineAE = zoomGroup.append("line")
 const lineDE = zoomGroup.append("line")
     .attr("stroke-width", 0.5)
     .style("pointer-events", "none")
+const lineAF = zoomGroup.append("line")
+    .attr("stroke-width", 0.5)
+    .style("pointer-events", "none")
+const lineDF = zoomGroup.append("line")
+    .attr("stroke-width", 0.5)
+    .style("pointer-events", "none")
+const lineFE2 = zoomGroup.append("line")
+    .attr("stroke-width", 0.5)
+    .style("pointer-events", "none")
+const lineDE2 = zoomGroup.append("line")
+    .attr("stroke-width", 0.5)
+    .style("pointer-events", "none")
+const lineAE2 = zoomGroup.append("line")
+    .attr("stroke-width", 0.5)
+    .style("pointer-events", "none")
+
 const kFCircle = zoomGroup.append("circle")
     .attr("fill", "none")
     .attr("stroke-width", 0.5)
@@ -272,7 +310,7 @@ const outputCircle = zoomGroup.append("circle")
     .attr("stroke-width", 0.5)
     .style("pointer-events", "none")
 
-// const focusPoint = {id: "F", x: 0, y: 0}
+const focusPoint = {id: "F", x: 0, y: 0}
 // const focusDot = zoomGroup.append("circle")
 //     .attr("cx", focusPoint.x)
 //     .attr("cy", focusPoint.y)

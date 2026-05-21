@@ -159,7 +159,7 @@ function updateOutputLimits() {
         B_max = 360-B_max;
     }
     
-    const crossAngle = coordToLink(getJointsAngle(getJoint("D"), getJoint("B")),"angle")
+    const crossAngle = coordToLink(getJointsAngle(getPoint("D"), getPoint("B")),"angle")
 
     if (!linkageOpen & outputClass === "Rocker" && inputClass === "Rocker" && crossAngle < 180) {
         B_min = 360-B_min;
@@ -188,13 +188,13 @@ function updateOutputLimits() {
 // }
 
 function updateOpenCrossed() {
-    const AB_th = coordToLink(getJointsAngle(getJoint("A"), getJoint("B")), "angle")
+    const AB_th = coordToLink(getJointsAngle(getPoint("A"), getPoint("B")), "angle")
 
-    let DB_th = coordToLink(getJointsAngle(getJoint("D"), getJoint("B"), true), "angle")
-    const BD_th = coordToLink(getJointsAngle(getJoint("B"), getJoint("D"), true), "angle")
+    let DB_th = coordToLink(getJointsAngle(getPoint("D"), getPoint("B"), true), "angle")
+    const BD_th = coordToLink(getJointsAngle(getPoint("B"), getPoint("D"), true), "angle")
 
-    let DC_th = coordToLink(getJointsAngle(getJoint("D"), getJoint("C"), true), "angle")
-    const BC_th = coordToLink(getJointsAngle(getJoint("B"), getJoint("C"), true), "angle")
+    let DC_th = coordToLink(getJointsAngle(getPoint("D"), getPoint("C"), true), "angle")
+    const BC_th = coordToLink(getJointsAngle(getPoint("B"), getPoint("C"), true), "angle")
     
     if (AB_th < DB_th && DC_th < DB_th) {
         linkageOpen = true
@@ -208,10 +208,10 @@ function updateOpenCrossed() {
 } 
 
 function toggleOpenCrossed(retrace=true) {
-    const DB_th = getJointsAngle(getJoint("D"), getJoint("B"))
-    const DC_th = getJointsAngle(getJoint("D"), getJoint("C"))
+    const DB_th = getJointsAngle(getPoint("D"), getPoint("B"))
+    const DC_th = getJointsAngle(getPoint("D"), getPoint("C"))
     const newDC_th = 2*DB_th - DC_th
-    rotatePoint(getJoint("C"),newDC_th,getJoint("D"))
+    rotatePoint(getPoint("C"),newDC_th,getPoint("D"))
     updateOpenCrossed()
     tPointFollow()
     if (retrace) updateTrace()
@@ -220,7 +220,7 @@ function toggleOpenCrossed(retrace=true) {
 
 function updateLinkGeometry() {
     // pathCrunodeSynth(false)
-    nodeDrag
+    jointDrag
         .attr("cx", d => d.x)
         .attr("cy", d => d.y)
         .style("display", d => d.id.length === 1 ? "block" : getLinkByID(d.id).ternary ? "block" : "none")
@@ -288,54 +288,95 @@ function updateLinkGeometry() {
         // .attr("stroke-dasharray", d => d.display === "block" ? "none" : "2,3")
         // .style("pointer-events", d => d.display === "block" ? "auto" : "none")
 
-    // getFocusPoint(true)
+    getFocusPoint(true)
     // focusDot
     //     .attr("cx", focusPoint.x)
     //     .attr("cy", focusPoint.y)
-    // getE2(synthPointCount < 2)
+    // // getE2(false)//synthPointCount < 2)
+    // const kF = getCircle3Points(getPoint("A"), getPoint("D"), synthPoints[0])
+    // const kF_cent = {x: kF[0], y: kF[1]}
+    // const kF_rad = kF[2]/2
+
+    // const angle_kFE2 = getJointsAngle(kF_cent, synthPoints[1])
+
+    // const new_E2 = placePointPolar(synthPoints[1],kF_cent,angle_kFE2,kF_rad,false)
+
+    // synthPoints[1].x = new_E2.x
+    // synthPoints[1].y = new_E2.y
+    getE2()
+    // getE3(false)//synthPointCount < 3)
         
     // intersectionDot
-    //     .attr("cx", getLinesIntersection(getJoint("B"),getJoint("A"),getJoint("C"),getJoint("D"))[0])
-    //     .attr("cy", getLinesIntersection(getJoint("B"),getJoint("A"),getJoint("C"),getJoint("D"))[1])
+    //     .attr("cx", getLinesIntersection(getPoint("B"),getPoint("A"),getPoint("C"),getPoint("D"))[0])
+    //     .attr("cy", getLinesIntersection(getPoint("B"),getPoint("A"),getPoint("C"),getPoint("D"))[1])
     //     .attr("fill", fgColor)
     // lineAE
-    //     .attr("x1", getJoint("A").x)
-    //     .attr("y1", getJoint("A").y)
+    //     .attr("x1", getPoint("A").x)
+    //     .attr("y1", getPoint("A").y)
     //     .attr("x2", synthPoints[0].x)
     //     .attr("y2", synthPoints[0].y)
     //     .attr("stroke", fgColor)
     // lineDE
-    //     .attr("x1", getJoint("D").x)
-    //     .attr("y1", getJoint("D").y)
+    //     .attr("x1", getPoint("D").x)
+    //     .attr("y1", getPoint("D").y)
     //     .attr("x2", synthPoints[0].x)
     //     .attr("y2", synthPoints[0].y)
     //     .attr("stroke", fgColor)
+    // lineAF
+    //     .attr("x1", getPoint("A").x)
+    //     .attr("y1", getPoint("A").y)
+    //     .attr("x2", focusPoint.x)
+    //     .attr("y2", focusPoint.y)
+    //     .attr("stroke", fgColor)
+    // lineDF
+    //     .attr("x1", getPoint("D").x)
+    //     .attr("y1", getPoint("D").y)
+    //     .attr("x2", focusPoint.x)
+    //     .attr("y2", focusPoint.y)
+    //     .attr("stroke", fgColor)
+    // lineFE2
+    //     .attr("x1", focusPoint.x)
+    //     .attr("y1", focusPoint.y)
+    //     .attr("x2", synthPoints[1].x)
+    //     .attr("y2", synthPoints[1].y)
+    //     .attr("stroke", fgColor)
+    // lineDE2
+    //     .attr("x1", getPoint("D").x)
+    //     .attr("y1", getPoint("D").y)
+    //     .attr("x2", synthPoints[1].x)
+    //     .attr("y2", synthPoints[1].y)
+    //     .attr("stroke", fgColor)
+    // lineAE2
+    //     .attr("x1", getPoint("A").x)
+    //     .attr("y1", getPoint("A").y)
+    //     .attr("x2", synthPoints[1].x)
+    //     .attr("y2", synthPoints[1].y)
+    //     .attr("stroke", fgColor)
+
+    // update_kFCircle()
     // kFCircle
-    //     .attr("cx", getCircle3Points(
-    //         getJoint("A"), getJoint("D"), focusPoint)[0])
-    //     .attr("cy", getCircle3Points(
-    //         getJoint("A"), getJoint("D"), focusPoint)[1])
-    //     .attr("r", getCircle3Points(
-    //         getJoint("A"), getJoint("D"), focusPoint)[2]/2)
+    //     .attr("cx", kFCirc[0])
+    //     .attr("cy", kFCirc[1])
+    //     .attr("r", kFCirc[2]/2)
     //     .attr("stroke", fgColor)
     // ADCircle
-    //     .attr("cx", getCircle2Points(getJoint("A"), getJoint("D"))[0])
-    //     .attr("cy", getCircle2Points(getJoint("A"), getJoint("D"))[1])
-    //     .attr("r", getCircle2Points(getJoint("A"), getJoint("D"))[2]/2)
+    //     .attr("cx", getCircle2Points(getPoint("A"), getPoint("D"))[0])
+    //     .attr("cy", getCircle2Points(getPoint("A"), getPoint("D"))[1])
+    //     .attr("r", getCircle2Points(getPoint("A"), getPoint("D"))[2]/2)
     //     .attr("stroke", fgColor)
     // inputCircle
-    //     .attr("cx", getJoint("A").x)
-    //     .attr("cy", getJoint("A").y)
+    //     .attr("cx", getPoint("A").x)
+    //     .attr("cy", getPoint("A").y)
     //     .attr("r", 6*20)
     //     .attr("stroke", fgColor)
     // outputCircle
-    //     .attr("cx", getJoint("D").x)
-    //     .attr("cy", getJoint("D").y)
+    //     .attr("cx", getPoint("D").x)
+    //     .attr("cy", getPoint("D").y)
     //     .attr("r", 4.5*20)
     //     .attr("stroke", fgColor)
 
-    // const angAEB = getAngleBtwPoints(getJoint("B"), getJoint("A"), getJoint("BC"))
-    // const angDEC = getAngleBtwPoints(getJoint("C"), getJoint("D"), getJoint("BC"))
+    // const angAEB = getAngleBtwPoints(getPoint("B"), getPoint("A"), getPoint("BC"))
+    // const angDEC = getAngleBtwPoints(getPoint("C"), getPoint("D"), getPoint("BC"))
 
     // document.getElementById("debugOutputs").innerHTML = `
     //         ${angAEB.toFixed(1)} \n<br>
@@ -388,8 +429,6 @@ function updateLinkGeometry() {
     nodeModeCrunodeLabel.style("display", nodeMode ? "block" : "none")
     nodeModeCuspLabel.style("display", nodeMode ? "block" : "none")
 
-    
-
 
     inputLinkVal
         .attr("fill", d3.interpolateRgb(getLinkByType("input").color,"white")(whtnColor*2))
@@ -408,12 +447,37 @@ function updateLinkGeometry() {
     updateToolTips()
 
     // DBLink
-    //     .attr("x1", getJoint("D").x)
-    //     .attr("y1", getJoint("D").y)
-    //     .attr("x2", getJoint("B").x)
-    //     .attr("y2", getJoint("B").y)
+    //     .attr("x1", getPoint("D").x)
+    //     .attr("y1", getPoint("D").y)
+    //     .attr("x2", getPoint("B").x)
+    //     .attr("y2", getPoint("B").y)
 
-    // document.getElementById("debugOutputs").innerHTML = `${synthSolution}`
+    // const angE1B = getJointsAngle(getPoint("E1"),getPoint("B"))
+    // const test_BE = (AE1*AE1 - AE2*AE2)/(2*AE1*Math.cos(degToRad(getAngleBtwPoints(getPoint("A"),getPoint("B"),getPoint("E1")))) - 2*AE2)
+    // const ztest = (DE1*DE1 - DE2*DE2)/((((AE1*AE1 - AE2*AE2)/(2*BE*AE1))+(AE2/AE1)-(DE2/DE1))*2*DE1)
+    // const ztest2 = (AE1*AE1 - AE2*AE2)/((((DE1*DE1 - DE2*DE2)/(2*CE*DE1))+(DE2/DE1)-(AE2/AE1))*2*AE1)
+    // const ztest = (test_BE*test_BE + AE1*AE1 - AB*AB)/(2*test_BE*AE1)
+    // const cosTest = Math.cos(degToRad(getAngleBtwPoints(getPoint("A"),getPoint("B"),getPoint("E1"))))
+    const test_CE = (DE1*DE1 - DE2*DE2)/((((AE1*AE1 - AE2*AE2)/(2*BE*AE1))-(AE2/AE1)-(DE2/DE1))*2*DE1)
+    const test_BE = -(AE2*AE2 - AE1*AE1)/(2*AE1*Math.cos(degToRad(getAngleBtwPoints(getPoint("A"), getPoint("B"), getPoint("E1")))) + 2*AE2)
+
+
+    // document.getElementById("debugOutputs").innerHTML = `
+    //     testCE: ${test_CE.toFixed(1)} \n<br>
+    //     testBE: ${test_BE.toFixed(1)} \n<br>
+    //     AE1: ${AE1.toFixed(1)} \n<br>
+    //     DE1: ${DE1.toFixed(1)} \n<br>
+    //     AE2: ${AE2.toFixed(1)} \n<br>
+    //     DE2: ${DE2.toFixed(1)} \n<br>
+    //     AB: ${AB.toFixed(1)} \n<br>
+    //     BE: ${BE.toFixed(1)} \n<br>
+    //     DC: ${DC.toFixed(1)} \n<br>
+    //     CE: ${CE.toFixed(1)} \n<br>
+    //     AE1B: ${getAngleBtwPoints(getPoint("A"),getPoint("B"),getPoint("E1")).toFixed(1)} \n<br>
+    //     DE1C: ${getAngleBtwPoints(getPoint("D"),getPoint("C"),getPoint("E1")).toFixed(1)} \n<br>
+    //     AE2B: ${getAngleBtwPoints(getPoint("A"),getPoint("B"),getPoint("E2")).toFixed(1)} \n<br>
+    //     DE2C: ${getAngleBtwPoints(getPoint("D"),getPoint("C"),getPoint("E2")).toFixed(1)} \n<br>
+    // `
 }
 
 function updateTrace(alt=true, oc=linkageOpen) {
@@ -430,14 +494,14 @@ function updateTrace(alt=true, oc=linkageOpen) {
     const couplerLink = getLinkByType("coupler")
     const fixedLink = getLinkByType("fixed")
 
-    const nodeA = getJoint(inputLink.id[0])
-    const nodeB = getJoint(inputLink.id[1])
-    const nodeC = getJoint(outputLink.id[1])
-    const nodeD = getJoint(outputLink.id[0])
-    const nodeAB = getJoint(inputLink.id)
-    const nodeBC = getJoint(couplerLink.id)
-    const nodeDC = getJoint(outputLink.id)
-    const nodeAD = getJoint(fixedLink.id)
+    const nodeA = getPoint(inputLink.id[0])
+    const nodeB = getPoint(inputLink.id[1])
+    const nodeC = getPoint(outputLink.id[1])
+    const nodeD = getPoint(outputLink.id[0])
+    const nodeAB = getPoint(inputLink.id)
+    const nodeBC = getPoint(couplerLink.id)
+    const nodeDC = getPoint(outputLink.id)
+    const nodeAD = getPoint(fixedLink.id)
     
     for (i = 0; i < jointsData.length; i++) {
         jointsData[i].points = []
@@ -782,8 +846,8 @@ function defaultLinkage() {
 
         localStorage.setItem(`${linksData[i].id}_t`, "")
     }
-    synthPoints[0].x = getJoint("BC").x
-    synthPoints[0].y = getJoint("BC").y
+    synthPoints[0].x = getPoint("BC").x
+    synthPoints[0].y = getPoint("BC").y
 
     savePoints()
     updateTPoints()

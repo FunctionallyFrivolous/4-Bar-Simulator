@@ -1,9 +1,9 @@
 
 function getLinkPoints(link) {
     const getJoints = []
-    getJoints[0] = getJoint(link[0])
-    getJoints[1] = getJoint(link[1])
-    getJoints[2] = getJoint(link)
+    getJoints[0] = getPoint(link[0])
+    getJoints[1] = getPoint(link[1])
+    getJoints[2] = getPoint(link)
 
     return getJoints
 }
@@ -31,16 +31,29 @@ function setLinkPoints() {
     outputAngle = coordToLink(getLinkAngle(outLink), "angle")
     baseAngle = getLinkAngle(fixLink)
 
+    AB = getDistBtwPoints(getPoint("A"),getPoint("B"))
+    BE = getDistBtwPoints(getPoint("B"),getPoint("BC"))
+    DC = getDistBtwPoints(getPoint("D"),getPoint("C"))
+    CE = getDistBtwPoints(getPoint("C"),getPoint("BC"))
+    BC = getDistBtwPoints(getPoint("B"),getPoint("C"))
+    AD = getDistBtwPoints(getPoint("A"),getPoint("D"))
+    AE1 = getDistBtwPoints(getPoint("A"),getPoint("E1"))
+    DE1 = getDistBtwPoints(getPoint("D"),getPoint("E1"))
+    AE2 = getDistBtwPoints(getPoint("A"),getPoint("E2"))
+    DE2 = getDistBtwPoints(getPoint("D"),getPoint("E2"))
+    AE3 = getDistBtwPoints(getPoint("A"),getPoint("E3"))
+    DE3 = getDistBtwPoints(getPoint("D"),getPoint("E3"))
+
 }
 
 function getLinkAngle(link) {
-    const linkAngle = getJointsAngle(getJoint(link[0]), getJoint(link[1]), true)
+    const linkAngle = getJointsAngle(getPoint(link[0]), getPoint(link[1]), true)
     return linkAngle;
 }
 function setLinkAngle(link, deg) {
     const thisLink = getLinkByID(link)
     const linkPoints = getLinkPoints(link)
-    const pivotPoint = getJoint(link[0])
+    const pivotPoint = getPoint(link[0])
 
     for (i = 0; i < linkPoints.length; i++) {
         const mobilePoint = linkPoints[i]

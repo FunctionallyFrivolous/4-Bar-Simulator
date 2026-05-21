@@ -1,6 +1,8 @@
 
-function getJoint(id) {
-    const joint = jointsData.find(j => j.id == id)
+function getPoint(id) {
+    let joint = null
+    if (id[0] === "E") joint = synthPoints.find(p => p.id === id)
+    else joint = jointsData.find(j => j.id == id)
     return joint
 }
 
@@ -42,8 +44,8 @@ function tPointFollow() {
     for (i = 0; i < linksData.length; i++) {
         const thisLink = linksData[i]
         const linkDeg = getLinkAngle(thisLink.id)
-        const pivotJoint = getJoint(thisLink.id[0])
-        const tPoint = getJoint(thisLink.id)
+        const pivotJoint = getPoint(thisLink.id[0])
+        const tPoint = getPoint(thisLink.id)
         const newDeg = linkDeg + thisLink.tAng
         // rotatePoint(tPoint, linkDeg + thisLink.tAng, pivotJoint)
 
@@ -55,11 +57,11 @@ function tPointFollow() {
 function updateTPoints(snap=false, point="") {
     for (i = 0; i < linksData.length; i++) {
         const linkID = linksData[i].id
-        const tPoint = getJoint(linkID)
-        const linkAngle = getJointsAngle(getJoint("B"),getJoint("C"))//getLinkAngle(linkID)
-        const pJoint = getJoint(linkID[0])
+        const tPoint = getPoint(linkID)
+        const linkAngle = getJointsAngle(getPoint("B"),getPoint("C"))//getLinkAngle(linkID)
+        const pJoint = getPoint(linkID[0])
 
-        let tDeg = getAngleBtwPoints(tPoint, getJoint(linkID[1]), pJoint)
+        let tDeg = getAngleBtwPoints(tPoint, getPoint(linkID[1]), pJoint)
         
         if (linksData[i].tSnap && point !== linkID) tDeg = linksData[i].tAng
         if (snap) {
@@ -76,7 +78,7 @@ function updateTPoints(snap=false, point="") {
 
         linksData[i].tAng = tDeg
 
-        const tDist = getDistBtwPoints(getJoint(linkID), pJoint)
+        const tDist = getDistBtwPoints(getPoint(linkID), pJoint)
         linksData[i].tLen = tDist  
     }
     // setLinkPoints()
@@ -162,11 +164,11 @@ function getMidPoint(startPoint, endPoint) {
 }
 
 function getFocusPoint(place=false){
-    const pointA = getJoint("A")
-    const pointD = getJoint("D")
-    const pointB = getJoint("B")
-    const pointC = getJoint("C")
-    const pointE = getJoint("BC")
+    const pointA = getPoint("A")
+    const pointD = getPoint("D")
+    const pointB = getPoint("B")
+    const pointC = getPoint("C")
+    const pointE = getPoint("BC")
 
     const angleBCE = getJointsAngle(pointD,pointA) - getAngleBtwPoints(pointB, pointE, pointC)
     const distDF = getDistBtwPoints(pointC,pointE)/getDistBtwPoints(pointB,pointC) * getDistBtwPoints(pointA,pointD)
@@ -177,29 +179,83 @@ function getFocusPoint(place=false){
 }
 
 function getE2(place=false) {
-    const pointE1 = getJoint("B")//synthPoints[0]
+    const pointE1 = synthPoints[0] //getPoint("BC")
     const pointE2 = synthPoints[1]
-    const pointA = getJoint("A")
-    const pointD = getJoint("D")
+    const pointBC = getPoint("BC")
+    const pointA = getPoint("A")
+    const pointB = getPoint("B")
+    const pointC = getPoint("C")
+    const pointD = getPoint("D")
     const pointF = getFocusPoint()
+
+    const angleBEC = getAngleBtwPoints(pointC,pointB,pointBC)
+    const angleAFD = getAngleBtwPoints(pointD,pointA,pointF)
 
     const distDE1 = getDistBtwPoints(pointD,pointE1)
 
     const circADF = getCircle3Points(pointA,pointD,pointF)
     const circCenter = {x: circADF[0], y: circADF[1]}
 
-    const angleDE1 = getJointsAngle(pointD,pointE1)
+    // const angleDE1 = getJointsAngle(pointD,pointE1)
     const angleDcirc = getJointsAngle(pointD,circCenter)
     const angle_centerDE1 = getAngleBtwPoints(pointE1,circCenter,pointD)
 
+
     const newE2 = placePointPolar(pointE2,pointD,angleDcirc,circADF[2],place)
 
-    document.getElementById("debugOutputs").innerHTML = `
-            ${angle_centerDE1.toFixed(1)} \n<br>
-            ${angleDcirc.toFixed(1)} \n<br>
-    `
+    const angleDE2F = getAngleBtwPoints(pointF,pointD,pointE2)//newE2)
+    // const angleDE2F = getAngleBtwPoints(pointD,pointE2,pointF)//newE2)
+    // const angleDE2F = getAngleBtwPoints(pointF,pointE2,pointD)//newE2)
+    const angleAE1D = getAngleBtwPoints(pointD,pointA,pointE1)//newE2)
+    const angleAE2D = getAngleBtwPoints(pointD,pointA,pointE2)//newE2)
+
+    // document.getElementById("debugOutputs").innerHTML = `
+    //        BE1C: ${angleBEC.toFixed(1)} \n<br>
+    //        AFD: ${angleAFD.toFixed(1)} \n<br>
+    //        AE2D: ${angleAE2D.toFixed(1)} \n<br>
+    //        AE1D: ${angleAE1D.toFixed(1)} \n<br>
+    // `
 
     return newE2
+}
+
+function getE3(place=false) {
+    const pointE1 = synthPoints[0] //getPoint("BC")
+    const pointE2 = synthPoints[1]
+    const pointE3 = synthPoints[2]
+    const pointBC = getPoint("BC")
+    const pointA = getPoint("A")
+    const pointB = getPoint("B")
+    const pointC = getPoint("C")
+    const pointD = getPoint("D")
+    const pointF = getFocusPoint()
+
+    const angleBEC = getAngleBtwPoints(pointC,pointB,pointBC)
+    const angleAFD = getAngleBtwPoints(pointD,pointA,pointF)
+
+    const distDE1 = getDistBtwPoints(pointD,pointE1)
+
+    const circADF = getCircle3Points(pointA,pointD,pointF)
+    const circCenter = {x: circADF[0], y: circADF[1]}
+
+    // const angleDE1 = getJointsAngle(pointD,pointE1)
+    const angleDcirc = getJointsAngle(pointD,circCenter)
+    const angle_centerDE1 = getAngleBtwPoints(pointE1,circCenter,pointD)
+
+
+    const newE3 = placePointPolar(pointE2,pointD,angleDcirc,circADF[2],place)
+
+    const angleAE2D = getAngleBtwPoints(pointD,pointA,pointE2)//newE2)
+    const angleAE3D = getAngleBtwPoints(pointD,pointA,pointE3)//newE2)
+
+    document.getElementById("debugOutputs").innerHTML = `
+           BE1C: ${angleBEC.toFixed(1)} \n<br>
+           AFD: ${angleAFD.toFixed(1)} \n<br>
+           AE2D: ${angleAE2D.toFixed(1)} \n<br>
+           AE3D: ${angleAE3D.toFixed(1)} \n<br>
+    `
+
+    return newE3
 }
 
 function savePoints() {
@@ -307,8 +363,8 @@ function undoRedo() {
         }
     }
 
-    // synthPoints[0].x = getJoint("BC").x
-    // synthPoints[0].y = getJoint("BC").y
+    // synthPoints[0].x = getPoint("BC").x
+    // synthPoints[0].y = getPoint("BC").y
 
     savePoints()
     updateTPoints()

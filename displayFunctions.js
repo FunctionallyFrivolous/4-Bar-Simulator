@@ -9,7 +9,7 @@ function toggleDarkMode(){
     darkModeIconTop.attr("fill", bgColor)
     darkModeIconBottom.attr("fill", fgColor)
     // darkModeIcon.text(darkMode ? "⬔" : "⬕")
-    nodeDrag.attr("fill", darkMode ? "white" : "black")
+    jointDrag.attr("fill", darkMode ? "white" : "black")
 
     // synthCycleIcon.attr("fill", fgColor)
     // synthCycleButton.attr("fill", fgColor)
@@ -30,7 +30,7 @@ function toggleDarkMode(){
 function updateToolTips() {
     linkLinesToolTip
         .text(d => `${d.type} link (L = ${d.len.toFixed(1)})`)
-    nodeDragToolTip
+    jointDragToolTip
         .text(d => `(${coordToLink(d.x,"x").toFixed(1)}, ${coordToLink(d.y,"y").toFixed(1)})`)
 }
 
