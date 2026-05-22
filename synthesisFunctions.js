@@ -513,6 +513,7 @@ function pathNodeModeSynth(doit=true,drag="E1") {
     const angleAE2 = getJointsAngle(pointA, pointE2)
     const angle_be = radToDeg(Math.acos((AB*AB + AE2*AE2 - BE*BE)/(2*AB*AE2)))
     pointE2.inAng = coordToLink(angleAE2 - angle_be,"angle")
+    if (isNaN(angle_be)) pointE2.inAng = inputLimits.min
 
     // Need to assign E2.isOpen...
 
