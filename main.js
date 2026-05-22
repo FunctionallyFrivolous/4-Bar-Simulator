@@ -2,19 +2,14 @@
     // Synthesis Methods
         // Cognates - DONE!
         // Nodes
-            // DONE: Crunode, Cusp, Crunode-Crunode, Cusp-Crunode, Crunode-Cusp
-            // WIP: 
-                // Cusp-Cusp: 
-                    // Issue when E1E2 mid point crosses kF center
-                        // Driven fixed joint jumps to opposite side of kF
-                        // How to prevent this...
-                // Edge cases:
-                    // Sometimes B or C goes off into space....
-                        // Ideally avoid these scenarios
-                        // Potentially work around by not allowing these cases (check calc'd BE or CE)
-                            // Revert to previous values if this (or just not placePoint, i.e. doit=false)
-                            // Then when drag yields a valid solution, do it
-            // Then: Three nodes!
+            // DONE: All two-node combos! 
+            // Edge cases:
+                // Sometimes B or C goes off into space....
+                    // Ideally avoid these scenarios
+                    // Potentially work around by not allowing these cases (check calc'd BE or CE)
+                        // Revert to previous values if this (or just not placePoint, i.e. doit=false)
+                        // Then when drag yields a valid solution, do it
+            // Then: Three nodes!?
             // Imaginary Nodes?
                 // Constrain/enforce configs to not allow imaginary node cases?
                     // Drive this via AD dist?
