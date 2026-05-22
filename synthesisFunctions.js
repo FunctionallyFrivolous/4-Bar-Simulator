@@ -369,8 +369,6 @@ function pathNodeModeSynth(doit=true,drag="E1") {
         placeC = AE2 > DE2 ? true : false
     } 
     // const placeB = !placeC || pointE2.type === "cusp"
-
-    document.getElementById("debugOutputs").innerHTML = `${placeC}`
     
     if (placeC){
         const dragAngle = getAngleBtwPoints(pointA, pointB, pointE1)
@@ -509,19 +507,14 @@ function pathNodeModeSynth(doit=true,drag="E1") {
     updateOutputLimits()
 
     synthModeOpen = linkageOpen
-    synthPoints[0].inAng = inputAngle
-    synthPoints[0].isOpen = linkageOpen
+    pointE1.inAng = inputAngle
+    pointE1.isOpen = linkageOpen
 
+    const angleAE2 = getJointsAngle(pointA, pointE2)
+    const angle_be = radToDeg(Math.acos((AB*AB + AE2*AE2 - BE*BE)/(2*AB*AE2)))
+    pointE2.inAng = coordToLink(angleAE2 - angle_be,"angle")
 
-    const check_AE1B = getAngleBtwPoints(pointA,pointB,pointE)
-    const check_DE1C = getAngleBtwPoints(pointD,pointC,pointE)
-    const check_AE2B = getAngleBtwPoints(pointA,pointB,pointE2)
-    const check_DE2C = getAngleBtwPoints(pointD,pointC,pointE2)
-
-    // document.getElementById("debugOutputs").innerHTML = `
-    //     AEB: ${check_AE1B.toFixed(1)} \n<br>
-    //     DEC: ${check_DE1C.toFixed(1)} \n<br>
-    // `
+    // Need to assign E2.isOpen...
 
 }
 

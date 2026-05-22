@@ -27,7 +27,7 @@
             // DONE: Crunode, Cusp, Crunode-Crunode, Cusp-Crunode, Crunode-Cusp
             // WIP: 
                 // Cusp-Cusp: 
-                    // Add step to set new A or D position
+                    // Need to update logic for overAD configs...
                 // Edge cases:
                     // Sometimes B or C goes off into space....
                         // Ideally avoid these scenarios
@@ -39,7 +39,10 @@
                     //
             // Then: Three nodes!
             // Imaginary Nodes?
-                // Constrain/enforce configs to not allow imaginary node cases?
+                // NOTE: imaginary node states cannot be allowed
+                    // The E-node input angle becomes NA which then breaks everything when trying to jump to that angle
+                        // A potential alt solution to this ^ would be to check for this and just jump to a valid angle (btwn limits)
+                // Constrain/enforce configs to not allow imaginary node cases
                     // Drive this via AD dist?
                     // Determine the cusp condition and limit on that
             // Alt Solutions
