@@ -161,13 +161,21 @@ function pathNodeModeSynth(doit=true,drag="E1") {
         const angle_e12 = getJointsAngle(point_e12,kF_center)
         const angleFixed = angle_e12
         const moveFixed = AE2 > DE2 ? pointA : pointD
+        
+        const checkNewFixed = placePointPolar(moveFixed, kF_center, angleFixed, kF_rad, false)
+        const checkNewFixed_opp = placePointPolar(moveFixed, kF_center, angleFixed, -kF_rad, false)
+        const newDelta = getDistBtwPoints(moveFixed,checkNewFixed)
+        const newDelta_opp = getDistBtwPoints(moveFixed,checkNewFixed_opp)
+
+        const fixed_rad = newDelta > newDelta_opp ? -kF_rad : kF_rad
 
         // document.getElementById("debugOutputs").innerHTML = `
-        //     angle_e12: ${angle_e12} \n<br>
-        //     angleFixed: ${angleFixed} \n<br>
+        //     newDelta: ${newDelta.toFixed(1)} \n<br>
+        //     newEelta_opp: ${newDelta_opp.toFixed(1)} \n<br>
+        //     fixed_rad: ${fixed_rad.toFixed(1)} \n<br>
         // `
-        
-        placePointPolar(moveFixed, kF_center, angleFixed, kF_rad, (pointE1.type === "cusp" && pointE2.type === "cusp"))
+
+        placePointPolar(moveFixed, kF_center, angleFixed, fixed_rad, (pointE1.type === "cusp" && pointE2.type === "cusp"))
 
         placePointPolar(adjPoint, kF_center, angle_kF, kF_rad, synthPointCount > 1)
         setLinkPoints()
@@ -194,10 +202,6 @@ function pathNodeModeSynth(doit=true,drag="E1") {
 
     const overAD = (angleE1_E2 > angleE1_A && angleE2_E1 > angleD_E1) || (angleE1_E2 < angleE1_A && angleE2_E1 < angleD_E1)
 
-    // document.getElementById("debugOutputs").innerHTML = `
-    //     AE2>DE2: ${AE2>DE2} \n<br>
-    //     overAD: ${overAD} \n<br>
-    // `
     // Determine whether to place B & C to new locations
     let placeC = drag !== "C" && (drag === "B" || (AE2 > DE2 && pointE2.type !== "cusp") || (AE2 < DE2 && pointE2.type === "cusp"))// || (pointE2.type === "cusp"))
     if (pointE1.type === "cusp" && pointE2.type === "cusp"){
@@ -246,10 +250,10 @@ function pathNodeModeSynth(doit=true,drag="E1") {
         if (synthPointCount > 1){// && pointE2.type !== "cusp") {
             if (overAD) {
                 if (pointE2.type === "cusp" && pointE1.type !== "cusp") {
-                    newCE = (DE1*DE1 - DE2*DE2)/((((AE1*AE1 - AE2*AE2)/(2*BE*AE1))-(AE2/AE1)-(DE2/DE1))*2*DE1)
+                    newCE = Math.abs((DE1*DE1 - DE2*DE2)/((((AE1*AE1 - AE2*AE2)/(2*BE*AE1))-(AE2/AE1)-(DE2/DE1))*2*DE1))
                 }
                 else {
-                    newCE = (DE1*DE1 - DE2*DE2)/(((BE*BE + AE1*AE1 - AB*AB)*DE1/(BE*AE1))+((BE*BE + AE2*AE2 - AB*AB)*DE2/(BE*AE2)))
+                    newCE = Math.abs((DE1*DE1 - DE2*DE2)/(((BE*BE + AE1*AE1 - AB*AB)*DE1/(BE*AE1))+((BE*BE + AE2*AE2 - AB*AB)*DE2/(BE*AE2))))
                 }
             } else {
                 if (pointE2.type === "cusp") {
@@ -260,14 +264,6 @@ function pathNodeModeSynth(doit=true,drag="E1") {
                 }
             }
         }
-
-        // document.getElementById("debugOutputs").innerHTML = `
-        //         newCE: ${newCE.toFixed(1)} \n<br>
-        //         new_angleE1C: ${new_angleE1C.toFixed(1)} \n<br>
-        //         overAD: ${overAD} \n<br>
-        //         E2: ${pointE2.type} \n<br>
-        //         AE2>DE2: ${AE2>DE2} \n<br>
-        //     `
 
         placePointPolar(pointC, pointE1, new_angleE1C, newCE, true)
 
@@ -309,10 +305,10 @@ function pathNodeModeSynth(doit=true,drag="E1") {
         if (synthPointCount > 1){// && pointE2.type !== "cusp") {
             if (overAD) {
                 if (pointE2.type === "cusp" && pointE1.type !== "cusp") {
-                    newBE = (AE1*AE1 - AE2*AE2)/((((DE1*DE1 - DE2*DE2)/(2*CE*DE1))-(DE2/DE1)-(AE2/AE1))*2*AE1)
+                    newBE = Math.abs((AE1*AE1 - AE2*AE2)/((((DE1*DE1 - DE2*DE2)/(2*CE*DE1))-(DE2/DE1)-(AE2/AE1))*2*AE1))
                 }
                 else {
-                    newBE = (AE1*AE1 - AE2*AE2)/(((CE*CE + DE1*DE1 - DC*DC)*AE1/(CE*DE1))+((CE*CE + DE2*DE2 - DC*DC)*AE2/(CE*DE2)))
+                    newBE = Math.abs((AE1*AE1 - AE2*AE2)/(((CE*CE + DE1*DE1 - DC*DC)*AE1/(CE*DE1))+((CE*CE + DE2*DE2 - DC*DC)*AE2/(CE*DE2))))
                 }
             } else {
                 if (pointE2.type === "cusp") {
@@ -322,13 +318,6 @@ function pathNodeModeSynth(doit=true,drag="E1") {
                     newBE = (AE1*AE1 - AE2*AE2)/(((CE*CE + DE1*DE1 - DC*DC)*AE1/(CE*DE1))-((CE*CE + DE2*DE2 - DC*DC)*AE2/(CE*DE2)))
                 }
             }
-            // document.getElementById("debugOutputs").innerHTML = `
-            //     newBE: ${newBE.toFixed(1)} \n<br>
-            //     new_angleE1B: ${new_angleE1B.toFixed(1)} \n<br>
-            //     overAD: ${overAD} \n<br>
-            //     E2: ${pointE2.type} \n<br>
-            //     AE2>DE2: ${AE2>DE2} \n<br>
-            // `
         }
 
         placePointPolar(pointB, pointE1, new_angleE1B, newBE, true)

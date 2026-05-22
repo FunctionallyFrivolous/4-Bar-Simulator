@@ -462,6 +462,9 @@ const synthDrag = synthDragGroup.selectAll("circle")
                 }
                 linkageOpen = activeSynthPoint.isOpen
                 doActuate(getNetAngle(linkToCoord(revertAngle,"angle")))
+                if (!checkPointsCoincident(getPoint("BC"),activeSynthPoint)) {
+                    toggleOpenCrossed()
+                }
             } else {
                 if (inverted){//  || synthModeTempOpen > inputLimits.max || synthModeTempOpen < inputLimits.min) {
                     // If we include limits ^, the coupler point can jump to other loop when dragging casuses it to reach a limit...
@@ -470,6 +473,9 @@ const synthDrag = synthDragGroup.selectAll("circle")
                 }
                 linkageOpen = synthModeTempOpen
                 doActuate(getNetAngle(linkToCoord(synthModeTempAngle,"angle")))
+                if (!checkPointsCoincident(getPoint("BC"),activeSynthPoint)) {
+                    toggleOpenCrossed()
+                }
             }
 
             // Update all the things

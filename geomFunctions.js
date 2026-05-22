@@ -303,7 +303,7 @@ function updateLinkGeometry() {
 
     // synthPoints[1].x = new_E2.x
     // synthPoints[1].y = new_E2.y
-    getE2()
+    // getE2()
     // getE3(false)//synthPointCount < 3)
         
     // intersectionDot

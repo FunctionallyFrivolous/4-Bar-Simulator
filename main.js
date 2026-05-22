@@ -23,6 +23,7 @@
                 // A given nodes config has multiple solutions (namely alt A & D locations)
                     // Need a way to explore each solution
         // Symmetric Coupler Curves
+            // Ideally be able to combine this with other synth methods (nodes, etc)
     // Animation features
         // User actuate via slider
         // User adjust playback speed (vertical slider above play button?)
