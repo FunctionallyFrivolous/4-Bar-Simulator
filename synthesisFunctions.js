@@ -159,7 +159,7 @@ function pathNodeModeSynth(doit=true,drag="E1") {
 
         const point_e12 = getMidPoint(pointE1,pointE2)
         const angle_e12 = getJointsAngle(point_e12,kF_center)
-        const angleFixed = angle_e12
+        let angleFixed = angle_e12
         const moveFixed = AE2 > DE2 ? pointA : pointD
         
         const checkNewFixed = placePointPolar(moveFixed, kF_center, angleFixed, kF_rad, false)
@@ -174,6 +174,11 @@ function pathNodeModeSynth(doit=true,drag="E1") {
         //     newEelta_opp: ${newDelta_opp.toFixed(1)} \n<br>
         //     fixed_rad: ${fixed_rad.toFixed(1)} \n<br>
         // `
+
+        // This helps prevent issues when transitioning from cusp-cusp to cusp-crunode
+        if ((Math.abs(DE2-DE1)<limitThreshold) && !(pointE1.type === "cusp" && pointE2.type === "cusp")) {
+            placePointPolar(moveFixed, kF_center, angleFixed-10, fixed_rad, true)
+        }
 
         placePointPolar(moveFixed, kF_center, angleFixed, fixed_rad, (pointE1.type === "cusp" && pointE2.type === "cusp"))
 
@@ -334,10 +339,13 @@ function pathNodeModeSynth(doit=true,drag="E1") {
     pointE1.inAng = inputAngle
     pointE1.isOpen = linkageOpen
 
+    const temp_inAng = pointE2.inAng
     const angleAE2 = getJointsAngle(pointA, pointE2)
     const angle_be = radToDeg(Math.acos((AB*AB + AE2*AE2 - BE*BE)/(2*AB*AE2)))
     pointE2.inAng = coordToLink(angleAE2 - angle_be,"angle")
-    if (isNaN(angle_be)) pointE2.inAng = inputLimits.min
+    // if (isNaN(angle_be)) pointE2.inAng = inputLimits.min // < This is causing an issue... 
+        // When the input angle is initially unreachable
+    if (isNaN(angle_be)) pointE2.inAng = temp_inAng
 
     // Need to assign E2.isOpen...
 
@@ -391,6 +399,8 @@ function snapToSynthPoint(point="E1") {
     // If, after actuating to the synth point angle (and inverting if necessary), the coupler point has not reached the synth point, then the open/crossed config must also be toggled
     if (!checkPointsCoincident(synthPoint,couplerPoint)) {
         toggleOpenCrossed()
+        linkageOpen = synthPoint.isOpen
+        doActuate(getNetAngle(linkToCoord(synthPoint.inAng,"angle")))
     }
 
     return inverted // In order to track whether the system was inverted via above
