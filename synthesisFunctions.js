@@ -108,167 +108,12 @@ function cycleCognates() {
     tPointFollow()
 }
 
-function pathCrunodeSynth(doit=false, cDrag=false) {
-    if (!nodeMode) {
-        altTraceData.points = []
-        return
-    }
-    // if (synthSolution === 13) synthSolution = 1
-
-    synthPointCount = 0
-    for (i = 0; i < synthPoints.length; i++) {
-        if (synthPoints[i].type !== "none") synthPointCount++
-    }
-
-    getLinkByType("coupler").tSnap = false
-
-    const pointA = getPoint("A")
-    const pointB = getPoint("B")
-    const pointC = getPoint("C")
-    const pointD = getPoint("D")
-    const pointE = getPoint("BC")
-
-    const pointE1 = synthPoints[0]
-    const pointE2 = synthPoints[1]
-    const pointE3 = synthPoints[2]
-
-    update_kFCircle()
-    const kF_center = {x: kFCirc[0], y: kFCirc[1]}
-    const kF_rad = kFCirc[2]/2
-
-    const angle_kF_D = getJointsAngle(kF_center,pointD) // Direction from kF center to D
-    placePointPolar(pointD,kF_center,angle_kF_D,kF_rad,synthPointCount > 1)
-
-    const angle_kF_A = getJointsAngle(kF_center,pointA) // Direction from kF center to A
-    placePointPolar(pointA,kF_center,angle_kF_A,kF_rad,synthPointCount > 2)
-
-    setLinkPoints()
-
-    // const AB = getDistBtwPoints(pointA,pointB) // Input link length
-    // const DC = getDistBtwPoints(pointD,pointC) // Output link length
-    // const BE = getDistBtwPoints(pointB,pointE) // Input side of coupler link triangle
-    // const CE = getDistBtwPoints(pointC,pointE) // Output side of coupler link triangle
-
-    // const AE1 = getDistBtwPoints(pointA,pointE1) // Input-side fixed joint to first node location
-    // const DE1 = getDistBtwPoints(pointD,pointE1) // Output-side fixed joint to first node location
-
-    // const AE2 = getDistBtwPoints(pointA,pointE2) // Input-side fixed joint to second node location
-    // const DE2 = getDistBtwPoints(pointD,pointE2) // Output-side fixed joint to second node location
-
-    // // for DC
-    // const W1 = (BE*AE1)/(CE*DE1)
-    // const U1 = ((CE*CE + DE1*DE1)*BE*AE1)/(CE*DE1) - AE1*AE1 - BE*BE
-    // const W2 = (BE*AE2)/(CE*DE2)
-    // const U2 = ((CE*CE + DE2*DE2)*BE*AE2)/(CE*DE2) - AE2*AE2 - BE*BE
-
-    // const DCsq = Math.abs((U2-U1)/(W2-W1))
-    // const newDC = Math.sqrt(DCsq)
-
-    // const angleDE1 = getJointsAngle(pointD,pointE1)
-    // const angleCDE1 = radToDeg(Math.cos((DC*DC + DE1*DE1 - CE*CE)/(2*DC*DE1)))
-    // const angleDC = angleDE1 + angleCDE1
-
-    // placePointPolar(pointC,pointD,angleDC,newDC, synthPointCount > 1)
-    // setLinkPoints()
-
-    // const angleDEC = getAngleBtwPoints(pointD, pointC, pointE1)
-    // const angleEA = getJointsAngle(pointE1, pointA, false)
-    // let angleEB = getNetAngle(angleEA - angleDEC)
-
-    // const old_angleEB = getJointsAngle(pointE, pointB, false)
-
-    // if (Math.abs(old_angleEB+180-angleEB) < Math.abs(old_angleEB-angleEB)) {
-    //     angleEB = angleEB - 180 
-    // }
-
-    // const newB = placePointPolar(pointB, pointE, angleEB, BE, doit)
-
-    // if ((BE*AE1) < limitThreshold || (BE*AE2) < limitThreshold) {
-    //     document.getElementById("debugOutputs").innerHTML = `no`
-    // }
-
-    // for AB
-    const W1 = (CE*DE1)/(BE*AE1)
-    const U1 = ((BE*BE + AE1*AE1)*CE*DE1)/(BE*AE1) - DE1*DE1 - CE*CE
-    const W2 = (CE*DE2)/(BE*AE2)
-    const U2 = ((BE*BE + AE2*AE2)*CE*DE2)/(BE*AE2) - DE2*DE2 - CE*CE
-
-    const ABsq = Math.abs((U2-U1)/(W1-W2))
-    let newAB = Math.sqrt(ABsq)
-
-    if (synthPointCount > 1 && (synthPoints[1].type === "cusp" || Math.abs(BE-newAB) > AE2)) {
-        newAB = BE-AE2
-    }
-    // if (synthPointCount > 1){
-    //     if(synthp)
-    // }
-    
-    const angleAE1 = getJointsAngle(pointA,pointE1)
-    const angleBAE1 = radToDeg(Math.cos((AB*AB + AE1*AE1 - BE*BE)/(2*AB*AE1)))
-    const angleAB = angleAE1 + angleBAE1
-
-    placePointPolar(pointB,pointA,angleAB,newAB, synthPointCount > 1)
-
-    setLinkPoints()
-
-    // document.getElementById("debugOutputs").innerHTML = `
-    //     ${synthPointCount} \n<br>
-    //     ${angleAE1.toFixed(1)} \n<br>
-    //     ${angleBAE1.toFixed(1)} \n<br>
-    //     ${angleAB.toFixed(1)} \n<br>
-    // `
-
-    const angleAEB = getAngleBtwPoints(pointA, pointB, pointE1)
-    const angleED = getJointsAngle(pointE, pointD, false)
-    let angleEC = getNetAngle(angleED - angleAEB)
-
-    // if (cDrag) {
-        const old_angleEC = getJointsAngle(pointE, pointC, false)
-
-        if (Math.abs(old_angleEC+180-angleEC) < Math.abs(old_angleEC-angleEC)) {
-            angleEC = angleEC - 180 
-        }
-    // }
-
-    let newCE = CE
-
-    if (synthPointCount > 1 && (synthPoints[1].type === "cusp" || DC+newCE < DE2 || Math.abs(newCE-DC) > DE2)) {
-        newCE = DE2-DC
-    }
-
-    const newC = placePointPolar(pointC, pointE, angleEC, newCE, doit)
-
-    setLinkPoints()
-    updateTPoints()
-    updateInputLimits()
-    updateOutputLimits()
-
-    synthModeOpen = linkageOpen
-    synthPoints[0].inAng = inputAngle
-    synthPoints[0].isOpen = linkageOpen
-    // synthPoints[0].x = pointE.x
-    // synthPoints[0].y = pointE.y
-
-    // document.getElementById("debugOutputs").innerHTML = `
-    //     CE: ${newCE.toFixed(1)} \n<br>
-    //     DC: ${DC.toFixed(1)} \n<br>
-    //     DC_real: ${getDistBtwPoints(getPoint("D"),getPoint("C")).toFixed(1)} \n<br>
-    //     \n<br>
-    //     DE2: ${getDistBtwPoints(getPoint("D"),synthPoints[1]).toFixed(1)} \n<br>
-    //     DC+CE: ${(getDistBtwPoints(getPoint("C"),getPoint("BC"))+getDistBtwPoints(getPoint("D"),getPoint("C"))).toFixed(1)} \n<br>
-    //     DC-CE: ${(-getDistBtwPoints(getPoint("C"),getPoint("BC"))+getDistBtwPoints(getPoint("D"),getPoint("C"))).toFixed(1)} \n<br>
-    // `
-
-    return [newC.x, newC.y]
-    // return [newB.x, newB.y]
-}
-
 function pathNodeModeSynth(doit=true,drag="E1") {
     if (!nodeMode) return
-
-    // const nodeE1 = synthPoints.find(n => n.id === "E1")
-    // if (nodeE1.type === "crunode") pathCrunodeSynth(true)
-    // else if (nodeE1.type === "cusp") pathCuspSynth(true)
+    // if (!nodeMode) {
+    //     altTraceData.points = []
+    //     return
+    // }
 
     setLinkPoints()
 
@@ -282,22 +127,7 @@ function pathNodeModeSynth(doit=true,drag="E1") {
     const pointE2 = getPoint("E2")
     const pointE3 = getPoint("E3")
 
-    // const AE1 = getDistBtwPoints(pointA,pointE1)
-    // const AE2 = getDistBtwPoints(pointA,pointE2)
-    // const AB = getDistBtwPoints(pointA,pointB)
-    // let BE = getDistBtwPoints(pointB,pointE)
-
-    // const DE1 = getDistBtwPoints(pointD,pointE1)
-    // const DE2 = getDistBtwPoints(pointD,pointE2)
-    // const DC = getDistBtwPoints(pointD,pointC)
-    // let CE = getDistBtwPoints(pointC,pointE)
-
     const dragPoint = drag[0] === "E" ? synthPoints.find(p=>p.id === drag) : getPoint(drag)
-    
-    // const distE2A = getDistBtwPoints(drag[0] === "E" ? dragPoint : pointE2,pointA)
-    // const distE2D = getDistBtwPoints(drag[0] === "E" ? dragPoint : pointE2,pointD)
-    // const distE2A = getDistBtwPoints(pointE2,pointA)
-    // const distE2D = getDistBtwPoints(pointE2,pointD)
 
     // If dragging a focus point (i.e. A, D, or an E)...
         // Determine which 3 to use to define kF
@@ -311,7 +141,6 @@ function pathNodeModeSynth(doit=true,drag="E1") {
             kFPoint = AE2 > DE2 ? pointA : pointD
             adjPoint = AE2 > DE2 ? pointD : pointA
         }
-
 
         switch (synthPointCount) {
             case 1:
@@ -332,6 +161,12 @@ function pathNodeModeSynth(doit=true,drag="E1") {
         const angle_e12 = getJointsAngle(point_e12,kF_center)
         const angleFixed = angle_e12
         const moveFixed = AE2 > DE2 ? pointA : pointD
+
+        // document.getElementById("debugOutputs").innerHTML = `
+        //     angle_e12: ${angle_e12} \n<br>
+        //     angleFixed: ${angleFixed} \n<br>
+        // `
+        
         placePointPolar(moveFixed, kF_center, angleFixed, kF_rad, (pointE1.type === "cusp" && pointE2.type === "cusp"))
 
         placePointPolar(adjPoint, kF_center, angle_kF, kF_rad, synthPointCount > 1)
@@ -410,7 +245,7 @@ function pathNodeModeSynth(doit=true,drag="E1") {
         let newCE = CE
         if (synthPointCount > 1){// && pointE2.type !== "cusp") {
             if (overAD) {
-                if (pointE2.type === "cusp") {
+                if (pointE2.type === "cusp" && pointE1.type !== "cusp") {
                     newCE = (DE1*DE1 - DE2*DE2)/((((AE1*AE1 - AE2*AE2)/(2*BE*AE1))-(AE2/AE1)-(DE2/DE1))*2*DE1)
                 }
                 else {
@@ -473,7 +308,7 @@ function pathNodeModeSynth(doit=true,drag="E1") {
         let newBE = BE
         if (synthPointCount > 1){// && pointE2.type !== "cusp") {
             if (overAD) {
-                if (pointE2.type === "cusp") {
+                if (pointE2.type === "cusp" && pointE1.type !== "cusp") {
                     newBE = (AE1*AE1 - AE2*AE2)/((((DE1*DE1 - DE2*DE2)/(2*CE*DE1))-(DE2/DE1)-(AE2/AE1))*2*AE1)
                 }
                 else {
@@ -550,105 +385,13 @@ function mirrorNodeSynth(doit=true) {
     // updateLinkGeometry()
 }
 
-function pathCuspSynth(doit=true) {
-    // if (!nodeMode) return
-
-    setLinkPoints()
-
-    const nodeE = synthPoints[0]
-    const nodeE2 = synthPoints[1]
-    const nodeA = getPoint("A")
-    const nodeB = getPoint("B")
-    const nodeC = getPoint("C")
-    const nodeD = getPoint("D")
-
-    let midAD = getMidPoint(nodeA,nodeD)
-    let radAD = getDistBtwPoints(nodeA,nodeD)/2
-
-    let inputLength = linkToCoord(getLinkByType("input").len, "dist")
-    const outputLength = linkToCoord(getLinkByType("output").len, "dist")
-
-    let angleAE = getJointsAngle(nodeA, nodeE)// - 180*(Math.floor(synthSolution/2))
-
-    const inputAng = getJointsAngle(nodeB, nodeA)
-    if (Math.abs(angleAE-inputAng) < 90) angleAE = angleAE - 180
-
-
-    if (synthPointCount === 2) {
-        // const nodeE2 = synthPoints[1]
-        update_kFCircle()
-        const kFCenter = {x: kFCirc[0], y: kFCirc[1]}
-        const kFRad = kFCirc[2]/2
-
-        kFCircle
-            .attr("cx", kFCirc[0])
-            .attr("cy", kFCirc[1])
-            .attr("r", kFCirc[2]/2)
-
-        const e12 = getMidPoint(nodeE, nodeE2)
-        const angleE1E2 = getJointsAngle(nodeE, nodeE2)
-        const angle_e12 = angleE1E2 + 90
-
-        let dist_e12 = kFRad + getDistBtwPoints(e12, kFCenter)
-
-        let D_new = placePointPolar(nodeD, e12, angle_e12, dist_e12, false)
-
-        if (getDistBtwPoints(kFCenter,D_new) - kFRad > 0.0001) {
-            dist_e12 = kFRad - getDistBtwPoints(e12, kFCenter)
-            D_new = placePointPolar(nodeD, e12, angle_e12, dist_e12, false)
-        }
-        nodeD.x = D_new.x
-        nodeD.y = D_new.y
-
-        setLinkPoints()
-
-        midAD = getMidPoint(nodeA,nodeD)
-        radAD = getDistBtwPoints(nodeA,nodeD)/2
-
-        inputLength = 2*radAD * Math.cos(degToRad(coordToLink(getJointsAngle(nodeA, nodeE),"angle")))
-        let B_new = placePointPolar(nodeB, nodeA, angleAE, inputLength, false)
-        if (getDistBtwPoints(midAD,B_new)-radAD > 0.0001) {
-            inputLength = -inputLength
-        }
-    }
-
-    placePointPolar(nodeB, nodeA, angleAE, inputLength, doit)
-
-    let angleDE = getJointsAngle(nodeD, nodeE)// - 180*synthSolution
-    const outputAng = getJointsAngle(nodeC, nodeD)
-    if (Math.abs(angleDE-outputAng) < 90) angleDE = angleDE - 180
-
-    placePointPolar(nodeC, nodeD, angleDE, outputLength, doit)
-
-    setLinkPoints()
-    updateTPoints()
-    updateInputLimits()
-    updateOutputLimits()
-
-    synthModeOpen = linkageOpen
-
-    synthPoints[0].inAng = inputAngle
-    synthPoints[0].isOpen = linkageOpen
-    
-    if (synthPointCount === 2) {
-        let angleAE2 = getJointsAngle(nodeA, nodeE2)
-
-        let B_new = placePointPolar(nodeB, nodeA, angleAE2, inputLength, false)
-        if (getDistBtwPoints(midAD,B_new)-radAD > 0.0001) {
-            angleAE2 = angleAE2 + 180
-        }
-
-        synthPoints[1].inAng = coordToLink(angleAE2,"angle")
-        synthPoints[1].isOpen = linkageOpen
-    }
-}
-
 function snapToSynthPoint(point="E1") {
     const synthPoint = synthPoints.find(p=>p.id === point)
     const couplerPoint = getPoint("BC")
 
     let inverted = false
 
+    // If the angle to be snapped to is outside of the current input limits, this indicates that inversion is required in order to complete the snap
     if (synthPoint.inAng > inputLimits.max || synthPoint.inAng < inputLimits.min) {
         invertLinkage()
         inverted = true
@@ -656,9 +399,10 @@ function snapToSynthPoint(point="E1") {
     linkageOpen = synthPoint.isOpen
     doActuate(getNetAngle(linkToCoord(synthPoint.inAng,"angle")))
 
-    if (Math.abs(couplerPoint.x-synthPoint.x) > limitThreshold || Math.abs(couplerPoint.y-synthPoint.y) > limitThreshold) {
+    // If, after actuating to the synth point angle (and inverting if necessary), the coupler point has not reached the synth point, then the open/crossed config must also be toggled
+    if (!checkPointsCoincident(synthPoint,couplerPoint)) {
         toggleOpenCrossed()
     }
 
-    return inverted
+    return inverted // In order to track whether the system was inverted via above
 }

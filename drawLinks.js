@@ -95,9 +95,11 @@ const linkLines = linkLineGroup.selectAll("polygon")
             let inverted = null
 
             if (nodeMode && d.type !== "input"){
-                if(Math.abs(getPoint("BC").x-synthPoints[0].x) > limitThreshold && Math.abs(getPoint("BC").y-synthPoints[0].y) > limitThreshold) {
-                    if (d.id === "BC") return
-                    inverted = snapToSynthPoint("E1")
+                // If the coupler point is not currently on E1...
+                if(!checkPointsCoincident(synthPoints[0],getPoint("BC"))) {
+                    // if (d.id === "BC") return // Dont allow dragging of the coupler link when in nodeMode
+                    if (d.type !== "fixed") return // Only allow dragging of the fixed link when in nodeMode
+                    inverted = snapToSynthPoint("E1") //
                 }
             }
 
@@ -163,7 +165,7 @@ const linkLines = linkLineGroup.selectAll("polygon")
                 updateTPoints(false, d.id)
                 pathNodeModeSynth(nodeMode,d.id)
 
-                if (nodeMode && synthPoints[0].type !== "crunode") {
+                if (nodeMode && d.type === "fixed") {
                     let revertAngle = activeSynthPoint.inAng
 
                     // Snap back to the input angle from before the drag event
@@ -263,47 +265,53 @@ const jointDrag = jointDragGroup.selectAll("cirlce")
             
             let inverted = null
             if (nodeMode){
-                if (d.id === "BC") return
-                if (checkPointsCoincident(synthPoints[0],getPoint("BC"))) {
+                if (d.id === "BC") return;
+                if (!checkPointsCoincident(synthPoints[0],getPoint("BC"))) {
+                    if (d.id === "B" || d.id === "C") return;
                     inverted = snapToSynthPoint("E1")
                 }
+                // snapToSynthPoint("E1")
             }
 
             d.x = event.x
             d.y = event.y
 
-            if (d.id === "BC") {
-                synthPoints[0].x = d.x
-                synthPoints[0].y = d.y
-            } else {
-                synthPoints[0].x = getPoint("BC").x
-                synthPoints[0].y = getPoint("BC").y
+            if (!nodeMode) {    
+                if (d.id === "BC") {
+                    synthPoints[0].x = d.x
+                    synthPoints[0].y = d.y
+                } 
+                else {
+                    synthPoints[0].x = getPoint("BC").x
+                    synthPoints[0].y = getPoint("BC").y
+                }
             }
+            
             if (d.id.length === 2) updateTPoints(true, d.id)
             else updateTPoints()
 
             pathNodeModeSynth(nodeMode,d.id)
 
-            // if (nodeMode && synthPoints[0].type !== "crunode") {
-            //     let revertAngle = activeSynthPoint.inAng
+            if (nodeMode && d.ground){
+                let revertAngle = activeSynthPoint.inAng
 
-            //     // Snap back to the input angle from before the drag event
-            //     if (synthPointSnap) {
-            //         if (inverted || revertAngle > inputLimits.max || revertAngle < inputLimits.min) { // If the linkage was previously inverted, revert it
-            //             invertLinkage()
-            //         }
-            //         linkageOpen = activeSynthPoint.isOpen
-            //         doActuate(getNetAngle(linkToCoord(revertAngle,"angle")))
-            //     } else {
-            //         if (inverted){//  || synthModeTempOpen > inputLimits.max || synthModeTempOpen < inputLimits.min) {
-            //             // If we include limits ^, the coupler point can jump to other loop when dragging casuses it to reach a limit...
-            //             // If we exclude limits ^, the coupler point will jump to other loop if it gets pinched off from active point...
-            //             invertLinkage()
-            //         }
-            //         linkageOpen = synthModeTempOpen
-            //         doActuate(getNetAngle(linkToCoord(synthModeTempAngle,"angle")))
-            //     }
-            // }
+                // Snap back to the input angle from before the drag event
+                if (synthPointSnap) {
+                    if (inverted || revertAngle > inputLimits.max || revertAngle < inputLimits.min) { // If the linkage was previously inverted, revert it
+                        invertLinkage()
+                    }
+                    linkageOpen = activeSynthPoint.isOpen
+                    doActuate(getNetAngle(linkToCoord(revertAngle,"angle")))
+                } else {
+                    if (inverted){//  || synthModeTempOpen > inputLimits.max || synthModeTempOpen < inputLimits.min) {
+                        // If we include limits ^, the coupler point can jump to other loop when dragging casuses it to reach a limit...
+                        // If we exclude limits ^, the coupler point will jump to other loop if it gets pinched off from active point...
+                        invertLinkage()
+                    }
+                    linkageOpen = synthModeTempOpen
+                    doActuate(getNetAngle(linkToCoord(synthModeTempAngle,"angle")))
+                }
+            }
 
             setLinkPoints()
             updateTrace()

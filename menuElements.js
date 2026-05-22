@@ -482,7 +482,6 @@ nodeModeButton
         nodeModeTable[0].active = nodeMode
         nodeModeMenu.attr("stroke-opacity", n => n.id === "E1_crunode" && n.active ? 0.5 : 0.1)
         
-        // pathCrunodeSynth(true)
         pathNodeModeSynth(true)
         updateLinkGeometry()
         updateTrace()

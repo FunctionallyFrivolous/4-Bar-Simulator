@@ -1,4 +1,28 @@
 // Next Tasks:
+    // Synthesis Methods
+        // Cognates - DONE!
+        // Nodes
+            // DONE: Crunode, Cusp, Crunode-Crunode, Cusp-Crunode, Crunode-Cusp
+            // WIP: 
+                // Cusp-Cusp: 
+                    // Issue when E1E2 mid point crosses kF center
+                        // Driven fixed joint jumps to opposite side of kF
+                        // How to prevent this...
+                // Edge cases:
+                    // Sometimes B or C goes off into space....
+                        // Ideally avoid these scenarios
+                        // Potentially work around by not allowing these cases (check calc'd BE or CE)
+                            // Revert to previous values if this (or just not placePoint, i.e. doit=false)
+                            // Then when drag yields a valid solution, do it
+            // Then: Three nodes!
+            // Imaginary Nodes?
+                // Constrain/enforce configs to not allow imaginary node cases?
+                    // Drive this via AD dist?
+                    // Determine the cusp condition and limit on that
+            // Alt Solutions
+                // A given nodes config has multiple solutions (namely alt A & D locations)
+                    // Need a way to explore each solution
+        // Symmetric Coupler Curves
     // Animation features
         // User actuate via slider
         // User adjust playback speed (vertical slider above play button?)
@@ -21,38 +45,6 @@
             // Default Linkage?
     // localStorage - More?
         // Animation direction? Meh
-    // Synthesis Methods
-        // Cognates - DONE!
-        // Nodes
-            // DONE: Crunode, Cusp, Crunode-Crunode, Cusp-Crunode, Crunode-Cusp
-            // WIP: 
-                // Cusp-Cusp: 
-                    // Need to update logic for overAD configs...
-                // Edge cases:
-                    // Sometimes B or C goes off into space....
-                        // Ideally avoid these scenarios
-                        // Potentially work around by not allowing these cases (check calc'd BE or CE)
-                            // Revert to previous values if this (or just not placePoint, i.e. doit=false)
-                            // Then when drag yields a valid solution, do it
-            // General:
-                // Need to calc input angle for E2 positions...
-                    //
-            // Then: Three nodes!
-            // Imaginary Nodes?
-                // NOTE: imaginary node states cannot be allowed
-                    // The E-node input angle becomes NA which then breaks everything when trying to jump to that angle
-                        // A potential alt solution to this ^ would be to check for this and just jump to a valid angle (btwn limits)
-                // Constrain/enforce configs to not allow imaginary node cases
-                    // Drive this via AD dist?
-                    // Determine the cusp condition and limit on that
-            // Alt Solutions
-                // A given nodes config has multiple solutions (namely alt A & D locations)
-                    // Need a way to explore each solution
-                // Also want to automatically find the "nearest" solution (i.e. the solution config that look most like the current config)
-                    // Minimize error of... link lengths or A & D positions?
-                        // A & D positions is probably most relevant / higher priority
-                        // Minimizing link length error will also be nice for finding nearest solution within a specific A/D config
-        // Symmetric Coupler Curves
     // Scale Linkage
         // Scale all link lengths uniformly
         // Scale outward from joint A
