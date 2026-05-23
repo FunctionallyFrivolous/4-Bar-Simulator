@@ -163,18 +163,11 @@ function pathNodeModeSynth(doit=true,drag="E1") {
         const angle_e12 = getJointsAngle(point_e12,kF_center)
         let angleFixed = angle_e12
         const moveFixed = AE2 > DE2 ? pointA : pointD
-        
-        // const checkNewFixed = placePointPolar(moveFixed, kF_center, angleFixed, kF_rad, false)
-        // const checkNewFixed_opp = placePointPolar(moveFixed, kF_center, angleFixed, -kF_rad, false)
-        // const newDelta = getDistBtwPoints(moveFixed,checkNewFixed)
-        // const newDelta_opp = getDistBtwPoints(moveFixed,checkNewFixed_opp)
-
-        // const fixed_rad = newDelta > newDelta_opp ? -kF_rad : kF_rad
 
         const fixed_rad = checkClosestPolar(moveFixed,kF_center,angleFixed,kF_rad,-kF_rad)
 
         // This helps prevent issues when transitioning from cusp-cusp to cusp-crunode
-        if ((Math.abs(DE2-DE1)<limitThreshold) && !(pointE1.type === "cusp" && pointE2.type === "cusp")) {
+        if ((Math.abs(DE2-DE1)<limitThreshold) && synthPointCount > 1 && !(pointE1.type === "cusp" && pointE2.type === "cusp")) {
             placePointPolar(moveFixed, kF_center, angleFixed-10, fixed_rad, true)
         }
 
@@ -203,140 +196,169 @@ function pathNodeModeSynth(doit=true,drag="E1") {
     const angleE2_E1 = getNetAngle(getAngleBtwPoints(pointE1,pointE2,kF_center), false)
     const angleD_E1 = getNetAngle(getAngleBtwPoints(pointE1,pointD,kF_center), false)
 
-    const overAD = (angleE1_E2 > angleE1_A && angleE2_E1 > angleD_E1) || (angleE1_E2 < angleE1_A && angleE2_E1 < angleD_E1)
+    const overAD = (pointE2.type !== "none" && angleE1_E2 > angleE1_A && angleE2_E1 > angleD_E1) || (angleE1_E2 < angleE1_A && angleE2_E1 < angleD_E1)
 
     // Determine whether to place B & C to new locations
     let placeC = drag !== "C" && (drag === "B" || (AE2 > DE2 && pointE2.type !== "cusp") || (AE2 < DE2 && pointE2.type === "cusp"))// || (pointE2.type === "cusp"))
     if (pointE1.type === "cusp" && pointE2.type === "cusp"){
         placeC = AE2 > DE2 ? true : false
     } 
-    // const placeB = !placeC || pointE2.type === "cusp"
     
     if (placeC){
-        const dragAngle = getAngleBtwPoints(pointA, pointB, pointE1)
 
-        // if E1 is cusp, snap B to AE1 line
-        if (pointE1.type === "cusp" || pointE2.type === "cusp"){ 
-            let new_angleE1B = angleE1B
-            let newBE = BE
-            if (pointE1.type === "cusp") {
-                new_angleE1B = angleE1A
-                if (dragAngle > 90) new_angleE1B = new_angleE1B + 180
-            }
-            if (pointE2.type === "cusp"){
-                if (pointE1.type === "cusp" && pointE2.type === "cusp") {
-                    newBE = BE
-                    // if (cognateNumber === 2 && synthPointCount === 2 && pointE1.type === "cusp" && pointE2.type === "cusp") newBE = -newBE
-                }
-                else if (overAD) {
-                    newBE = Math.abs((AE2*AE2 - AE1*AE1)/(2*AE1*Math.cos(degToRad(getAngleBtwPoints(pointA, pointB, pointE1))) + 2*AE2))
-                } else {
-                    newBE = (AE1*AE1 - AE2*AE2)/(2*AE1*Math.cos(degToRad(getAngleBtwPoints(pointA, pointB, pointE1))) - 2*AE2)
-                }
-            }
-            
-            newBE = checkClosestPolar(pointB, pointE1, new_angleE1B, newBE, -newBE)
-            placePointPolar(pointB, pointE1, new_angleE1B, newBE, true)
-            setLinkPoints()
-            updateTPoints()
-            updateInputLimits()
-            updateOutputLimits()
+        let new_angleE1B = angleE1B
+        let newBE = BE
+
+        // if E1 is a cusp, then set B to lay on AE1
+        if (pointE1.type === "cusp") {
+            new_angleE1B = angleE1A
+        } else if (pointE2.type === "cusp" && !overAD) {
+            newBE = (AE1*AE1 - AE2*AE2)/(2*AE1*Math.cos(degToRad(getAngleBtwPoints(pointA, pointB, pointE1))) - 2*AE2)
+        } else if (pointE2.type === "cusp" && overAD) {
+            newBE = (AE1*AE1 - AE2*AE2)/(2*AE1*Math.cos(degToRad(getAngleBtwPoints(pointA, pointB, pointE1))) + 2*AE2)
         }
+
+        newBE = checkClosestPolar(pointB, pointE1, new_angleE1B, newBE, -newBE)
+        placePointPolar(pointB, pointE1, new_angleE1B, newBE, true)
+        setLinkPoints()
+        updateTPoints()
+        updateInputLimits()
+        updateOutputLimits()
 
         const angleAE1B = getAngleBtwPoints(pointA, pointB, pointE1)
-        const angleE1C = getJointsAngle(pointE1, pointC, false)
-        let new_angleE1C = getNetAngle(angleE1D - angleAE1B)
-        if (dragAngle > 90 && pointE1.type === "cusp") new_angleE1C = new_angleE1C + 180
-
+        let new_angleE1C = angleE1C
+        new_angleE1C = getNetAngle(angleE1D - angleAE1B)
         let newCE = CE
-        if (synthPointCount > 1){// && pointE2.type !== "cusp") {
-            if (overAD) {
-                if (pointE2.type === "cusp" && pointE1.type !== "cusp") {
-                    newCE = Math.abs((DE1*DE1 - DE2*DE2)/((((AE1*AE1 - AE2*AE2)/(2*BE*AE1))-(AE2/AE1)-(DE2/DE1))*2*DE1))
-                }
-                else {
-                    newCE = Math.abs((DE1*DE1 - DE2*DE2)/(((BE*BE + AE1*AE1 - AB*AB)*DE1/(BE*AE1))+((BE*BE + AE2*AE2 - AB*AB)*DE2/(BE*AE2))))
-                }
-            } else {
-                if (pointE2.type === "cusp") {
-                    newCE = (DE1*DE1 - DE2*DE2)/((((AE1*AE1 - AE2*AE2)/(2*BE*AE1))+(AE2/AE1)-(DE2/DE1))*2*DE1)
-                }
-                else {
-                    newCE = (DE1*DE1 - DE2*DE2)/(((BE*BE + AE1*AE1 - AB*AB)*DE1/(BE*AE1))-((BE*BE + AE2*AE2 - AB*AB)*DE2/(BE*AE2)))
-                }
-            }
+
+        if (pointE2.type === "none") {
+            newCE = CE
         }
-        
+        if (pointE2.type === "crunode" && !overAD){
+            newCE = (DE1*DE1 - DE2*DE2)/(((BE*BE + AE1*AE1 - AB*AB)*DE1/(BE*AE1))-((BE*BE + AE2*AE2 - AB*AB)*DE2/(BE*AE2)))
+        }
+        if (pointE2.type === "crunode" && overAD){
+            newCE = (DE1*DE1 - DE2*DE2)/(((BE*BE + AE1*AE1 - AB*AB)*DE1/(BE*AE1))+((BE*BE + AE2*AE2 - AB*AB)*DE2/(BE*AE2)))
+        }
+        if (pointE2.type === "cusp" && !overAD){
+            newCE = (DE1*DE1 - DE2*DE2)/((((AE1*AE1 - AE2*AE2)/(2*BE*AE1))+(AE2/AE1)-(DE2/DE1))*2*DE1)
+        }
+        if (pointE2.type === "cusp" && overAD){
+            newCE = (DE1*DE1 - DE2*DE2)/((((AE1*AE1 - AE2*AE2)/(2*BE*AE1))-(AE2/AE1)-(DE2/DE1))*2*DE1)
+        }
+
+        // if (pointE1.type === "crunode" && pointE2.type === "crunode" && !overAD){
+        //     newCE = (DE1*DE1 - DE2*DE2)/(((BE*BE + AE1*AE1 - AB*AB)*DE1/(BE*AE1))-((BE*BE + AE2*AE2 - AB*AB)*DE2/(BE*AE2)))
+        // }
+        // if (pointE1.type === "crunode" && pointE2.type === "crunode" && overAD){
+        //     newCE = (DE1*DE1 - DE2*DE2)/(((BE*BE + AE1*AE1 - AB*AB)*DE1/(BE*AE1))+((BE*BE + AE2*AE2 - AB*AB)*DE2/(BE*AE2)))
+        // }
+        // if (pointE1.type === "cusp" && pointE2.type === "crunode" && !overAD){
+        //     newCE = (DE1*DE1 - DE2*DE2)/(((BE*BE + AE1*AE1 - AB*AB)*DE1/(BE*AE1))-((BE*BE + AE2*AE2 - AB*AB)*DE2/(BE*AE2)))
+        // }
+        // if (pointE1.type === "cusp" && pointE2.type === "crunode" && overAD){
+        //     newCE = (DE1*DE1 - DE2*DE2)/(((BE*BE + AE1*AE1 - AB*AB)*DE1/(BE*AE1))+((BE*BE + AE2*AE2 - AB*AB)*DE2/(BE*AE2)))
+        //     // THIS IS THE SAME AS FOR crunode-crunode overAD. COMBINE THEM
+        // }
+        // if (pointE1.type === "crunode" && pointE2.type === "cusp" && !overAD){
+        //     newCE = (DE1*DE1 - DE2*DE2)/((((AE1*AE1 - AE2*AE2)/(2*BE*AE1))+(AE2/AE1)-(DE2/DE1))*2*DE1)
+        // }
+        // if (pointE1.type === "cusp" && pointE2.type === "cusp" && !overAD){
+        //     newCE = (DE1*DE1 - DE2*DE2)/((((AE1*AE1 - AE2*AE2)/(2*BE*AE1))+(AE2/AE1)-(DE2/DE1))*2*DE1)
+        // }
+        // if (pointE1.type === "crunode" && pointE2.type === "cusp" && overAD){
+        //     newCE = (DE1*DE1 - DE2*DE2)/((((AE1*AE1 - AE2*AE2)/(2*BE*AE1))-(AE2/AE1)-(DE2/DE1))*2*DE1)
+        // }
+        // if (pointE1.type === "cusp" && pointE2.type === "cusp" && overAD){
+        //     newCE = (DE1*DE1 - DE2*DE2)/(((BE*BE + AE1*AE1 - AB*AB)*DE1/(BE*AE1))+((BE*BE + AE2*AE2 - AB*AB)*DE2/(BE*AE2)))
+        // }
+
         newCE = checkClosestPolar(pointC, pointE1, new_angleE1C, newCE, -newCE) // Checks whether +-newCE is closer to old CE
         placePointPolar(pointC, pointE1, new_angleE1C, newCE, true)
 
     }
     else {
-        const dragAngle = getAngleBtwPoints(pointD, pointC, pointE1)
 
-        // if E1 is cusp, snap C to DE1 line
-        if (pointE1.type === "cusp" || pointE2.type === "cusp"){ 
-            let new_angleE1C = angleE1C
-            let newCE = CE 
-            if (pointE1.type === "cusp"){
-                new_angleE1C = angleE1D
-                if (dragAngle > 90) new_angleE1C = new_angleE1C + 180
-            }
-            if (pointE2.type === "cusp"){
-                if (pointE1.type === "cusp" && pointE2.type === "cusp") {
-                    newCE = CE
-                    // if (cognateNumber === 2 && synthPointCount === 2 && pointE1.type === "cusp" && pointE2.type === "cusp") newCE = -newCE
-                }
-                else if (overAD) {
-                    newCE = Math.abs((DE2*DE2 - DE1*DE1)/(2*DE1*Math.cos(degToRad(getAngleBtwPoints(pointD, pointC, pointE1))) + 2*DE2))
-                } else {
-                    newCE = (DE1*DE1 - DE2*DE2)/(2*DE1*Math.cos(degToRad(getAngleBtwPoints(pointD, pointC, pointE1))) - 2*DE2)
-                } 
-            }
+        let new_angleE1C = angleE1C
+        let newCE = CE 
 
-            newCE = checkClosestPolar(pointC, pointE1, new_angleE1C, newCE, -newCE)
-            placePointPolar(pointC, pointE1, new_angleE1C, newCE, true)
-            setLinkPoints()
-            updateTPoints()
-            updateInputLimits()
-            updateOutputLimits()
+        if (pointE1.type === "cusp" ){ 
+            new_angleE1C = angleE1D
+        } else if (pointE2.type === "cusp" && !overAD) {
+            newCE = (DE1*DE1 - DE2*DE2)/(2*DE1*Math.cos(degToRad(getAngleBtwPoints(pointD, pointC, pointE1))) - 2*DE2)
+        } else if (pointE2.type === "cusp" && overAD) {
+            newCE = (DE2*DE2 - DE1*DE1)/(2*DE1*Math.cos(degToRad(getAngleBtwPoints(pointD, pointC, pointE1))) + 2*DE2)
         }
+
+        newCE = checkClosestPolar(pointC, pointE1, new_angleE1C, newCE, -newCE)
+        placePointPolar(pointC, pointE1, new_angleE1C, newCE, true)
+        setLinkPoints()
+        updateTPoints()
+        updateInputLimits()
+        updateOutputLimits()
 
         const angleDE1C = getAngleBtwPoints(pointD, pointC, pointE1)
-        const angleE1B = getJointsAngle(pointE1, pointB, false)
-        let new_angleE1B = getNetAngle(angleE1A - angleDE1C)
-        if (dragAngle > 90 && pointE1.type === "cusp") new_angleE1B = new_angleE1B + 180
-
+        let new_angleE1B = angleE1B
+        new_angleE1B = getNetAngle(angleE1A - angleDE1C)
         let newBE = BE
-        if (synthPointCount > 1){// && pointE2.type !== "cusp") {
-            if (overAD) {
-                if (pointE2.type === "cusp" && pointE1.type !== "cusp") {
-                    newBE = Math.abs((AE1*AE1 - AE2*AE2)/((((DE1*DE1 - DE2*DE2)/(2*CE*DE1))-(DE2/DE1)-(AE2/AE1))*2*AE1))
-                }
-                else {
-                    newBE = Math.abs((AE1*AE1 - AE2*AE2)/(((CE*CE + DE1*DE1 - DC*DC)*AE1/(CE*DE1))+((CE*CE + DE2*DE2 - DC*DC)*AE2/(CE*DE2))))
-                }
-            } else {
-                if (pointE2.type === "cusp") {
-                    newBE = (AE1*AE1 - AE2*AE2)/((((DE1*DE1 - DE2*DE2)/(2*CE*DE1))+(DE2/DE1)-(AE2/AE1))*2*AE1)
-                }
-                else {
-                    newBE = (AE1*AE1 - AE2*AE2)/(((CE*CE + DE1*DE1 - DC*DC)*AE1/(CE*DE1))-((CE*CE + DE2*DE2 - DC*DC)*AE2/(CE*DE2)))
-                }
-            }
+
+        if (pointE2.type === "none") {
+            newBE = BE
+        }
+        if (pointE2.type === "crunode" && !overAD){
+            newBE = (AE1*AE1 - AE2*AE2)/(((CE*CE + DE1*DE1 - DC*DC)*AE1/(CE*DE1))-((CE*CE + DE2*DE2 - DC*DC)*AE2/(CE*DE2)))
+        }
+        if (pointE2.type === "crunode" && overAD){
+            newBE = (AE1*AE1 - AE2*AE2)/(((CE*CE + DE1*DE1 - DC*DC)*AE1/(CE*DE1))+((CE*CE + DE2*DE2 - DC*DC)*AE2/(CE*DE2)))
+        }
+        if (pointE2.type === "cusp" && !overAD){
+            newBE = (AE1*AE1 - AE2*AE2)/((((DE1*DE1 - DE2*DE2)/(2*CE*DE1))+(DE2/DE1)-(AE2/AE1))*2*AE1)
+        }
+        if (pointE2.type === "cusp" && overAD){
+            newBE = (AE1*AE1 - AE2*AE2)/((((DE1*DE1 - DE2*DE2)/(2*CE*DE1))-(DE2/DE1)-(AE2/AE1))*2*AE1)
         }
 
-        newBE = checkClosestPolar(pointB, pointE1, new_angleE1B, newBE, -newBE)
+        // if (pointE1.type === "crunode" && pointE2.type === "crunode" && !overAD){
+        //     newBE = (AE1*AE1 - AE2*AE2)/(((CE*CE + DE1*DE1 - DC*DC)*AE1/(CE*DE1))-((CE*CE + DE2*DE2 - DC*DC)*AE2/(CE*DE2)))
+        // }
+        // if (pointE1.type === "crunode" && pointE2.type === "crunode" && overAD){
+        //     newBE = (AE1*AE1 - AE2*AE2)/(((CE*CE + DE1*DE1 - DC*DC)*AE1/(CE*DE1))+((CE*CE + DE2*DE2 - DC*DC)*AE2/(CE*DE2)))
+        // }
+        // if (pointE1.type === "cusp" && pointE2.type === "crunode" && !overAD){
+        //     newBE = (AE1*AE1 - AE2*AE2)/(((CE*CE + DE1*DE1 - DC*DC)*AE1/(CE*DE1))-((CE*CE + DE2*DE2 - DC*DC)*AE2/(CE*DE2)))
+        // }
+        // if (pointE1.type === "cusp" && pointE2.type === "crunode" && overAD){
+        //     newBE = (AE1*AE1 - AE2*AE2)/(((CE*CE + DE1*DE1 - DC*DC)*AE1/(CE*DE1))+((CE*CE + DE2*DE2 - DC*DC)*AE2/(CE*DE2)))
+        //     // THIS IS THE SAME AS FOR crunode-crunode overAD. COMBINE THEM
+        // }
+        // if (pointE1.type === "crunode" && pointE2.type === "cusp" && !overAD){
+        //     newBE = (AE1*AE1 - AE2*AE2)/((((DE1*DE1 - DE2*DE2)/(2*CE*DE1))+(DE2/DE1)-(AE2/AE1))*2*AE1)
+        // }
+        // if (pointE1.type === "cusp" && pointE2.type === "cusp" && !overAD){
+        //     newBE = (AE1*AE1 - AE2*AE2)/((((DE1*DE1 - DE2*DE2)/(2*CE*DE1))+(DE2/DE1)-(AE2/AE1))*2*AE1)
+        // }
+        // if (pointE1.type === "crunode" && pointE2.type === "cusp" && overAD){
+        //     newBE = (AE1*AE1 - AE2*AE2)/((((DE1*DE1 - DE2*DE2)/(2*CE*DE1))-(DE2/DE1)-(AE2/AE1))*2*AE1)
+        // }
+        // if (pointE1.type === "cusp" && pointE2.type === "cusp" && overAD){
+        //     newBE = (AE1*AE1 - AE2*AE2)/(((CE*CE + DE1*DE1 - DC*DC)*AE1/(CE*DE1))+((CE*CE + DE2*DE2 - DC*DC)*AE2/(CE*DE2)))
+        // }
+
+        newBE = checkClosestPolar(pointB, pointE1, new_angleE1B, newBE, -newBE) // Checks whether +-newCE is closer to old CE
         placePointPolar(pointB, pointE1, new_angleE1B, newBE, true)
-        
+
     }
+
+    // if (!checkPointsCoincident(pointE,pointE1)) {
+    //     pointE.x = pointE1.x
+    //     pointE.y = pointE1.y
+    //     document.getElementById("debugOutputs").innerHTML = `this`
+    // } else document.getElementById("debugOutputs").innerHTML = ``
 
     setLinkPoints()
     updateTPoints()
     updateInputLimits()
     updateOutputLimits()
 
-    synthModeOpen = linkageOpen
     pointE1.inAng = inputAngle
     pointE1.isOpen = linkageOpen
 
@@ -403,13 +425,13 @@ function snapToSynthPoint(point="E1") {
         invertLinkage()
         inverted = true
     }
-    linkageOpen = synthPoint.isOpen
+    // linkageOpen = synthPoint.isOpen // < this causes E1 to bounce off limits during dragging. Is is necessary in other cases?
     doActuate(getNetAngle(linkToCoord(synthPoint.inAng,"angle")))
 
     // If, after actuating to the synth point angle (and inverting if necessary), the coupler point has not reached the synth point, then the open/crossed config must also be toggled
     if (!checkPointsCoincident(synthPoint,couplerPoint)) {
         toggleOpenCrossed()
-        linkageOpen = synthPoint.isOpen
+        // linkageOpen = synthPoint.isOpen // < this causes same limit bounce issue
         doActuate(getNetAngle(linkToCoord(synthPoint.inAng,"angle")))
     }
 

@@ -109,7 +109,6 @@ let swapStatus = false
 let cognateNumber = 1
 
 let synthModeInputAngle = 0
-let synthModeOpen = linkageOpen
 let synthModeTempAngle = 0
 let synthModeTempOpen = linkageOpen
 let synthSolution = 1

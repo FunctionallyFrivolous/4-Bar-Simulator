@@ -200,7 +200,6 @@ const linkLines = linkLineGroup.selectAll("polygon")
             savePoints()
             if (d.type !== "input") {
                 updateTrace()
-                synthModeOpen = linkageOpen
                 synthModeTempAngle = inputAngle
             }
             updateLinkGeometry();
@@ -330,7 +329,6 @@ const jointDrag = jointDragGroup.selectAll("cirlce")
             traceSteps = traceStepsFine
             savePoints()
             updateTrace()
-            synthModeOpen = linkageOpen
             synthModeTempAngle = inputAngle
             updateLinkGeometry()
         })
@@ -442,13 +440,12 @@ const synthDrag = synthDragGroup.selectAll("circle")
                 synthPointSnap = true
             } else synthPointSnap = false
 
-            // synthDrag.attr("fill-opacity", n => n.id === d.id ? 0.1 : 0)
             if (d.display === "block") synthDrag.attr("fill-opacity", n => n.id === d.id ? 0.1 : 0)
-            // else synthDots.attr("opacity", n => n.id === d.id ? 1 : 0.05)
         })
         .on("drag", function(event, d) {
             // First, snap back to E1 position. Keep track of whether the linkage was inverted to get there
             const inverted = snapToSynthPoint("E1")
+            // There is an issue with this ^, when E1 position bumps up against limits
 
             // Drag the selected point
             d.x = event.x
@@ -466,14 +463,6 @@ const synthDrag = synthDragGroup.selectAll("circle")
             // Snap back to the input angle from before the drag event
             if (synthPointSnap) {
                 snapToSynthPoint(activeSynthPoint.id)
-                // if (inverted || revertAngle > inputLimits.max || revertAngle < inputLimits.min) { // If the linkage was previously inverted, revert it
-                //     invertLinkage()
-                // }
-                // linkageOpen = activeSynthPoint.isOpen
-                // doActuate(getNetAngle(linkToCoord(revertAngle,"angle")))
-                // if (nodeMode && !checkPointsCoincident(getPoint("BC"),activeSynthPoint)) {
-                //     toggleOpenCrossed()
-                // }
             } else {
                 if (inverted){//  || synthModeTempOpen > inputLimits.max || synthModeTempOpen < inputLimits.min) {
                     // If we include limits ^, the coupler point can jump to other loop when dragging casuses it to reach a limit...
@@ -488,7 +477,6 @@ const synthDrag = synthDragGroup.selectAll("circle")
             setLinkPoints()
             updateTPoints()
             updateTrace()
-            // updateTrace(false, synthModeOpen)
             updateLinkGeometry()
         })
         .on("end", function(event,d) {

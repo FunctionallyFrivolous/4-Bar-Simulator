@@ -452,16 +452,6 @@ function updateLinkGeometry() {
     //     .attr("x2", getPoint("B").x)
     //     .attr("y2", getPoint("B").y)
 
-    // const angE1B = getJointsAngle(getPoint("E1"),getPoint("B"))
-    // const test_BE = (AE1*AE1 - AE2*AE2)/(2*AE1*Math.cos(degToRad(getAngleBtwPoints(getPoint("A"),getPoint("B"),getPoint("E1")))) - 2*AE2)
-    // const ztest = (DE1*DE1 - DE2*DE2)/((((AE1*AE1 - AE2*AE2)/(2*BE*AE1))+(AE2/AE1)-(DE2/DE1))*2*DE1)
-    // const ztest2 = (AE1*AE1 - AE2*AE2)/((((DE1*DE1 - DE2*DE2)/(2*CE*DE1))+(DE2/DE1)-(AE2/AE1))*2*AE1)
-    // const ztest = (test_BE*test_BE + AE1*AE1 - AB*AB)/(2*test_BE*AE1)
-    // const cosTest = Math.cos(degToRad(getAngleBtwPoints(getPoint("A"),getPoint("B"),getPoint("E1"))))
-    const test_CE = (DE1*DE1 - DE2*DE2)/((((AE1*AE1 - AE2*AE2)/(2*BE*AE1))-(AE2/AE1)-(DE2/DE1))*2*DE1)
-    const test_BE = -(AE2*AE2 - AE1*AE1)/(2*AE1*Math.cos(degToRad(getAngleBtwPoints(getPoint("A"), getPoint("B"), getPoint("E1")))) + 2*AE2)
-
-
     // document.getElementById("debugOutputs").innerHTML = `
     //     AE1: ${AE1.toFixed(1)} \n<br>
     //     DE1: ${DE1.toFixed(1)} \n<br>
@@ -478,6 +468,11 @@ function updateLinkGeometry() {
     // `
 
     // document.getElementById("debugOutputs").innerHTML = `${cognateNumber}`
+    // document.getElementById("debugOutputs").innerHTML = `
+    //         ${synthPointCount} \n<br>
+    //         ${synthPoints[0].type} \n<br>
+    //         ${synthPoints[1].type} \n<br>
+    //     `
 }
 
 function updateTrace(alt=true, oc=linkageOpen) {

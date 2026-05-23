@@ -244,13 +244,11 @@ cognateButton
     .attr("stroke-opacity", 0.75)
     .on("click", function() {
         if (nodeMode) {
-            // linkageOpen = synthModeOpen
             // doActuate(getNetAngle(linkToCoord(synthPoints[0].inAng,"angle")))
             cycleCognates()
             setLinkPoints()
             updateOpenCrossed()
             pathNodeModeSynth(true,"E1")
-            // synthModeOpen = linkageOpen
         } else {
             cycleCognates()
         }
@@ -295,6 +293,7 @@ resetLinkageButton
         synthPointCount = 0
         for (i = 0; i < synthPoints.length; i++) {
             synthPoints[i].display = "none"
+            synthPoints[i].type = "none"
         }
         for (i = 0; i < nodeModeTable.length; i++){
             nodeModeTable[i].active = false
