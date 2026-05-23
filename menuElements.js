@@ -247,13 +247,14 @@ cognateButton
             // linkageOpen = synthModeOpen
             // doActuate(getNetAngle(linkToCoord(synthPoints[0].inAng,"angle")))
             cycleCognates()
-            pathNodeModeSynth()
             setLinkPoints()
             updateOpenCrossed()
+            pathNodeModeSynth(true,"E1")
             // synthModeOpen = linkageOpen
         } else {
             cycleCognates()
         }
+        setLinkPoints()
         savePoints()
         updateLinkGeometry()
         updateTrace()
@@ -289,6 +290,7 @@ resetLinkageButton
     .attr("stroke-opacity", 0.75)
     .on("click", function() {
         nodeMode = false
+        cognateNumber = 1
         synthSolution = 1
         synthPointCount = 0
         for (i = 0; i < synthPoints.length; i++) {
@@ -701,8 +703,8 @@ const nodeModeMenu = nodeModeMenuGroup.selectAll("path")
         }
         
         nodeModeMenu.attr("stroke-opacity", d => d.active && d.id !== oppType.id ? 0.5 : 0.1)
-
-        pathNodeModeSynth(true)
+        
+        pathNodeModeSynth(true,"E1")
         updateLinkGeometry()
         updateTrace()
         updateLinkGeometry()

@@ -192,3 +192,14 @@ function getABunchOfAngles() {
     //     cos_calc: ${cos_law.toFixed(1)} \n<br>
     // `
 }
+
+function checkClosestPolar(refPoint,origin,angle,dist1,dist2){
+    const check1 = placePointPolar(refPoint, origin, angle, dist1, false)
+    const check2 = placePointPolar(refPoint, origin, angle, dist2, false)
+    const delta1 = getDistBtwPoints(refPoint,check1)
+    const delta2 = getDistBtwPoints(refPoint,check2)
+
+    const closest = delta1 > delta2 ? dist2 : dist1
+
+    return closest
+}

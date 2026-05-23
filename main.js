@@ -16,7 +16,10 @@
                     // Determine the cusp condition and limit on that
             // Alt Solutions
                 // A given nodes config has multiple solutions (namely alt A & D locations)
-                    // Need a way to explore each solution
+                // Need a way to explore each solution
+                // New function to swap fixed joint across to other side of kF
+                    // Cycling consists of alternating swapping A and D and cycling cognates
+                    // Need to track solution number and account for this in nodeMode function to remain in the current solution and prevent snapping back to primary
         // Symmetric Coupler Curves
             // Ideally be able to combine this with other synth methods (nodes, etc)
     // Animation features
@@ -102,6 +105,8 @@ document.getElementById("topView").style.border = `1px solid ${fgColor}`
 let undoStatus = true;
 let invertStatus = false;
 let swapStatus = false
+
+let cognateNumber = 1
 
 let synthModeInputAngle = 0
 let synthModeOpen = linkageOpen

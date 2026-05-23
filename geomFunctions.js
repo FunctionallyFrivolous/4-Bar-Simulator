@@ -463,8 +463,6 @@ function updateLinkGeometry() {
 
 
     // document.getElementById("debugOutputs").innerHTML = `
-    //     testCE: ${test_CE.toFixed(1)} \n<br>
-    //     testBE: ${test_BE.toFixed(1)} \n<br>
     //     AE1: ${AE1.toFixed(1)} \n<br>
     //     DE1: ${DE1.toFixed(1)} \n<br>
     //     AE2: ${AE2.toFixed(1)} \n<br>
@@ -478,6 +476,8 @@ function updateLinkGeometry() {
     //     AE2B: ${getAngleBtwPoints(getPoint("A"),getPoint("B"),getPoint("E2")).toFixed(1)} \n<br>
     //     DE2C: ${getAngleBtwPoints(getPoint("D"),getPoint("C"),getPoint("E2")).toFixed(1)} \n<br>
     // `
+
+    // document.getElementById("debugOutputs").innerHTML = `${cognateNumber}`
 }
 
 function updateTrace(alt=true, oc=linkageOpen) {
