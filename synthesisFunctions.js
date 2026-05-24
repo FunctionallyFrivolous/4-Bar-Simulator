@@ -277,6 +277,8 @@ function pathNodeModeSynth(doit=true,drag="E1") {
         setLinkPoints()
 
         if (synthPointCount > 1 && checkImaginaryNode(newCE,placeC)){
+            new_angleE1B = angleE1B
+            newBE = BE
             if (pointE1.type === "cusp") {
             new_angleE1B = angleE1A
             } else if (!overAD) {
@@ -302,11 +304,11 @@ function pathNodeModeSynth(doit=true,drag="E1") {
             placePointPolar(pointC, pointE1, new_angleE1C, newCE, true)
         }
 
-        document.getElementById("debugOutputs").innerHTML = `
-            ${checkImaginaryNode(pointC)} \n<br>
-            ${Math.abs(DC+newCE).toFixed(1)} < ${DE2.toFixed(1)}: ${Math.abs(DC+newCE) < DE2} \n<br>
-            ${Math.abs(DC-newCE).toFixed(1)} > ${DE2.toFixed(1)}: ${Math.abs(DC-newCE) > DE2} \n<br>
-        `
+        // document.getElementById("debugOutputs").innerHTML = `
+        //     ${checkImaginaryNode(pointC)} \n<br>
+        //     ${Math.abs(DC+newCE).toFixed(1)} < ${DE2.toFixed(1)}: ${Math.abs(DC+newCE) < DE2} \n<br>
+        //     ${Math.abs(DC-newCE).toFixed(1)} > ${DE2.toFixed(1)}: ${Math.abs(DC-newCE) > DE2} \n<br>
+        // `
 
     }
     else {
@@ -382,6 +384,8 @@ function pathNodeModeSynth(doit=true,drag="E1") {
         setLinkPoints()
 
         if (synthPointCount > 1 && checkImaginaryNode(newBE,placeC)){
+            new_angleE1C = angleE1C
+            newCE = CE 
             if (pointE1.type === "cusp" ){ 
                 new_angleE1C = angleE1D
             } else if (!overAD) {
@@ -520,16 +524,9 @@ function checkImaginaryNode(newXE, placeC=true) {
     const fixed_X = placeC ? DC : AB
     const fixed_E2 = placeC ? DE2 : AE2
 
-    imaginary = Math.abs(fixed_X + newXE) < fixed_E2 ? true : false
-    imaginary = Math.abs(fixed_X - newXE) > fixed_E2 ? true : false
-
-    // document.getElementById("debugOutputs").innerHTML = `
-    //     ${imaginary} \n<br>
-    //     ${Math.abs(fixed_X+new_XE).toFixed(1)} < ${fixed_E2.toFixed(1)}: ${Math.abs(fixed_X+new_XE) < fixed_E2} \n<br>
-    //     ${Math.abs(fixed_X-new_XE).toFixed(1)} > ${fixed_E2.toFixed(1)}: ${Math.abs(fixed_X-new_XE) > fixed_E2} \n<br>
-    // `
-
-    // new_XE = Math.abs(fixed_E2-fixed_X)
+    if (Math.abs(fixed_X + newXE) < fixed_E2 || Math.abs(fixed_X - newXE) > fixed_E2) {
+        imaginary = true
+    }
 
     return imaginary
 }
