@@ -302,7 +302,9 @@ function pathNodeModeSynth(doit=true,drag="E1") {
             // }
             newCE = checkClosestPolar(pointC, pointE1, new_angleE1C, newCE, -newCE)
             placePointPolar(pointC, pointE1, new_angleE1C, newCE, true)
-        }
+            // document.getElementById("debugOutputs").innerHTML = `imaginary`
+        } 
+        // else document.getElementById("debugOutputs").innerHTML = ``
 
         // document.getElementById("debugOutputs").innerHTML = `
         //     ${checkImaginaryNode(pointC)} \n<br>
@@ -409,7 +411,9 @@ function pathNodeModeSynth(doit=true,drag="E1") {
             // }
             newBE = checkClosestPolar(pointB, pointE1, new_angleE1B, newBE, -newBE)
             placePointPolar(pointB, pointE1, new_angleE1B, newBE, true)
-        }
+            // document.getElementById("debugOutputs").innerHTML = `imaginary`
+        } 
+        // else document.getElementById("debugOutputs").innerHTML = ``
 
     }
 
@@ -527,6 +531,16 @@ function checkImaginaryNode(newXE, placeC=true) {
     if (Math.abs(fixed_X + newXE) < fixed_E2 || Math.abs(fixed_X - newXE) > fixed_E2) {
         imaginary = true
     }
+
+    // document.getElementById("debugOutputs").innerHTML = `
+    //         img: ${imaginary} \n<br>
+    //         placeC: ${placeC} \n<br>
+    //         newXE: ${newXE.toFixed(1)} \n<br>
+    //         fixed_X: ${fixed_X.toFixed(1)} \n<br>
+    //         fixed_E2: ${fixed_E2.toFixed(1)} \n<br>
+    //         ${Math.abs(fixed_X+newXE).toFixed(1)} < ${fixed_E2.toFixed(1)}: ${Math.abs(fixed_X+newXE) < fixed_E2} \n<br>
+    //         ${Math.abs(fixed_X-newXE).toFixed(1)} > ${fixed_E2.toFixed(1)}: ${Math.abs(fixed_X-newXE) > fixed_E2} \n<br>
+    //     `
 
     return imaginary
 }

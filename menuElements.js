@@ -533,6 +533,7 @@ synthCycleButton
         updateTrace()
         updateLinkGeometry()
     })
+    .style("display", "none")
 const synthCycleToolTip = synthCycleButton
     .append("title")
     .text("Reverse Actuation Direction")
@@ -551,6 +552,7 @@ synthCycleIcon
     .attr("alignment-baseline", "middle")
     .style("pointer-events", "none")
     .text("⟲") //⟲, ⥁ , ↻ , ⟳
+    .style("display", "none")
 
 // Symbols:
     // Function generation: ⦡ , ⌔

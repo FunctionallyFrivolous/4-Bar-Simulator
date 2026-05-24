@@ -394,12 +394,12 @@ function updateLinkGeometry() {
         .style("pointer-events", nodeMode ? "none" : "auto")
     openCrossedIcon.attr("opacity", nodeMode ? 0.25 : 1)
 
-    synthCycleButton
-        .style("display", nodeMode ? "block" : "none")
-        // .attr("x", buttonMargin*5 + buttonHeight*4 + (nodeMode ? buttonHeight+buttonMargin : 0))
-    synthCycleIcon
-        .style("display", nodeMode ? "block" : "none")
-        // .attr("x", buttonHeight/2 + buttonMargin*5 + buttonHeight*4 + (nodeMode ? buttonHeight+buttonMargin : 0))
+    // synthCycleButton
+    //     .style("display", nodeMode ? "block" : "none")
+    //     // .attr("x", buttonMargin*5 + buttonHeight*4 + (nodeMode ? buttonHeight+buttonMargin : 0))
+    // synthCycleIcon
+    //     .style("display", nodeMode ? "block" : "none")
+    //     // .attr("x", buttonHeight/2 + buttonMargin*5 + buttonHeight*4 + (nodeMode ? buttonHeight+buttonMargin : 0))
 
 
     crossoverIcon
@@ -452,15 +452,22 @@ function updateLinkGeometry() {
     //     .attr("x2", getPoint("B").x)
     //     .attr("y2", getPoint("B").y)
 
+    const testBE = (AE1*AE1 - AE2*AE2)/((((DE1*DE1 - DE2*DE2)/(2*CE*DE1))+(DE2/DE1)-(AE2/AE1))*2*AE1)
+    const testCE = (DE1*DE1 - DE2*DE2)/(2*DE1*((AE2/AE1)-(DE2/DE1)))
+
     // document.getElementById("debugOutputs").innerHTML = `
+    //     testCE: ${testCE.toFixed(1)} \n<br>
+    //     valid?:  ${Math.abs(testBE-BE)<limitThreshold} \n<br>
+    //     AB: ${AB.toFixed(1)} \n<br>
+    //     testBE: ${testBE.toFixed(1)} \n<br>
+    //     BE: ${BE.toFixed(1)} \n<br>
+    //     DC: ${DC.toFixed(1)} \n<br>
+    //     CE: ${CE.toFixed(1)} \n<br>
     //     AE1: ${AE1.toFixed(1)} \n<br>
     //     DE1: ${DE1.toFixed(1)} \n<br>
     //     AE2: ${AE2.toFixed(1)} \n<br>
     //     DE2: ${DE2.toFixed(1)} \n<br>
-    //     AB: ${AB.toFixed(1)} \n<br>
-    //     BE: ${BE.toFixed(1)} \n<br>
-    //     DC: ${DC.toFixed(1)} \n<br>
-    //     CE: ${CE.toFixed(1)} \n<br>
+    //     \n<br>
     //     AE1B: ${getAngleBtwPoints(getPoint("A"),getPoint("B"),getPoint("E1")).toFixed(1)} \n<br>
     //     DE1C: ${getAngleBtwPoints(getPoint("D"),getPoint("C"),getPoint("E1")).toFixed(1)} \n<br>
     //     AE2B: ${getAngleBtwPoints(getPoint("A"),getPoint("B"),getPoint("E2")).toFixed(1)} \n<br>

@@ -11,15 +11,7 @@
                         // Then when drag yields a valid solution, do it
             // Then: Three nodes!?
             // Imaginary Nodes?
-                // Constrain/enforce configs to not allow imaginary node cases?
-                    // Drive this via AD dist?
-                    // Determine the cusp condition and limit on that
-            // Alt Solutions
-                // A given nodes config has multiple solutions (namely alt A & D locations)
-                // Need a way to explore each solution
-                // New function to swap fixed joint across to other side of kF
-                    // Cycling consists of alternating swapping A and D and cycling cognates
-                    // Need to track solution number and account for this in nodeMode function to remain in the current solution and prevent snapping back to primary
+                // Solved except for overAD cases...
         // Symmetric Coupler Curves
             // Ideally be able to combine this with other synth methods (nodes, etc)
     // Animation features
