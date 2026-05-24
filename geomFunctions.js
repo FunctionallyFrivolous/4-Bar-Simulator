@@ -354,11 +354,11 @@ function updateLinkGeometry() {
     //     .attr("stroke", fgColor)
 
     // update_kFCircle()
-    // kFCircle
-    //     .attr("cx", kFCirc[0])
-    //     .attr("cy", kFCirc[1])
-    //     .attr("r", kFCirc[2]/2)
-    //     .attr("stroke", fgColor)
+    kFCircle
+        .attr("cx", kFCirc[0])
+        .attr("cy", kFCirc[1])
+        .attr("r", kFCirc[2]/2)
+        .attr("stroke", fgColor)
     // ADCircle
     //     .attr("cx", getCircle2Points(getPoint("A"), getPoint("D"))[0])
     //     .attr("cy", getCircle2Points(getPoint("A"), getPoint("D"))[1])
@@ -467,12 +467,8 @@ function updateLinkGeometry() {
     //     DE2C: ${getAngleBtwPoints(getPoint("D"),getPoint("C"),getPoint("E2")).toFixed(1)} \n<br>
     // `
 
-    // document.getElementById("debugOutputs").innerHTML = `${cognateNumber}`
-    // document.getElementById("debugOutputs").innerHTML = `
-    //         ${synthPointCount} \n<br>
-    //         ${synthPoints[0].type} \n<br>
-    //         ${synthPoints[1].type} \n<br>
-    //     `
+    // document.getElementById("debugOutputs").innerHTML = `${synthSolution}`
+
 }
 
 function updateTrace(alt=true, oc=linkageOpen) {

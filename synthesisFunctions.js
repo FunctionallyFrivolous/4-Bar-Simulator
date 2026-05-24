@@ -209,7 +209,6 @@ function pathNodeModeSynth(doit=true,drag="E1") {
         let new_angleE1B = angleE1B
         let newBE = BE
 
-        // if E1 is a cusp, then set B to lay on AE1
         if (pointE1.type === "cusp") {
             new_angleE1B = angleE1A
         } else if (pointE2.type === "cusp" && !overAD) {
@@ -274,6 +273,40 @@ function pathNodeModeSynth(doit=true,drag="E1") {
 
         newCE = checkClosestPolar(pointC, pointE1, new_angleE1C, newCE, -newCE) // Checks whether +-newCE is closer to old CE
         placePointPolar(pointC, pointE1, new_angleE1C, newCE, true)
+
+        setLinkPoints()
+
+        if (synthPointCount > 1 && checkImaginaryNode(newCE,placeC)){
+            if (pointE1.type === "cusp") {
+            new_angleE1B = angleE1A
+            } else if (!overAD) {
+                newBE = (AE1*AE1 - AE2*AE2)/(2*AE1*Math.cos(degToRad(getAngleBtwPoints(pointA, pointB, pointE1))) - 2*AE2)
+            } 
+            // else if (overAD) {
+            //     newBE = (AE1*AE1 - AE2*AE2)/(2*AE1*Math.cos(degToRad(getAngleBtwPoints(pointA, pointB, pointE1))) + 2*AE2)
+            // }
+            newBE = checkClosestPolar(pointB, pointE1, new_angleE1B, newBE, -newBE)
+            placePointPolar(pointB, pointE1, new_angleE1B, newBE, true)
+            setLinkPoints()
+            updateTPoints()
+            updateInputLimits()
+            updateOutputLimits()
+
+            if (!overAD){
+                newCE = (DE1*DE1 - DE2*DE2)/((((AE1*AE1 - AE2*AE2)/(2*BE*AE1))+(AE2/AE1)-(DE2/DE1))*2*DE1)
+            }
+            // if (overAD){
+            //     newCE = (DE1*DE1 - DE2*DE2)/((((AE1*AE1 - AE2*AE2)/(2*BE*AE1))-(AE2/AE1)-(DE2/DE1))*2*DE1)
+            // }
+            newCE = checkClosestPolar(pointC, pointE1, new_angleE1C, newCE, -newCE)
+            placePointPolar(pointC, pointE1, new_angleE1C, newCE, true)
+        }
+
+        document.getElementById("debugOutputs").innerHTML = `
+            ${checkImaginaryNode(pointC)} \n<br>
+            ${Math.abs(DC+newCE).toFixed(1)} < ${DE2.toFixed(1)}: ${Math.abs(DC+newCE) < DE2} \n<br>
+            ${Math.abs(DC-newCE).toFixed(1)} > ${DE2.toFixed(1)}: ${Math.abs(DC-newCE) > DE2} \n<br>
+        `
 
     }
     else {
@@ -345,6 +378,34 @@ function pathNodeModeSynth(doit=true,drag="E1") {
 
         newBE = checkClosestPolar(pointB, pointE1, new_angleE1B, newBE, -newBE) // Checks whether +-newCE is closer to old CE
         placePointPolar(pointB, pointE1, new_angleE1B, newBE, true)
+
+        setLinkPoints()
+
+        if (synthPointCount > 1 && checkImaginaryNode(newBE,placeC)){
+            if (pointE1.type === "cusp" ){ 
+                new_angleE1C = angleE1D
+            } else if (!overAD) {
+                newCE = (DE1*DE1 - DE2*DE2)/(2*DE1*Math.cos(degToRad(getAngleBtwPoints(pointD, pointC, pointE1))) - 2*DE2)
+            } 
+            // else if (overAD) {
+            //     newCE = (DE2*DE2 - DE1*DE1)/(2*DE1*Math.cos(degToRad(getAngleBtwPoints(pointD, pointC, pointE1))) + 2*DE2)
+            // }
+            newCE = checkClosestPolar(pointC, pointE1, new_angleE1C, newCE, -newCE)
+            placePointPolar(pointC, pointE1, new_angleE1C, newCE, true)
+            setLinkPoints()
+            updateTPoints()
+            updateInputLimits()
+            updateOutputLimits()
+
+            if (!overAD){
+                newBE = (AE1*AE1 - AE2*AE2)/((((DE1*DE1 - DE2*DE2)/(2*CE*DE1))+(DE2/DE1)-(AE2/AE1))*2*AE1)
+            }
+            // if (overAD){
+            //     newBE = (AE1*AE1 - AE2*AE2)/((((DE1*DE1 - DE2*DE2)/(2*CE*DE1))-(DE2/DE1)-(AE2/AE1))*2*AE1)
+            // }
+            newBE = checkClosestPolar(pointB, pointE1, new_angleE1B, newBE, -newBE)
+            placePointPolar(pointB, pointE1, new_angleE1B, newBE, true)
+        }
 
     }
 
@@ -436,4 +497,39 @@ function snapToSynthPoint(point="E1") {
     }
 
     return inverted // In order to track whether the system was inverted via above
+}
+
+function cycleSynthSolution(solution=1){
+
+    const adjPoint = solution%2 > 0 ? getPoint("A") : getPoint("D")
+
+    const kF_center = {x: kFCirc[0], y: kFCirc[1]}
+    const kF_rad = kFCirc[2]/2
+    let angle_kF = getJointsAngle(kF_center, adjPoint)
+
+    placePointPolar(adjPoint, kF_center, angle_kF, -kF_rad, solution>1)
+
+    setLinkPoints()
+    updateTPoints()
+    updateInputLimits()
+    updateOutputLimits()
+}
+
+function checkImaginaryNode(newXE, placeC=true) {
+    let imaginary = false
+    const fixed_X = placeC ? DC : AB
+    const fixed_E2 = placeC ? DE2 : AE2
+
+    imaginary = Math.abs(fixed_X + newXE) < fixed_E2 ? true : false
+    imaginary = Math.abs(fixed_X - newXE) > fixed_E2 ? true : false
+
+    // document.getElementById("debugOutputs").innerHTML = `
+    //     ${imaginary} \n<br>
+    //     ${Math.abs(fixed_X+new_XE).toFixed(1)} < ${fixed_E2.toFixed(1)}: ${Math.abs(fixed_X+new_XE) < fixed_E2} \n<br>
+    //     ${Math.abs(fixed_X-new_XE).toFixed(1)} > ${fixed_E2.toFixed(1)}: ${Math.abs(fixed_X-new_XE) > fixed_E2} \n<br>
+    // `
+
+    // new_XE = Math.abs(fixed_E2-fixed_X)
+
+    return imaginary
 }

@@ -519,6 +519,8 @@ synthCycleButton
         if (synthSolution < 12) synthSolution++
         else synthSolution = 1
 
+        cycleSynthSolution(synthSolution)
+
         // if (synthPointCount >= 2) synthPointCount--
         // else synthPointCount++
         // doActuate(getNetAngle(linkToCoord(synthPoints[0].inAng,"angle")))
@@ -526,7 +528,7 @@ synthCycleButton
         //     synthPoints[i].display = i < synthPointCount ? "block" : "none"
         // }
 
-        pathNodeModeSynth(nodeMode)
+        // pathNodeModeSynth(nodeMode)
         setLinkPoints()
         updateTrace()
         updateLinkGeometry()
