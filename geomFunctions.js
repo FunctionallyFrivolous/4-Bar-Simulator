@@ -354,11 +354,11 @@ function updateLinkGeometry() {
     //     .attr("stroke", fgColor)
 
     // update_kFCircle()
-    kFCircle
-        .attr("cx", kFCirc[0])
-        .attr("cy", kFCirc[1])
-        .attr("r", kFCirc[2]/2)
-        .attr("stroke", fgColor)
+    // kFCircle
+    //     .attr("cx", kFCirc[0])
+    //     .attr("cy", kFCirc[1])
+    //     .attr("r", kFCirc[2]/2)
+    //     .attr("stroke", fgColor)
     // ADCircle
     //     .attr("cx", getCircle2Points(getPoint("A"), getPoint("D"))[0])
     //     .attr("cy", getCircle2Points(getPoint("A"), getPoint("D"))[1])
