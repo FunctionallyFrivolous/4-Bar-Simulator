@@ -248,7 +248,7 @@ cognateButton
             cycleCognates()
             setLinkPoints()
             updateOpenCrossed()
-            pathNodeModeSynth(true,"E1")
+            pathNodeModeSynth(true,"E1",true)
         } else {
             cycleCognates()
         }

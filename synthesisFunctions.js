@@ -110,7 +110,7 @@ function cycleCognates() {
     tPointFollow()
 }
 
-function pathNodeModeSynth(doit=true,drag="E1") {
+function pathNodeModeSynth(doit=true,drag="E1",checkClosest=false) {
     if (!nodeMode) return
     // if (!nodeMode) {
     //     altTraceData.points = []
@@ -211,13 +211,13 @@ function pathNodeModeSynth(doit=true,drag="E1") {
 
         if (pointE1.type === "cusp") {
             new_angleE1B = angleE1A
-        } else if (pointE2.type === "cusp" && !overAD) {
+        } else if (pointE2.type === "cusp" && !checkClosest && !overAD) {
             newBE = (AE1*AE1 - AE2*AE2)/(2*AE1*Math.cos(degToRad(getAngleBtwPoints(pointA, pointB, pointE1))) - 2*AE2)
         } else if (pointE2.type === "cusp" && overAD) {
             newBE = (AE1*AE1 - AE2*AE2)/(2*AE1*Math.cos(degToRad(getAngleBtwPoints(pointA, pointB, pointE1))) + 2*AE2)
         }
 
-        newBE = checkClosestPolar(pointB, pointE1, new_angleE1B, newBE, -newBE)
+        if (checkClosest || overAD) newBE = checkClosestPolar(pointB, pointE1, new_angleE1B, newBE, -newBE)
         placePointPolar(pointB, pointE1, new_angleE1B, newBE, true)
         setLinkPoints()
         updateTPoints()
@@ -232,16 +232,16 @@ function pathNodeModeSynth(doit=true,drag="E1") {
         if (pointE2.type === "none") {
             newCE = CE
         }
-        if (pointE2.type === "crunode" && !overAD){
+        if ((pointE2.type === "crunode" || (pointE2.type === "cusp" && checkClosest)) && !overAD){
             newCE = (DE1*DE1 - DE2*DE2)/(((BE*BE + AE1*AE1 - AB*AB)*DE1/(BE*AE1))-((BE*BE + AE2*AE2 - AB*AB)*DE2/(BE*AE2)))
         }
-        if (pointE2.type === "crunode" && overAD){
+        if ((pointE2.type === "crunode" || (pointE2.type === "cusp" && checkClosest)) && overAD){
             newCE = (DE1*DE1 - DE2*DE2)/(((BE*BE + AE1*AE1 - AB*AB)*DE1/(BE*AE1))+((BE*BE + AE2*AE2 - AB*AB)*DE2/(BE*AE2)))
         }
-        if (pointE2.type === "cusp" && !overAD){
+        if (pointE2.type === "cusp" && !checkClosest && !overAD){
             newCE = (DE1*DE1 - DE2*DE2)/((((AE1*AE1 - AE2*AE2)/(2*BE*AE1))+(AE2/AE1)-(DE2/DE1))*2*DE1)
         }
-        if (pointE2.type === "cusp" && overAD){
+        if (pointE2.type === "cusp" && !checkClosest && overAD){
             newCE = (DE1*DE1 - DE2*DE2)/((((AE1*AE1 - AE2*AE2)/(2*BE*AE1))-(AE2/AE1)-(DE2/DE1))*2*DE1)
         }
 
@@ -271,12 +271,22 @@ function pathNodeModeSynth(doit=true,drag="E1") {
         //     newCE = (DE1*DE1 - DE2*DE2)/(((BE*BE + AE1*AE1 - AB*AB)*DE1/(BE*AE1))+((BE*BE + AE2*AE2 - AB*AB)*DE2/(BE*AE2)))
         // }
 
-        newCE = checkClosestPolar(pointC, pointE1, new_angleE1C, newCE, -newCE) // Checks whether +-newCE is closer to old CE
+        if (checkClosest) newCE = checkClosestPolar(pointC, pointE1, new_angleE1C, newCE, -newCE) // Checks whether +-newCE is closer to old CE
         placePointPolar(pointC, pointE1, new_angleE1C, newCE, true)
 
         setLinkPoints()
 
-        if (synthPointCount > 1 && checkImaginaryNode(newCE,placeC)){
+        // if (Math.abs(DC + Math.abs(newCE)) < DE2 || Math.abs(DC - Math.abs(newCE)) > DE2) {
+        //     document.getElementById("debugOutputs").innerHTML = `
+        //         imaginary \n<br>
+        //         DC: ${DC.toFixed(1)} \n<br>
+        //         newCE: ${newCE.toFixed(1)} \n<br>
+        //         DE2: ${DE2.toFixed(1)} \n<br>
+        //         test1 (less than DE2): ${Math.abs(DC + Math.abs(newCE)).toFixed(1)} \n<br> 
+        //         test2 (greater than DE2): ${Math.abs(DC - Math.abs(newCE)).toFixed(1)} \n<br>
+        //     `
+        // } else document.getElementById("debugOutputs").innerHTML = ``
+        if (synthPointCount > 1 && checkImaginaryNode(newCE,placeC) && !checkClosest){
             new_angleE1B = angleE1B
             newBE = BE
             if (pointE1.type === "cusp") {
@@ -287,7 +297,7 @@ function pathNodeModeSynth(doit=true,drag="E1") {
             // else if (overAD) {
             //     newBE = (AE1*AE1 - AE2*AE2)/(2*AE1*Math.cos(degToRad(getAngleBtwPoints(pointA, pointB, pointE1))) + 2*AE2)
             // }
-            newBE = checkClosestPolar(pointB, pointE1, new_angleE1B, newBE, -newBE)
+            if (checkClosest) newBE = checkClosestPolar(pointB, pointE1, new_angleE1B, newBE, -newBE)
             placePointPolar(pointB, pointE1, new_angleE1B, newBE, true)
             setLinkPoints()
             updateTPoints()
@@ -300,7 +310,7 @@ function pathNodeModeSynth(doit=true,drag="E1") {
             // if (overAD){
             //     newCE = (DE1*DE1 - DE2*DE2)/((((AE1*AE1 - AE2*AE2)/(2*BE*AE1))-(AE2/AE1)-(DE2/DE1))*2*DE1)
             // }
-            newCE = checkClosestPolar(pointC, pointE1, new_angleE1C, newCE, -newCE)
+            if (checkClosest) newCE = checkClosestPolar(pointC, pointE1, new_angleE1C, newCE, -newCE)
             placePointPolar(pointC, pointE1, new_angleE1C, newCE, true)
             // document.getElementById("debugOutputs").innerHTML = `imaginary`
         } 
@@ -315,13 +325,13 @@ function pathNodeModeSynth(doit=true,drag="E1") {
 
         if (pointE1.type === "cusp" ){ 
             new_angleE1C = angleE1D
-        } else if (pointE2.type === "cusp" && !overAD) {
+        } else if (pointE2.type === "cusp" && !checkClosest && !overAD) {
             newCE = (DE1*DE1 - DE2*DE2)/(2*DE1*Math.cos(degToRad(getAngleBtwPoints(pointD, pointC, pointE1))) - 2*DE2)
         } else if (pointE2.type === "cusp" && overAD) {
             newCE = (DE2*DE2 - DE1*DE1)/(2*DE1*Math.cos(degToRad(getAngleBtwPoints(pointD, pointC, pointE1))) + 2*DE2)
         }
 
-        newCE = checkClosestPolar(pointC, pointE1, new_angleE1C, newCE, -newCE)
+        if (checkClosest || overAD) newCE = checkClosestPolar(pointC, pointE1, new_angleE1C, newCE, -newCE)
         placePointPolar(pointC, pointE1, new_angleE1C, newCE, true)
         setLinkPoints()
         updateTPoints()
@@ -336,16 +346,16 @@ function pathNodeModeSynth(doit=true,drag="E1") {
         if (pointE2.type === "none") {
             newBE = BE
         }
-        if (pointE2.type === "crunode" && !overAD){
+        if ((pointE2.type === "crunode" || (pointE2.type === "cusp" && checkClosest)) && !overAD){
             newBE = (AE1*AE1 - AE2*AE2)/(((CE*CE + DE1*DE1 - DC*DC)*AE1/(CE*DE1))-((CE*CE + DE2*DE2 - DC*DC)*AE2/(CE*DE2)))
         }
-        if (pointE2.type === "crunode" && overAD){
+        if ((pointE2.type === "crunode" || (pointE2.type === "cusp" && checkClosest)) && overAD){
             newBE = (AE1*AE1 - AE2*AE2)/(((CE*CE + DE1*DE1 - DC*DC)*AE1/(CE*DE1))+((CE*CE + DE2*DE2 - DC*DC)*AE2/(CE*DE2)))
         }
-        if (pointE2.type === "cusp" && !overAD){
+        if (pointE2.type === "cusp" && !checkClosest && !overAD){
             newBE = (AE1*AE1 - AE2*AE2)/((((DE1*DE1 - DE2*DE2)/(2*CE*DE1))+(DE2/DE1)-(AE2/AE1))*2*AE1)
         }
-        if (pointE2.type === "cusp" && overAD){
+        if (pointE2.type === "cusp" && !checkClosest && overAD){
             newBE = (AE1*AE1 - AE2*AE2)/((((DE1*DE1 - DE2*DE2)/(2*CE*DE1))-(DE2/DE1)-(AE2/AE1))*2*AE1)
         }
 
@@ -375,12 +385,23 @@ function pathNodeModeSynth(doit=true,drag="E1") {
         //     newBE = (AE1*AE1 - AE2*AE2)/(((CE*CE + DE1*DE1 - DC*DC)*AE1/(CE*DE1))+((CE*CE + DE2*DE2 - DC*DC)*AE2/(CE*DE2)))
         // }
 
-        newBE = checkClosestPolar(pointB, pointE1, new_angleE1B, newBE, -newBE) // Checks whether +-newCE is closer to old CE
+        if (checkClosest) newBE = checkClosestPolar(pointB, pointE1, new_angleE1B, newBE, -newBE) // Checks whether +-newCE is closer to old CE
         placePointPolar(pointB, pointE1, new_angleE1B, newBE, true)
 
         setLinkPoints()
 
-        if (synthPointCount > 1 && checkImaginaryNode(newBE,placeC)){
+        // if (Math.abs(AB + newBE) < AE2 || Math.abs(AB - newBE) > AE2) {
+        //     document.getElementById("debugOutputs").innerHTML = `
+        //         imaginary \n<br>
+        //         AB: ${AB.toFixed(1)} \n<br>
+        //         newBE: ${newBE.toFixed(1)} \n<br>
+        //         AE2: ${AE2.toFixed(1)} \n<br>
+        //         test1 (less than DE2): ${Math.abs(AB + newBE).toFixed(1)} \n<br>
+        //         test2 (greater than DE2): ${Math.abs(AB - newBE).toFixed(1)} \n<br>
+        //     `
+        // } else document.getElementById("debugOutputs").innerHTML = ``
+
+        if (synthPointCount > 1 && checkImaginaryNode(newBE,placeC) && !checkClosest){
             new_angleE1C = angleE1C
             newCE = CE 
             if (pointE1.type === "cusp" ){ 
@@ -391,7 +412,7 @@ function pathNodeModeSynth(doit=true,drag="E1") {
             // else if (overAD) {
             //     newCE = (DE2*DE2 - DE1*DE1)/(2*DE1*Math.cos(degToRad(getAngleBtwPoints(pointD, pointC, pointE1))) + 2*DE2)
             // }
-            newCE = checkClosestPolar(pointC, pointE1, new_angleE1C, newCE, -newCE)
+            if (checkClosest) newCE = checkClosestPolar(pointC, pointE1, new_angleE1C, newCE, -newCE)
             placePointPolar(pointC, pointE1, new_angleE1C, newCE, true)
             setLinkPoints()
             updateTPoints()
@@ -404,7 +425,7 @@ function pathNodeModeSynth(doit=true,drag="E1") {
             // if (overAD){
             //     newBE = (AE1*AE1 - AE2*AE2)/((((DE1*DE1 - DE2*DE2)/(2*CE*DE1))-(DE2/DE1)-(AE2/AE1))*2*AE1)
             // }
-            newBE = checkClosestPolar(pointB, pointE1, new_angleE1B, newBE, -newBE)
+            if (checkClosest) newBE = checkClosestPolar(pointB, pointE1, new_angleE1B, newBE, -newBE)
             placePointPolar(pointB, pointE1, new_angleE1B, newBE, true)
             // document.getElementById("debugOutputs").innerHTML = `imaginary`
         } 
@@ -523,7 +544,7 @@ function checkImaginaryNode(newXE, placeC=true) {
     const fixed_X = placeC ? DC : AB
     const fixed_E2 = placeC ? DE2 : AE2
 
-    if (Math.abs(fixed_X + newXE) < fixed_E2 || Math.abs(fixed_X - newXE) > fixed_E2) {
+    if (Math.abs(fixed_X + Math.abs(newXE)) < fixed_E2 || Math.abs(fixed_X - Math.abs(newXE)) > fixed_E2) {
         imaginary = true
     }
 

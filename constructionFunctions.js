@@ -208,7 +208,8 @@ function checkClosestPolar(refPoint,origin,angle,dist1,dist2){
     }
 
     let closest = delta1 > delta2 ? dist2 : dist1
-    if (closest === dist2 && Math.abs(Math.abs(test)-Math.abs(dist2))<limitThreshold) closest = dist1
+    // if (closest === dist1 && Math.abs(closest) > 1000) closest = dist2
+    // if (closest === dist2 && Math.abs(closest) > 1000) closest = dist1
 
     return closest
 }
