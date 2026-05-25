@@ -110,7 +110,7 @@ function cycleCognates() {
     tPointFollow()
 }
 
-function pathNodeModeSynth(doit=true,drag="E1",checkClosest=false) {
+function pathNodeModeSynth(drag="E1",checkClosest=false) {
     if (!nodeMode) return
     // if (!nodeMode) {
     //     altTraceData.points = []
@@ -422,6 +422,8 @@ function mirrorNodeSynth(doit=true) {
 }
 
 function snapToSynthPoint(point="E1") {
+    if (!nodeMode) return
+
     const synthPoint = synthPoints.find(p=>p.id === point)
     const couplerPoint = getPoint("BC")
 

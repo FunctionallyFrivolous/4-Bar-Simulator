@@ -245,10 +245,11 @@ cognateButton
     .on("click", function() {
         if (nodeMode) {
             // doActuate(getNetAngle(linkToCoord(synthPoints[0].inAng,"angle")))
+            snapToSynthPoint("E1")
             cycleCognates()
             setLinkPoints()
             updateOpenCrossed()
-            pathNodeModeSynth(true,"E1",true)
+            pathNodeModeSynth("E1",true)
         } else {
             cycleCognates()
         }
@@ -483,7 +484,7 @@ nodeModeButton
         nodeModeTable[0].active = nodeMode
         nodeModeMenu.attr("stroke-opacity", n => n.id === "E1_crunode" && n.active ? 0.5 : 0.1)
         
-        pathNodeModeSynth(true)
+        pathNodeModeSynth()
         updateLinkGeometry()
         updateTrace()
         updateLinkGeometry()
@@ -707,7 +708,7 @@ const nodeModeMenu = nodeModeMenuGroup.selectAll("path")
         
         nodeModeMenu.attr("stroke-opacity", d => d.active && d.id !== oppType.id ? 0.5 : 0.1)
         
-        pathNodeModeSynth(true,"E1")
+        pathNodeModeSynth("E1")
         updateLinkGeometry()
         updateTrace()
         updateLinkGeometry()

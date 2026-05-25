@@ -163,7 +163,7 @@ const linkLines = linkLineGroup.selectAll("polygon")
                     synthPoints[0].y = getPoint(d.id).y
                 }
                 updateTPoints(false, d.id)
-                pathNodeModeSynth(nodeMode,d.id)
+                pathNodeModeSynth(d.id)
 
                 if (nodeMode && d.type === "fixed") {
                     // let revertAngle = activeSynthPoint.inAng
@@ -293,7 +293,7 @@ const jointDrag = jointDragGroup.selectAll("cirlce")
             if (d.id.length === 2) updateTPoints(true, d.id)
             else updateTPoints()
 
-            pathNodeModeSynth(nodeMode,d.id)
+            pathNodeModeSynth(d.id)
 
             if (nodeMode && d.ground){
                 // let revertAngle = activeSynthPoint.inAng
@@ -455,7 +455,7 @@ const synthDrag = synthDragGroup.selectAll("circle")
             getPoint("BC").y = synthPoints[0].y
             
             // Perform the relevant node mode stuff
-            pathNodeModeSynth(nodeMode,d.id)
+            pathNodeModeSynth(d.id)
 
             // Snap to the input angle of the active point
             // let revertAngle = activeSynthPoint.inAng

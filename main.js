@@ -4,14 +4,9 @@
         // Nodes
             // DONE: All two-node combos! 
             // Edge cases:
-                // Sometimes B or C goes off into space....
-                    // Ideally avoid these scenarios
-                    // Potentially work around by not allowing these cases (check calc'd BE or CE)
-                        // Revert to previous values if this (or just not placePoint, i.e. doit=false)
-                        // Then when drag yields a valid solution, do it
-            // Then: Three nodes!?
-            // Imaginary Nodes?
-                // Solved except for overAD cases...
+                // Dragging B across infinity when E2-cusp
+                // Imaginary Nodes: Solved except for overAD cases...
+            // Three nodes!? Eventually...
         // Symmetric Coupler Curves
             // Ideally be able to combine this with other synth methods (nodes, etc)
     // Animation features
