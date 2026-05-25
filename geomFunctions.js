@@ -458,6 +458,7 @@ function updateLinkGeometry() {
     // document.getElementById("debugOutputs").innerHTML = `
     //     testCE: ${testCE.toFixed(1)} \n<br>
     //     valid?:  ${Math.abs(testBE-BE)<limitThreshold} \n<br>
+    //     valid?:  ${Math.abs(testBE-BE).toFixed(1)} \n<br>
     //     AB: ${AB.toFixed(1)} \n<br>
     //     testBE: ${testBE.toFixed(1)} \n<br>
     //     BE: ${BE.toFixed(1)} \n<br>

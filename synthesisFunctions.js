@@ -306,11 +306,6 @@ function pathNodeModeSynth(doit=true,drag="E1") {
         } 
         // else document.getElementById("debugOutputs").innerHTML = ``
 
-        // document.getElementById("debugOutputs").innerHTML = `
-        //     ${checkImaginaryNode(pointC)} \n<br>
-        //     ${Math.abs(DC+newCE).toFixed(1)} < ${DE2.toFixed(1)}: ${Math.abs(DC+newCE) < DE2} \n<br>
-        //     ${Math.abs(DC-newCE).toFixed(1)} > ${DE2.toFixed(1)}: ${Math.abs(DC-newCE) > DE2} \n<br>
-        // `
 
     }
     else {

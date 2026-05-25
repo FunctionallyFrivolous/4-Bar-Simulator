@@ -207,13 +207,8 @@ function checkClosestPolar(refPoint,origin,angle,dist1,dist2){
         test = (DE1*DE1 - DE2*DE2)/((((AE1*AE1 - AE2*AE2)/(2*BE*AE1))+(AE2/AE1)-(DE2/DE1))*2*DE1)
     }
 
-    // document.getElementById("debugOutputs").innerHTML = `
-    //     test: ${test.toFixed(1)} \n<br>
-    //     dist1: ${dist1.toFixed(1)} \n<br>
-    //     : ${(test-dist2).toFixed(1)} \n<br>
-    // `
-
-    const closest = delta1 > delta2 && Math.abs(test-dist2)<limitThreshold ? dist2 : dist1
+    let closest = delta1 > delta2 ? dist2 : dist1
+    if (closest === dist2 && Math.abs(Math.abs(test)-Math.abs(dist2))<limitThreshold) closest = dist1
 
     return closest
 }
