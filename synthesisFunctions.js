@@ -213,7 +213,7 @@ function pathNodeModeSynth(doit=true,drag="E1",checkClosest=false) {
             new_angleE1B = angleE1A
         } else if (pointE2.type === "cusp" && !checkClosest && !overAD) {
             newBE = (AE1*AE1 - AE2*AE2)/(2*AE1*Math.cos(degToRad(getAngleBtwPoints(pointA, pointB, pointE1))) - 2*AE2)
-        } else if (pointE2.type === "cusp" && overAD) {
+        } else if (pointE2.type === "cusp" && !checkClosest && overAD) {
             newBE = (AE1*AE1 - AE2*AE2)/(2*AE1*Math.cos(degToRad(getAngleBtwPoints(pointA, pointB, pointE1))) + 2*AE2)
         }
 
@@ -234,58 +234,26 @@ function pathNodeModeSynth(doit=true,drag="E1",checkClosest=false) {
         }
         if ((pointE2.type === "crunode" || (pointE2.type === "cusp" && checkClosest)) && !overAD){
             newCE = (DE1*DE1 - DE2*DE2)/(((BE*BE + AE1*AE1 - AB*AB)*DE1/(BE*AE1))-((BE*BE + AE2*AE2 - AB*AB)*DE2/(BE*AE2)))
+            // document.getElementById("debugOutputs").innerHTML = `1`
         }
         if ((pointE2.type === "crunode" || (pointE2.type === "cusp" && checkClosest)) && overAD){
             newCE = (DE1*DE1 - DE2*DE2)/(((BE*BE + AE1*AE1 - AB*AB)*DE1/(BE*AE1))+((BE*BE + AE2*AE2 - AB*AB)*DE2/(BE*AE2)))
+            // document.getElementById("debugOutputs").innerHTML = `2`
         }
         if (pointE2.type === "cusp" && !checkClosest && !overAD){
             newCE = (DE1*DE1 - DE2*DE2)/((((AE1*AE1 - AE2*AE2)/(2*BE*AE1))+(AE2/AE1)-(DE2/DE1))*2*DE1)
+            // document.getElementById("debugOutputs").innerHTML = `3`
         }
         if (pointE2.type === "cusp" && !checkClosest && overAD){
             newCE = (DE1*DE1 - DE2*DE2)/((((AE1*AE1 - AE2*AE2)/(2*BE*AE1))-(AE2/AE1)-(DE2/DE1))*2*DE1)
+            // document.getElementById("debugOutputs").innerHTML = `4`
         }
-
-        // if (pointE1.type === "crunode" && pointE2.type === "crunode" && !overAD){
-        //     newCE = (DE1*DE1 - DE2*DE2)/(((BE*BE + AE1*AE1 - AB*AB)*DE1/(BE*AE1))-((BE*BE + AE2*AE2 - AB*AB)*DE2/(BE*AE2)))
-        // }
-        // if (pointE1.type === "crunode" && pointE2.type === "crunode" && overAD){
-        //     newCE = (DE1*DE1 - DE2*DE2)/(((BE*BE + AE1*AE1 - AB*AB)*DE1/(BE*AE1))+((BE*BE + AE2*AE2 - AB*AB)*DE2/(BE*AE2)))
-        // }
-        // if (pointE1.type === "cusp" && pointE2.type === "crunode" && !overAD){
-        //     newCE = (DE1*DE1 - DE2*DE2)/(((BE*BE + AE1*AE1 - AB*AB)*DE1/(BE*AE1))-((BE*BE + AE2*AE2 - AB*AB)*DE2/(BE*AE2)))
-        // }
-        // if (pointE1.type === "cusp" && pointE2.type === "crunode" && overAD){
-        //     newCE = (DE1*DE1 - DE2*DE2)/(((BE*BE + AE1*AE1 - AB*AB)*DE1/(BE*AE1))+((BE*BE + AE2*AE2 - AB*AB)*DE2/(BE*AE2)))
-        //     // THIS IS THE SAME AS FOR crunode-crunode overAD. COMBINE THEM
-        // }
-        // if (pointE1.type === "crunode" && pointE2.type === "cusp" && !overAD){
-        //     newCE = (DE1*DE1 - DE2*DE2)/((((AE1*AE1 - AE2*AE2)/(2*BE*AE1))+(AE2/AE1)-(DE2/DE1))*2*DE1)
-        // }
-        // if (pointE1.type === "cusp" && pointE2.type === "cusp" && !overAD){
-        //     newCE = (DE1*DE1 - DE2*DE2)/((((AE1*AE1 - AE2*AE2)/(2*BE*AE1))+(AE2/AE1)-(DE2/DE1))*2*DE1)
-        // }
-        // if (pointE1.type === "crunode" && pointE2.type === "cusp" && overAD){
-        //     newCE = (DE1*DE1 - DE2*DE2)/((((AE1*AE1 - AE2*AE2)/(2*BE*AE1))-(AE2/AE1)-(DE2/DE1))*2*DE1)
-        // }
-        // if (pointE1.type === "cusp" && pointE2.type === "cusp" && overAD){
-        //     newCE = (DE1*DE1 - DE2*DE2)/(((BE*BE + AE1*AE1 - AB*AB)*DE1/(BE*AE1))+((BE*BE + AE2*AE2 - AB*AB)*DE2/(BE*AE2)))
-        // }
 
         if (checkClosest) newCE = checkClosestPolar(pointC, pointE1, new_angleE1C, newCE, -newCE) // Checks whether +-newCE is closer to old CE
         placePointPolar(pointC, pointE1, new_angleE1C, newCE, true)
 
         setLinkPoints()
 
-        // if (Math.abs(DC + Math.abs(newCE)) < DE2 || Math.abs(DC - Math.abs(newCE)) > DE2) {
-        //     document.getElementById("debugOutputs").innerHTML = `
-        //         imaginary \n<br>
-        //         DC: ${DC.toFixed(1)} \n<br>
-        //         newCE: ${newCE.toFixed(1)} \n<br>
-        //         DE2: ${DE2.toFixed(1)} \n<br>
-        //         test1 (less than DE2): ${Math.abs(DC + Math.abs(newCE)).toFixed(1)} \n<br> 
-        //         test2 (greater than DE2): ${Math.abs(DC - Math.abs(newCE)).toFixed(1)} \n<br>
-        //     `
-        // } else document.getElementById("debugOutputs").innerHTML = ``
         if (synthPointCount > 1 && checkImaginaryNode(newCE,placeC) && !checkClosest){
             new_angleE1B = angleE1B
             newBE = BE
@@ -312,11 +280,7 @@ function pathNodeModeSynth(doit=true,drag="E1",checkClosest=false) {
             // }
             if (checkClosest) newCE = checkClosestPolar(pointC, pointE1, new_angleE1C, newCE, -newCE)
             placePointPolar(pointC, pointE1, new_angleE1C, newCE, true)
-            // document.getElementById("debugOutputs").innerHTML = `imaginary`
         } 
-        // else document.getElementById("debugOutputs").innerHTML = ``
-
-
     }
     else {
 
@@ -327,7 +291,7 @@ function pathNodeModeSynth(doit=true,drag="E1",checkClosest=false) {
             new_angleE1C = angleE1D
         } else if (pointE2.type === "cusp" && !checkClosest && !overAD) {
             newCE = (DE1*DE1 - DE2*DE2)/(2*DE1*Math.cos(degToRad(getAngleBtwPoints(pointD, pointC, pointE1))) - 2*DE2)
-        } else if (pointE2.type === "cusp" && overAD) {
+        } else if (pointE2.type === "cusp" && !checkClosest && overAD) {
             newCE = (DE2*DE2 - DE1*DE1)/(2*DE1*Math.cos(degToRad(getAngleBtwPoints(pointD, pointC, pointE1))) + 2*DE2)
         }
 
@@ -348,58 +312,25 @@ function pathNodeModeSynth(doit=true,drag="E1",checkClosest=false) {
         }
         if ((pointE2.type === "crunode" || (pointE2.type === "cusp" && checkClosest)) && !overAD){
             newBE = (AE1*AE1 - AE2*AE2)/(((CE*CE + DE1*DE1 - DC*DC)*AE1/(CE*DE1))-((CE*CE + DE2*DE2 - DC*DC)*AE2/(CE*DE2)))
+            // document.getElementById("debugOutputs").innerHTML = `5`
         }
         if ((pointE2.type === "crunode" || (pointE2.type === "cusp" && checkClosest)) && overAD){
             newBE = (AE1*AE1 - AE2*AE2)/(((CE*CE + DE1*DE1 - DC*DC)*AE1/(CE*DE1))+((CE*CE + DE2*DE2 - DC*DC)*AE2/(CE*DE2)))
+            // document.getElementById("debugOutputs").innerHTML = `6`
         }
         if (pointE2.type === "cusp" && !checkClosest && !overAD){
             newBE = (AE1*AE1 - AE2*AE2)/((((DE1*DE1 - DE2*DE2)/(2*CE*DE1))+(DE2/DE1)-(AE2/AE1))*2*AE1)
+            // document.getElementById("debugOutputs").innerHTML = `7`
         }
         if (pointE2.type === "cusp" && !checkClosest && overAD){
             newBE = (AE1*AE1 - AE2*AE2)/((((DE1*DE1 - DE2*DE2)/(2*CE*DE1))-(DE2/DE1)-(AE2/AE1))*2*AE1)
+            // document.getElementById("debugOutputs").innerHTML = `8`
         }
-
-        // if (pointE1.type === "crunode" && pointE2.type === "crunode" && !overAD){
-        //     newBE = (AE1*AE1 - AE2*AE2)/(((CE*CE + DE1*DE1 - DC*DC)*AE1/(CE*DE1))-((CE*CE + DE2*DE2 - DC*DC)*AE2/(CE*DE2)))
-        // }
-        // if (pointE1.type === "crunode" && pointE2.type === "crunode" && overAD){
-        //     newBE = (AE1*AE1 - AE2*AE2)/(((CE*CE + DE1*DE1 - DC*DC)*AE1/(CE*DE1))+((CE*CE + DE2*DE2 - DC*DC)*AE2/(CE*DE2)))
-        // }
-        // if (pointE1.type === "cusp" && pointE2.type === "crunode" && !overAD){
-        //     newBE = (AE1*AE1 - AE2*AE2)/(((CE*CE + DE1*DE1 - DC*DC)*AE1/(CE*DE1))-((CE*CE + DE2*DE2 - DC*DC)*AE2/(CE*DE2)))
-        // }
-        // if (pointE1.type === "cusp" && pointE2.type === "crunode" && overAD){
-        //     newBE = (AE1*AE1 - AE2*AE2)/(((CE*CE + DE1*DE1 - DC*DC)*AE1/(CE*DE1))+((CE*CE + DE2*DE2 - DC*DC)*AE2/(CE*DE2)))
-        //     // THIS IS THE SAME AS FOR crunode-crunode overAD. COMBINE THEM
-        // }
-        // if (pointE1.type === "crunode" && pointE2.type === "cusp" && !overAD){
-        //     newBE = (AE1*AE1 - AE2*AE2)/((((DE1*DE1 - DE2*DE2)/(2*CE*DE1))+(DE2/DE1)-(AE2/AE1))*2*AE1)
-        // }
-        // if (pointE1.type === "cusp" && pointE2.type === "cusp" && !overAD){
-        //     newBE = (AE1*AE1 - AE2*AE2)/((((DE1*DE1 - DE2*DE2)/(2*CE*DE1))+(DE2/DE1)-(AE2/AE1))*2*AE1)
-        // }
-        // if (pointE1.type === "crunode" && pointE2.type === "cusp" && overAD){
-        //     newBE = (AE1*AE1 - AE2*AE2)/((((DE1*DE1 - DE2*DE2)/(2*CE*DE1))-(DE2/DE1)-(AE2/AE1))*2*AE1)
-        // }
-        // if (pointE1.type === "cusp" && pointE2.type === "cusp" && overAD){
-        //     newBE = (AE1*AE1 - AE2*AE2)/(((CE*CE + DE1*DE1 - DC*DC)*AE1/(CE*DE1))+((CE*CE + DE2*DE2 - DC*DC)*AE2/(CE*DE2)))
-        // }
 
         if (checkClosest) newBE = checkClosestPolar(pointB, pointE1, new_angleE1B, newBE, -newBE) // Checks whether +-newCE is closer to old CE
         placePointPolar(pointB, pointE1, new_angleE1B, newBE, true)
 
         setLinkPoints()
-
-        // if (Math.abs(AB + newBE) < AE2 || Math.abs(AB - newBE) > AE2) {
-        //     document.getElementById("debugOutputs").innerHTML = `
-        //         imaginary \n<br>
-        //         AB: ${AB.toFixed(1)} \n<br>
-        //         newBE: ${newBE.toFixed(1)} \n<br>
-        //         AE2: ${AE2.toFixed(1)} \n<br>
-        //         test1 (less than DE2): ${Math.abs(AB + newBE).toFixed(1)} \n<br>
-        //         test2 (greater than DE2): ${Math.abs(AB - newBE).toFixed(1)} \n<br>
-        //     `
-        // } else document.getElementById("debugOutputs").innerHTML = ``
 
         if (synthPointCount > 1 && checkImaginaryNode(newBE,placeC) && !checkClosest){
             new_angleE1C = angleE1C
@@ -427,17 +358,8 @@ function pathNodeModeSynth(doit=true,drag="E1",checkClosest=false) {
             // }
             if (checkClosest) newBE = checkClosestPolar(pointB, pointE1, new_angleE1B, newBE, -newBE)
             placePointPolar(pointB, pointE1, new_angleE1B, newBE, true)
-            // document.getElementById("debugOutputs").innerHTML = `imaginary`
         } 
-        // else document.getElementById("debugOutputs").innerHTML = ``
-
     }
-
-    // if (!checkPointsCoincident(pointE,pointE1)) {
-    //     pointE.x = pointE1.x
-    //     pointE.y = pointE1.y
-    //     document.getElementById("debugOutputs").innerHTML = `this`
-    // } else document.getElementById("debugOutputs").innerHTML = ``
 
     setLinkPoints()
     updateTPoints()
