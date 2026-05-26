@@ -87,7 +87,7 @@ const linkLines = linkLineGroup.selectAll("polygon")
             synthModeTempAngle = inputAngle
             synthModeTempOpen = linkageOpen
 
-            if (checkPointsCoincident(activeSynthPoint,getPoint("BC"))) {
+            if (nodeMode && checkPointsCoincident(activeSynthPoint,getPoint("BC"))) {
                 synthPointSnap = true
             } else synthPointSnap = false
         })
@@ -260,7 +260,7 @@ const jointDrag = jointDragGroup.selectAll("cirlce")
             synthModeTempAngle = inputAngle
             synthModeTempOpen = linkageOpen
 
-            if (checkPointsCoincident(activeSynthPoint,getPoint("BC"))) {
+            if (nodeMode && checkPointsCoincident(activeSynthPoint,getPoint("BC"))) {
                 synthPointSnap = true
             } else synthPointSnap = false
         })
@@ -436,7 +436,7 @@ const synthDrag = synthDragGroup.selectAll("circle")
             synthModeTempAngle = inputAngle
             synthModeTempOpen = linkageOpen
 
-            if (checkPointsCoincident(activeSynthPoint,getPoint("BC"))) {
+            if (nodeMode && checkPointsCoincident(activeSynthPoint,getPoint("BC"))) {
                 synthPointSnap = true
             } else synthPointSnap = false
 

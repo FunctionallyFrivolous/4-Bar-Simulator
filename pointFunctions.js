@@ -60,17 +60,23 @@ function updateTPoints(snap=false, point="") {
         const tPoint = getPoint(linkID)
         const linkAngle = getJointsAngle(getPoint("B"),getPoint("C"))//getLinkAngle(linkID)
         const pJoint = getPoint(linkID[0])
+        const mJoint = getPoint(linkID[1])
 
         let tDeg = getAngleBtwPoints(tPoint, getPoint(linkID[1]), pJoint)
         
         if (linksData[i].tSnap && point !== linkID) tDeg = linksData[i].tAng
         if (snap) {
             if (point === linkID) {
-                if (Math.abs(tDeg) < snapAngle) {
-                    tDeg = 0
-                    linksData[i].tSnap = true
-                } else if (Math.abs(tDeg-180) < snapAngle) {
-                    tDeg = -180
+                // if (Math.abs(tDeg) < snapAngle) {
+                //     tDeg = 0
+                //     linksData[i].tSnap = true
+                // } else if (Math.abs(tDeg-180) < snapAngle) {
+                //     tDeg = -180
+                //     linksData[i].tSnap = true
+                if (getMinDistToLine(tPoint,pJoint,mJoint) < snapDist) {
+                    if (Math.abs(tDeg > 90)) {
+                        tDeg = -180
+                    } else tDeg = 0
                     linksData[i].tSnap = true
                 } else linksData[i].tSnap = false
             } else linksData[i].tSnap = false
@@ -375,7 +381,13 @@ function undoRedo() {
     undoStatus = !undoStatus
 }
 
-function checkPointsCoincident(point1, point2){
-    const coincident = Math.abs(point1.x - point2.x) < limitThreshold && Math.abs(point1.y - point2.y) < limitThreshold
+function checkPointsCoincident(point1, point2, dist=limitThreshold){
+    const coincident = Math.abs(point1.x - point2.x) < dist && Math.abs(point1.y - point2.y) < dist
     return coincident
+}
+
+function getMinDistToLine(point,lineS,lineE) {
+    const distance = Math.abs((lineE.x-lineS.x)*(lineS.y-point.y) - (lineS.x-point.x)*(lineE.y-lineS.y))/Math.sqrt((lineE.x-lineS.x)*(lineE.x-lineS.x) + (lineE.y-lineS.y)*(lineE.y-lineS.y))
+
+    return distance
 }

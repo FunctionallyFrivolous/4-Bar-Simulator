@@ -374,7 +374,7 @@ function pathNodeModeSynth(drag="E1",checkClosest=false) {
     const angle_be = radToDeg(Math.acos((AB*AB + AE2*AE2 - BE*BE)/(2*AB*AE2)))
     pointE2.inAng = coordToLink(angleAE2 - angle_be,"angle")
     // if (isNaN(angle_be)) pointE2.inAng = inputLimits.min // < This is causing an issue... 
-        // When the input angle is initially unreachable
+    // When the input angle is initially unreachable
     if (isNaN(angle_be)) pointE2.inAng = temp_inAng
 
     // Need to assign E2.isOpen...

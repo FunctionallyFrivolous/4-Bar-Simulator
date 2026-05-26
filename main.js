@@ -43,8 +43,7 @@
         // Interactive actions >>> buttons
         // Replace fit view button with double click on background?
     // Quirks & Bugs:
-        // Ternary node snapping is based on angle rather than distance. Results in snap "strength" that varies based on distance from the reference node
-            // This was just the easy/lazy way to get it done. Will fix later
+        
 
 
 // localStorage.clear()
@@ -111,7 +110,11 @@ const traceDelta = 0.25
 const traceReduction = 20
 let showGhostTrace = true
 
-const snapAngle = 5;
+// const snapAngle = 5;
+const snapDist = 7.5;
+
+// let nodesSnapped = false
+// const snapNodeDist = 10;
 
 let animationActive = false
 let animationTimer = null
