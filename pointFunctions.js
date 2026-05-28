@@ -67,14 +67,8 @@ function updateTPoints(snap=false, point="") {
         if (linksData[i].tSnap && point !== linkID) tDeg = linksData[i].tAng
         if (snap) {
             if (point === linkID) {
-                // if (Math.abs(tDeg) < snapAngle) {
-                //     tDeg = 0
-                //     linksData[i].tSnap = true
-                // } else if (Math.abs(tDeg-180) < snapAngle) {
-                //     tDeg = -180
-                //     linksData[i].tSnap = true
                 if (getMinDistToLine(tPoint,pJoint,mJoint) < snapDist) {
-                    if (Math.abs(tDeg > 90)) {
+                    if (Math.abs(tDeg) > 90) {
                         tDeg = -180
                     } else tDeg = 0
                     linksData[i].tSnap = true

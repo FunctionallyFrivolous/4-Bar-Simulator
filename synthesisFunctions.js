@@ -110,12 +110,19 @@ function cycleCognates() {
     tPointFollow()
 }
 
+// When is checkClosest required?
+    // In order to drag B or C past/thru E
+    // In order to ensure continuity across cognate cycle
+// When does checkClosest cause issues?
+    // When handling imaginary solutions
 function pathNodeModeSynth(drag="E1",checkClosest=false) {
     if (!nodeMode) return
     // if (!nodeMode) {
     //     altTraceData.points = []
     //     return
     // }
+
+    document.getElementById("debugOutputs").innerHTML = ``
 
     setLinkPoints()
 
@@ -196,13 +203,16 @@ function pathNodeModeSynth(drag="E1",checkClosest=false) {
     const angleE2_E1 = getNetAngle(getAngleBtwPoints(pointE1,pointE2,kF_center), false)
     const angleD_E1 = getNetAngle(getAngleBtwPoints(pointE1,pointD,kF_center), false)
 
-    const overAD = (pointE2.type !== "none" && angleE1_E2 > angleE1_A && angleE2_E1 > angleD_E1) || (angleE1_E2 < angleE1_A && angleE2_E1 < angleD_E1)
+    let overAD = (pointE2.type !== "none" && angleE1_E2 > angleE1_A && angleE2_E1 > angleD_E1) || (angleE1_E2 < angleE1_A && angleE2_E1 < angleD_E1)
+    // const angle_AE2 = coordToLink(getJointsAngle(pointA,pointE2),"angle")
+    // if (angle_AE2 > 180) overAD = true
 
     // Determine whether to place B & C to new locations
     let placeC = drag !== "C" && (drag === "B" || (AE2 > DE2 && pointE2.type !== "cusp") || (AE2 < DE2 && pointE2.type === "cusp"))// || (pointE2.type === "cusp"))
     if (pointE1.type === "cusp" && pointE2.type === "cusp"){
         placeC = AE2 > DE2 ? true : false
     } 
+    if (synthPointCount === 1) placeC = true
     
     if (placeC){
 
@@ -212,12 +222,17 @@ function pathNodeModeSynth(drag="E1",checkClosest=false) {
         if (pointE1.type === "cusp") {
             new_angleE1B = angleE1A
         } else if (pointE2.type === "cusp" && !checkClosest && !overAD) {
+        // } else if (pointE2.type === "cusp" && !overAD) {
             newBE = (AE1*AE1 - AE2*AE2)/(2*AE1*Math.cos(degToRad(getAngleBtwPoints(pointA, pointB, pointE1))) - 2*AE2)
         } else if (pointE2.type === "cusp" && !checkClosest && overAD) {
+        // } else if (pointE2.type === "cusp" && overAD) {
             newBE = (AE1*AE1 - AE2*AE2)/(2*AE1*Math.cos(degToRad(getAngleBtwPoints(pointA, pointB, pointE1))) + 2*AE2)
         }
 
-        if (checkClosest || overAD) newBE = checkClosestPolar(pointB, pointE1, new_angleE1B, newBE, -newBE)
+        if (checkClosest || overAD) {
+        // if (overAD) {
+            newBE = checkClosestPolar(pointB, pointE1, new_angleE1B, newBE, -newBE)
+        }
         placePointPolar(pointB, pointE1, new_angleE1B, newBE, true)
         setLinkPoints()
         updateTPoints()
@@ -233,23 +248,25 @@ function pathNodeModeSynth(drag="E1",checkClosest=false) {
             newCE = CE
         }
         if ((pointE2.type === "crunode" || (pointE2.type === "cusp" && checkClosest)) && !overAD){
+        // if ((pointE2.type === "crunode" || (pointE2.type === "cusp")) && !overAD){
             newCE = (DE1*DE1 - DE2*DE2)/(((BE*BE + AE1*AE1 - AB*AB)*DE1/(BE*AE1))-((BE*BE + AE2*AE2 - AB*AB)*DE2/(BE*AE2)))
-            // document.getElementById("debugOutputs").innerHTML = `1`
         }
         if ((pointE2.type === "crunode" || (pointE2.type === "cusp" && checkClosest)) && overAD){
+        // if ((pointE2.type === "crunode" || (pointE2.type === "cusp")) && overAD){
             newCE = (DE1*DE1 - DE2*DE2)/(((BE*BE + AE1*AE1 - AB*AB)*DE1/(BE*AE1))+((BE*BE + AE2*AE2 - AB*AB)*DE2/(BE*AE2)))
-            // document.getElementById("debugOutputs").innerHTML = `2`
         }
         if (pointE2.type === "cusp" && !checkClosest && !overAD){
+        // if (pointE2.type === "cusp" && !overAD){
             newCE = (DE1*DE1 - DE2*DE2)/((((AE1*AE1 - AE2*AE2)/(2*BE*AE1))+(AE2/AE1)-(DE2/DE1))*2*DE1)
-            // document.getElementById("debugOutputs").innerHTML = `3`
         }
         if (pointE2.type === "cusp" && !checkClosest && overAD){
+        // if (pointE2.type === "cusp" && overAD){
             newCE = (DE1*DE1 - DE2*DE2)/((((AE1*AE1 - AE2*AE2)/(2*BE*AE1))-(AE2/AE1)-(DE2/DE1))*2*DE1)
-            // document.getElementById("debugOutputs").innerHTML = `4`
         }
 
-        if (checkClosest) newCE = checkClosestPolar(pointC, pointE1, new_angleE1C, newCE, -newCE) // Checks whether +-newCE is closer to old CE
+        // if (checkClosest) {
+            newCE = checkClosestPolar(pointC, pointE1, new_angleE1C, newCE, -newCE) // Checks whether +-newCE is closer to old CE
+        // }
         placePointPolar(pointC, pointE1, new_angleE1C, newCE, true)
 
         setLinkPoints()
@@ -265,7 +282,8 @@ function pathNodeModeSynth(drag="E1",checkClosest=false) {
             // else if (overAD) {
             //     newBE = (AE1*AE1 - AE2*AE2)/(2*AE1*Math.cos(degToRad(getAngleBtwPoints(pointA, pointB, pointE1))) + 2*AE2)
             // }
-            if (checkClosest) newBE = checkClosestPolar(pointB, pointE1, new_angleE1B, newBE, -newBE)
+
+            // if (checkClosest) newBE = checkClosestPolar(pointB, pointE1, new_angleE1B, newBE, -newBE)
             placePointPolar(pointB, pointE1, new_angleE1B, newBE, true)
             setLinkPoints()
             updateTPoints()
@@ -278,7 +296,8 @@ function pathNodeModeSynth(drag="E1",checkClosest=false) {
             // if (overAD){
             //     newCE = (DE1*DE1 - DE2*DE2)/((((AE1*AE1 - AE2*AE2)/(2*BE*AE1))-(AE2/AE1)-(DE2/DE1))*2*DE1)
             // }
-            if (checkClosest) newCE = checkClosestPolar(pointC, pointE1, new_angleE1C, newCE, -newCE)
+
+            // if (checkClosest) newCE = checkClosestPolar(pointC, pointE1, new_angleE1C, newCE, -newCE)
             placePointPolar(pointC, pointE1, new_angleE1C, newCE, true)
         } 
     }
@@ -290,12 +309,17 @@ function pathNodeModeSynth(drag="E1",checkClosest=false) {
         if (pointE1.type === "cusp" ){ 
             new_angleE1C = angleE1D
         } else if (pointE2.type === "cusp" && !checkClosest && !overAD) {
+        // } else if (pointE2.type === "cusp" && !overAD) {
             newCE = (DE1*DE1 - DE2*DE2)/(2*DE1*Math.cos(degToRad(getAngleBtwPoints(pointD, pointC, pointE1))) - 2*DE2)
         } else if (pointE2.type === "cusp" && !checkClosest && overAD) {
+        // } else if (pointE2.type === "cusp" && overAD) {
             newCE = (DE2*DE2 - DE1*DE1)/(2*DE1*Math.cos(degToRad(getAngleBtwPoints(pointD, pointC, pointE1))) + 2*DE2)
         }
 
-        if (checkClosest || overAD) newCE = checkClosestPolar(pointC, pointE1, new_angleE1C, newCE, -newCE)
+        if (checkClosest || overAD) {
+        // if (overAD) {
+            newCE = checkClosestPolar(pointC, pointE1, new_angleE1C, newCE, -newCE)
+        }
         placePointPolar(pointC, pointE1, new_angleE1C, newCE, true)
         setLinkPoints()
         updateTPoints()
@@ -311,23 +335,25 @@ function pathNodeModeSynth(drag="E1",checkClosest=false) {
             newBE = BE
         }
         if ((pointE2.type === "crunode" || (pointE2.type === "cusp" && checkClosest)) && !overAD){
+        // if ((pointE2.type === "crunode" || (pointE2.type === "cusp")) && !overAD){
             newBE = (AE1*AE1 - AE2*AE2)/(((CE*CE + DE1*DE1 - DC*DC)*AE1/(CE*DE1))-((CE*CE + DE2*DE2 - DC*DC)*AE2/(CE*DE2)))
-            // document.getElementById("debugOutputs").innerHTML = `5`
         }
         if ((pointE2.type === "crunode" || (pointE2.type === "cusp" && checkClosest)) && overAD){
+        // if ((pointE2.type === "crunode" || (pointE2.type === "cusp")) && overAD){
             newBE = (AE1*AE1 - AE2*AE2)/(((CE*CE + DE1*DE1 - DC*DC)*AE1/(CE*DE1))+((CE*CE + DE2*DE2 - DC*DC)*AE2/(CE*DE2)))
-            // document.getElementById("debugOutputs").innerHTML = `6`
         }
         if (pointE2.type === "cusp" && !checkClosest && !overAD){
+        // if (pointE2.type === "cusp" && !overAD){
             newBE = (AE1*AE1 - AE2*AE2)/((((DE1*DE1 - DE2*DE2)/(2*CE*DE1))+(DE2/DE1)-(AE2/AE1))*2*AE1)
-            // document.getElementById("debugOutputs").innerHTML = `7`
         }
         if (pointE2.type === "cusp" && !checkClosest && overAD){
+        // if (pointE2.type === "cusp" && overAD){
             newBE = (AE1*AE1 - AE2*AE2)/((((DE1*DE1 - DE2*DE2)/(2*CE*DE1))-(DE2/DE1)-(AE2/AE1))*2*AE1)
-            // document.getElementById("debugOutputs").innerHTML = `8`
         }
 
-        if (checkClosest) newBE = checkClosestPolar(pointB, pointE1, new_angleE1B, newBE, -newBE) // Checks whether +-newCE is closer to old CE
+        // if (checkClosest) {
+            newBE = checkClosestPolar(pointB, pointE1, new_angleE1B, newBE, -newBE) // Checks whether +-newCE is closer to old CE
+        // }
         placePointPolar(pointB, pointE1, new_angleE1B, newBE, true)
 
         setLinkPoints()
@@ -343,7 +369,8 @@ function pathNodeModeSynth(drag="E1",checkClosest=false) {
             // else if (overAD) {
             //     newCE = (DE2*DE2 - DE1*DE1)/(2*DE1*Math.cos(degToRad(getAngleBtwPoints(pointD, pointC, pointE1))) + 2*DE2)
             // }
-            if (checkClosest) newCE = checkClosestPolar(pointC, pointE1, new_angleE1C, newCE, -newCE)
+
+            // if (checkClosest) newCE = checkClosestPolar(pointC, pointE1, new_angleE1C, newCE, -newCE)
             placePointPolar(pointC, pointE1, new_angleE1C, newCE, true)
             setLinkPoints()
             updateTPoints()
@@ -356,7 +383,8 @@ function pathNodeModeSynth(drag="E1",checkClosest=false) {
             // if (overAD){
             //     newBE = (AE1*AE1 - AE2*AE2)/((((DE1*DE1 - DE2*DE2)/(2*CE*DE1))-(DE2/DE1)-(AE2/AE1))*2*AE1)
             // }
-            if (checkClosest) newBE = checkClosestPolar(pointB, pointE1, new_angleE1B, newBE, -newBE)
+
+            // if (checkClosest) newBE = checkClosestPolar(pointB, pointE1, new_angleE1B, newBE, -newBE)
             placePointPolar(pointB, pointE1, new_angleE1B, newBE, true)
         } 
     }
@@ -471,16 +499,6 @@ function checkImaginaryNode(newXE, placeC=true) {
     if (Math.abs(fixed_X + Math.abs(newXE)) < fixed_E2 || Math.abs(fixed_X - Math.abs(newXE)) > fixed_E2) {
         imaginary = true
     }
-
-    // document.getElementById("debugOutputs").innerHTML = `
-    //         img: ${imaginary} \n<br>
-    //         placeC: ${placeC} \n<br>
-    //         newXE: ${newXE.toFixed(1)} \n<br>
-    //         fixed_X: ${fixed_X.toFixed(1)} \n<br>
-    //         fixed_E2: ${fixed_E2.toFixed(1)} \n<br>
-    //         ${Math.abs(fixed_X+newXE).toFixed(1)} < ${fixed_E2.toFixed(1)}: ${Math.abs(fixed_X+newXE) < fixed_E2} \n<br>
-    //         ${Math.abs(fixed_X-newXE).toFixed(1)} > ${fixed_E2.toFixed(1)}: ${Math.abs(fixed_X-newXE) > fixed_E2} \n<br>
-    //     `
 
     return imaginary
 }
