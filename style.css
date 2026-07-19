@@ -11,6 +11,6 @@ svg {
 }
 
 html, body {
-  background-color: transparent;
-  background: none;
+  background-color: transparent !important;
+  background: none !important;
 }
