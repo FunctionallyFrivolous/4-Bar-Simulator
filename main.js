@@ -84,7 +84,7 @@ const darkColor = "rgb(26, 26, 26)"
 let bgColor = lightColor
 let fgColor = darkColor
 let whtnColor = 0
-document.body.style.backgroundColor = bgColor
+// document.body.style.backgroundColor = bgColor
 document.getElementById("pageLab").style.color = fgColor
 document.getElementById("topView").style.border = `1px solid ${fgColor}`
 
