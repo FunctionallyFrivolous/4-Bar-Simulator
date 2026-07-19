@@ -10,3 +10,7 @@ svg {
     }
 }
 
+html, body {
+  background-color: transparent;
+  background: none;
+}
