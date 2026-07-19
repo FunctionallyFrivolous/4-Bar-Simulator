@@ -22,7 +22,7 @@ function toggleDarkMode(){
     nodeModeCrunodeLabel.attr("fill", fgColor)
     nodeModeCuspLabel.attr("stroke", fgColor)
 
-    document.body.style.backgroundColor = bgColor
+    // document.body.style.backgroundColor = bgColor
     document.getElementById("pageLab").style.color = fgColor
     document.getElementById("topView").style.border = `1px solid ${fgColor}`
 }
